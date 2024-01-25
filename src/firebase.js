@@ -1,6 +1,10 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
@@ -12,11 +16,16 @@ const firebaseConfig = {
   storageBucket: "pawsite-30215.appspot.com",
   messagingSenderId: "1068739245102",
   appId: "1:1068739245102:web:6492dc28800c7a176e5bbf",
-  measurementId: "G-BKJW8Y1Y9N"
+  measurementId: "G-BKJW8Y1Y9N",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-export { app, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword };
+export {
+  app,
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+};
