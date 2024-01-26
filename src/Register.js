@@ -1,16 +1,37 @@
-// src/Register.js
+// Register.js
 import React, { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "./firebase";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  db,
+  doc,
+  setDoc,
+} from "./firebase";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
-      const auth = getAuth();
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Registration successful!");
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Additional setup logic for registered users
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: "user" });
+
+      // Set custom claims (role) in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      await setDoc(userDocRef, { role: "user" });
+
+      navigate("/Login");
     } catch (error) {
       console.error("Error registering user:", error.message);
     }
@@ -34,6 +55,9 @@ const Register = () => {
       />
       <br />
       <button onClick={handleRegister}>Register</button>
+      <p>
+        Already have an account? <Link to="/login">Login here</Link>.
+      </p>
     </div>
   );
 };
