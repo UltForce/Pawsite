@@ -63,7 +63,11 @@ const Navbar = () => {
             <li>
               <Link onClick={handleLogout}>Logout</Link>
             </li>
+            <li>
+              <Link to="/account">Account</Link>
+            </li>
           </>
+          
         ) : (
           <>
             {/* Show Login and Register when the user is not logged in */}
