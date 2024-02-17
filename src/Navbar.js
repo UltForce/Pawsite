@@ -5,6 +5,19 @@ import { auth } from "./firebase"; // Import your auth instance
 import "./styles.css"; // Import the styles
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,10 +39,9 @@ const Navbar = () => {
     try {
       await auth.signOut();
       navigate("/login"); // Redirect to the login page after logout
-      toast.success(`Logout Successful!`, {
-        position: "top-right",
-        autoClose: 3000, // Auto-close the notification after 3 seconds
-        hideProgressBar: true,
+      Toast.fire({
+        icon: "success",
+        title: "Successfully Logout",
       });
     } catch (error) {
       console.error("Error logging out:", error.message);
@@ -67,7 +79,6 @@ const Navbar = () => {
               <Link to="/account">Account</Link>
             </li>
           </>
-          
         ) : (
           <>
             {/* Show Login and Register when the user is not logged in */}

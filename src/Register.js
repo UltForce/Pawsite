@@ -9,10 +9,22 @@ import {
   doc,
   setDoc,
 } from "./firebase";
-
+import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { sendEmailVerification } from "firebase/auth";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -61,19 +73,15 @@ const Register = () => {
         unit,
       });
 
-      // Display success notification
-      toast.success(`Registration Successful!`, {
-        position: "top-right",
-        autoClose: 3000, // Auto-close the notification after 3 seconds
-        hideProgressBar: true,
+      Toast.fire({
+        icon: "success",
+        title: "Successfully Registered",
       });
       navigate("/Login");
     } catch (error) {
-      // Display error notification
-      toast.error(`Error registering in: ${error.message}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
+      Toast.fire({
+        icon: "error",
+        title: "Error registering.",
       });
       console.error("Error registering user:", error.message);
     }

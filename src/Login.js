@@ -8,6 +8,19 @@ import {
 } from "./firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,17 +31,16 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // Display success notification
-      toast.success(`Welcome back, ${email}!`, {
-        position: "top-right",
-        autoClose: 3000, // Auto-close the notification after 3 seconds
-        hideProgressBar: true,
+      Toast.fire({
+        icon: "success",
+        title:
+          "Successfully Login",
       });
     } catch (error) {
-      // Display error notification
-      toast.error(`Error logging in: ${error.message}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
+      Toast.fire({
+        icon: "error",
+        title:
+          "Username or Password is incorrect.",
       });
     }
   };
@@ -39,7 +51,6 @@ const Login = () => {
         try {
           // Fetch user role from Firestore
           const userRole = await getUserRoleFirestore(user.uid);
-
           if (userRole === "admin") {
             navigate("/dashboard"); // Redirect admin to the dashboard
           } else {

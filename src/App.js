@@ -12,14 +12,12 @@ import FAQs from "./FAQs";
 import Terms from "./Terms";
 import Account from "./account";
 import Reset from "./reset";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   // Define or import userId here
   const userId = "your-user-id"; // Replace with the actual userId
-
   return (
     <Router>
       <Navbar />

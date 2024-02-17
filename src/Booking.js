@@ -1,27 +1,42 @@
 import React, { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid"; // Import timeGrid plugin
-import listPlugin from "@fullcalendar/list"; // Import list plugin
-import interactionPlugin from "@fullcalendar/interaction"; // Import interaction plugin
+import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
+import interactionPlugin from "@fullcalendar/interaction";
 import {
-  getMyAppointments,
   createAppointment,
+  updateAppointment,
   deleteAppointment,
+  getDocs,
+  getUserRoleFirestore,
+  collection,
+  getFirestore,
+  query,
+  getAllAppointments,
+  getApprovedAppointments,
+  getUserAppointments,
+  getCurrentUserId,
 } from "./firebase";
-import { auth } from "./firebase"; // Import Firebase authentication module
+import { auth } from "./firebase";
+import { toast } from "react-toastify"; // Import toast module
+import Swal from "sweetalert2";
 
-const getCurrentUserId = () => {
-  // Check if a user is currently signed in
-  const user = auth.currentUser;
-
-  // If a user is signed in, return the user's UID (user ID)
-  // If no user is signed in, return null or handle it according to your app logic
-  return user ? user.uid : null;
-};
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
 
 const Booking = () => {
-  const [userId, setUserId] = useState(""); // Assuming userId is managed locally
+  const dba = getFirestore(); // Use dba as Firestore instance
+  const [userId, setUserId] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [formData, setFormData] = useState({
@@ -29,14 +44,15 @@ const Booking = () => {
     appointmentType: "",
     serviceType: "",
     petName: "",
+    status: "pending",
   });
-  const [isFormOpen, setIsFormOpen] = useState(false); // State to manage form open/close
-  const [isValidDaySelected, setIsValidDaySelected] = useState(false); // Track if a valid day is selected
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isValidDaySelected, setIsValidDaySelected] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
 
   const calendarRef = useRef(null);
 
   useEffect(() => {
-    // Fetch userId from wherever you store it (e.g., local storage, context, etc.)
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUserId(storedUserId);
@@ -50,100 +66,255 @@ const Booking = () => {
   }, [userId]);
 
   useEffect(() => {
-    fetchAppointments(); // Fetch appointments when the component mounts
-  }, []); // Fetch appointments only once when the component mounts
+    fetchAppointments();
+  }, []);
 
   const fetchAppointments = async () => {
-    const userAppointments = await getMyAppointments(userId);
-    setAppointments(userAppointments);
-  };
+    try {
+      const userId = getCurrentUserId();
 
-  const handleEventClick = async (eventInfo) => {
-    const loggedInUserId = getCurrentUserId();
-    const appointmentId = eventInfo.event.id;
-    const clickedAppointment = appointments.find(
-      (appointment) => appointment.id === appointmentId
-    );
+      // Fetch user's own appointments
+      const userAppointments = await getUserAppointments(userId);
 
-    if (!clickedAppointment) {
-      console.error("Appointment not found.");
-      return;
+      // Fetch all approved appointments
+      let approvedAppointments = await getApprovedAppointments();
+
+      // Filter out user's own approved appointments from the approvedAppointments array
+      approvedAppointments = approvedAppointments.filter(
+        (appointment) => appointment.userId !== userId
+      );
+
+      // Combine user's own appointments and approved appointments
+      const allAppointments = [...approvedAppointments, ...userAppointments];
+
+      // Set the combined appointments
+      setAppointments(allAppointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error.message);
     }
+  };
+  fetchAppointments();
+  const handleEventClick = async (eventInfo) => {
+    try {
+      const loggedInUserId = getCurrentUserId(); // Get the current user's ID
+      const userRole = await getUserRoleFirestore(loggedInUserId); // Get the user's role
 
-    if (clickedAppointment.userId === loggedInUserId) {
-      // If the appointment belongs to the current user, display options to edit or delete it
-      const action = window.confirm(
-        "Do you want to edit or delete this appointment?"
+      const appointmentId = eventInfo.event.id;
+      const clickedAppointment = appointments.find(
+        (appointment) => appointment.id === appointmentId
       );
 
-      if (action) {
-        // Edit the appointment
-        // Implement your logic to edit the appointment here
-      } else {
-        // Delete the appointment
-        try {
-          await deleteAppointment(userId, appointmentId);
-          fetchAppointments();
-        } catch (error) {
-          console.error("Error deleting appointment:", error);
-        }
+      if (!clickedAppointment) {
+        console.error("Appointment not found.");
+        return;
       }
-    } else {
-      // If the appointment does not belong to the current user, simply display the details
-      alert(
-        "You cannot edit or delete appointments that do not belong to you."
-      );
+
+      if (
+        clickedAppointment.userId === loggedInUserId || // User owns the appointment
+        userRole === "admin" // User is an admin
+      ) {
+        setFormData({
+          appointmentId: appointmentId,
+          name: clickedAppointment.name,
+          appointmentType: clickedAppointment.appointmentType,
+          serviceType: clickedAppointment.serviceType,
+          petName: clickedAppointment.petName,
+        });
+        setSelectedDate(clickedAppointment.date);
+        setIsFormOpen(true);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "You cannot edit or delete appointments that do not belong to you.",
+          icon: "error",
+          type: "error",
+          heightAuto: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Confirm",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Toast.fire({
+              icon: "error",
+              title:
+                "You cannot edit or delete appointments that do not belong to you.",
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error handling event click:", error.message);
     }
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // Assuming you have a function to get the currently logged-in user's ID
-    const loggedInUserId = getCurrentUserId(); // Implement this function according to your authentication logic
+    const loggedInUserId = getCurrentUserId();
 
-    // Assuming you have a function to add appointment data to Firebase
-    await createAppointment(loggedInUserId, {
-      userId: loggedInUserId, // Add the userId of the currently logged-in user
-      date: selectedDate,
-      name: formData.name,
-      appointmentType: formData.appointmentType,
-      serviceType: formData.serviceType,
-      petName: formData.petName,
-    });
+    if (formData.appointmentId) {
+      Swal.fire({
+        title: "Do you want to edit this appointment?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await updateAppointment(loggedInUserId, formData.appointmentId, {
+            name: formData.name,
+            appointmentType: formData.appointmentType,
+            serviceType: formData.serviceType,
+            petName: formData.petName,
+          });
+          setIsFormOpen(false);
+          setIsValidDaySelected(false);
+          setFormData({
+            name: "",
+            appointmentType: "",
+            serviceType: "",
+            petName: "",
+          });
+          Swal.fire({
+            title: "success",
+            text: "Appointment updated successfully",
+            icon: "success",
+            type: "success",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "success",
+                title: "Appointment updated successfully",
+              });
+            }
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        title: "Do you want to create this appointment?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await createAppointment(loggedInUserId, {
+            userId: loggedInUserId,
+            date: selectedDate,
+            name: formData.name,
+            appointmentType: formData.appointmentType,
+            serviceType: formData.serviceType,
+            petName: formData.petName,
+            status: formData.status,
+          });
+          setIsFormOpen(false);
+          setIsValidDaySelected(false);
+          setFormData({
+            name: "",
+            appointmentType: "",
+            serviceType: "",
+            petName: "",
+          });
+          Swal.fire({
+            title: "success",
+            text: "Appointment created successfully",
+            icon: "success",
+            type: "success",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "success",
+                title: "Appointment created successfully",
+              });
+            }
+          });
+        }
+      });
+    }
     fetchAppointments();
-    setFormData({
-      name: "",
-      appointmentType: "",
-      serviceType: "",
-      petName: "",
-    });
-    setIsFormOpen(false); // Close the form after submission
   };
 
-  const handleDateSelect = (selectInfo) => {
-    const startDate = selectInfo.startStr;
-    const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+  const handleDeleteAppointment = async () => {
+    try {
+      if (formData.appointmentId) {
+        Swal.fire({
+          title: "Do you want to delete this appointment?",
+          showDenyButton: true,
+          confirmButtonText: "Yes",
+          denyButtonText: `No`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await deleteAppointment(formData.appointmentId);
+            toast.success("Appointment deleted successfully");
+            fetchAppointments();
+            setIsFormOpen(false);
+            setIsValidDaySelected(false);
+            setFormData({
+              name: "",
+              appointmentType: "",
+              serviceType: "",
+              petName: "",
+            });
+            Swal.fire({
+              title: "success",
+              text: "Appointment deleted successfully",
+              icon: "success",
+              type: "success",
+              heightAuto: false,
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "Confirm",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Toast.fire({
+                  icon: "success",
+                  title: "Appointment deleted successfully",
+                });
+              }
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      toast.error("Error deleting appointment");
+    }
+  };
 
-    // Check if the selected date is not in the past
+  const handleDateSelect = async (selectInfo) => {
+    const loggedInUserId = getCurrentUserId(); // Get the current user's ID
+    const userRole = await getUserRoleFirestore(loggedInUserId); // Get the user's role
+    const startDate = selectInfo.startStr;
+    const currentDate = new Date().toISOString().split("T")[0];
+
     if (startDate >= currentDate) {
       setSelectedDate(startDate);
       setIsValidDaySelected(true);
       const calendarApi = calendarRef.current.getApi();
       if (selectInfo.view.type === "timeGridDay") {
-        setIsFormOpen(true); // Open the form when a time slot is selected in time grid view
+        if (userRole === "user") {
+          setIsFormOpen(true);
+        }
       } else {
-        calendarApi.changeView("timeGridDay", startDate); // Switch to timeGrid view and focus on the selected date
+        calendarApi.changeView("timeGridDay", startDate);
       }
     } else {
       setIsFormOpen(false);
       setIsValidDaySelected(false);
       console.log("Cannot select past dates.");
     }
+    setFormData({
+      name: "",
+      appointmentType: "",
+      serviceType: "",
+      petName: "",
+    });
   };
 
   const handleViewChange = (viewInfo) => {
-    // Close the form if the current view is not timeGrid
     if (
       viewInfo.view.type !== "timeGrid" &&
       viewInfo.view.type !== "dayGridMonth"
@@ -151,10 +322,13 @@ const Booking = () => {
       setIsFormOpen(false);
     }
 
-    // Open the form if a valid day is selected and view is timeGrid
     if (isValidDaySelected && viewInfo.view.type === "timeGrid") {
       setIsFormOpen(true);
     }
+  };
+
+  const handleTermsChange = (e) => {
+    setTermsChecked(e.target.checked);
   };
 
   return (
@@ -169,7 +343,7 @@ const Booking = () => {
             listPlugin,
             interactionPlugin,
           ]}
-          initialView="timeGridDay" // Display one day view with time slots
+          initialView="timeGridDay"
           headerToolbar={{
             left: "prev,next today",
             center: "title",
@@ -182,18 +356,19 @@ const Booking = () => {
           }))}
           editable={true}
           selectable={true}
-          select={handleDateSelect} // Update event handler
+          select={handleDateSelect}
           eventClick={handleEventClick}
-          slotDuration="01:00:00" // Set slot duration to 1 hour
-          allDaySlot={false} // Disable all-day slots
-          datesSet={handleViewChange} // Listen for view change events
+          slotDuration="01:00:00"
+          allDaySlot={false}
+          datesSet={handleViewChange}
         />
       </div>
       <div style={{ flex: 1 }}>
-        {isFormOpen && ( // Render the form only when isFormOpen is true
+        {isFormOpen && (
           <>
             <h2>Appointment Form</h2>
             <form onSubmit={handleFormSubmit}>
+              {/* Existing form fields */}
               <div>
                 <label>Name:</label>
                 <input
@@ -215,7 +390,6 @@ const Booking = () => {
                     })
                   }
                 >
-                  <option value="">Select Appointment Type</option>
                   <option value="onsite">Onsite</option>
                   <option value="home">Home</option>
                 </select>
@@ -228,7 +402,6 @@ const Booking = () => {
                     setFormData({ ...formData, serviceType: e.target.value })
                   }
                 >
-                  <option value="">Select Service Type</option>
                   <option value="bathing">Bathing</option>
                   <option value="haircutting">Haircutting</option>
                   <option value="nail trimming">Nail Trimming</option>
@@ -245,7 +418,26 @@ const Booking = () => {
                   }
                 />
               </div>
-              <button type="submit">Submit</button>
+              <div>
+                <input
+                  type="checkbox"
+                  checked={termsChecked}
+                  onChange={handleTermsChange}
+                />
+                <label htmlFor="terms">
+                  I agree to the <a href="/terms">Terms and Conditions</a>.
+                </label>
+              </div>
+              <button type="submit" disabled={!termsChecked}>
+                Submit
+              </button>
+              {/* Conditionally render the delete button */}
+              {getUserRoleFirestore(getCurrentUserId()) === "admin" && formData.appointmentId && (
+                <button type="button" onClick={handleDeleteAppointment}>
+                  Delete
+                </button>
+              )}
+              
             </form>
           </>
         )}
