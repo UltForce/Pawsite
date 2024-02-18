@@ -2,7 +2,7 @@ import React from "react";
 
 const services = () => {
   return (
-    <div>
+    <div className="centered">
       <h2>Services</h2>
       <p>Welcome to the Services!</p>
     </div>

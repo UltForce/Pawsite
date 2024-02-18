@@ -81,7 +81,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="centered">
       <h2>Register</h2>
       <label>First Name:</label>
       <input

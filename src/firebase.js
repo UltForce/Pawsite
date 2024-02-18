@@ -26,7 +26,7 @@ import * as XLSX from "xlsx";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-const afirebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyANevoJMHQyCnWqcJJ71YUKIsKQjSDcUPA",
   authDomain: "pawsite-30215.firebaseapp.com",
   projectId: "pawsite-30215",
@@ -46,7 +46,7 @@ const bfirebaseConfig = {
   measurementId: "G-SX530VTRW7",
 };
 
-const firebaseConfig = {
+const cfirebaseConfig = {
   apiKey: "AIzaSyA-LkbWv8Fte-6QsadlNH2fukivyuUI8hM",
   authDomain: "pawsite3.firebaseapp.com",
   projectId: "pawsite3",

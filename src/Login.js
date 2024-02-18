@@ -30,20 +30,11 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      if (user) {
-        // Fetch user role from Firestore
-        const userRole = await getUserRoleFirestore(user.uid);
-        if (userRole === "admin") {
-          navigate("/dashboard"); // Redirect admin to the dashboard
-        } else {
-          navigate("/homepage"); // Redirect regular user to the homepage
-        }
-        Toast.fire({
-          icon: "success",
-          title: "Successfully Logged In",
-        });
-      }
+      // Display success notification
+      Toast.fire({
+        icon: "success",
+        title: "Successfully Login",
+      });
     } catch (error) {
       Toast.fire({
         icon: "error",
@@ -51,9 +42,28 @@ const Login = () => {
       });
     }
   };
-  
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          // Fetch user role from Firestore
+          const userRole = await getUserRoleFirestore(user.uid);
+          if (userRole === "admin") {
+            navigate("/dashboard"); // Redirect admin to the dashboard
+          } else {
+            navigate("/homepage"); // Redirect regular user to the homepage
+          }
+        } catch (error) {
+          console.error("Error getting user role:", error.message);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
   return (
-    <div>
+    <div className="centered">
       <h2>Login</h2>
       <label>Email:</label>
       <input

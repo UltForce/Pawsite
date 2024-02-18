@@ -14,7 +14,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="centered">
       <h2>Dashboard</h2>
       <p>Welcome to the dashboard!</p>
       {/* Button to trigger report generation */}
