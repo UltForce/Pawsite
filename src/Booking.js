@@ -8,18 +8,11 @@ import {
   createAppointment,
   updateAppointment,
   deleteAppointment,
-  getDocs,
   getUserRoleFirestore,
-  collection,
-  getFirestore,
-  query,
-  getAllAppointments,
   getApprovedAppointments,
   getUserAppointments,
   getCurrentUserId,
 } from "./firebase";
-import { auth } from "./firebase";
-import { toast } from "react-toastify"; // Import toast module
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -35,7 +28,6 @@ const Toast = Swal.mixin({
 });
 
 const Booking = () => {
-  const dba = getFirestore(); // Use dba as Firestore instance
   const [userId, setUserId] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -49,8 +41,55 @@ const Booking = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isValidDaySelected, setIsValidDaySelected] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
-
+  const [userRole, setUserRole] = useState(""); // State to store user role
   const calendarRef = useRef(null);
+
+  // Define colors for each status
+  const statusColors = {
+    pending: "orange",
+    canceled: "red",
+    approved: "blue",
+    completed: "green",
+  };
+
+  // Function to map appointment status to color
+  const getStatusColor = (status) => {
+    return statusColors[status] || "gray"; // Default color is gray for unknown status
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const loggedInUserId = getCurrentUserId();
+        const [role, userAppointments, approvedAppointments] =
+          await Promise.all([
+            getUserRoleFirestore(loggedInUserId),
+            getUserAppointments(loggedInUserId),
+            getApprovedAppointments(),
+          ]);
+
+        setUserRole(role);
+
+        // Filter out user's own approved appointments from the approvedAppointments array
+        const filteredApprovedAppointments = approvedAppointments.filter(
+          (appointment) => appointment.userId !== loggedInUserId
+        );
+
+        // Combine user's own appointments and filtered approved appointments
+        const allAppointments = [
+          ...filteredApprovedAppointments,
+          ...userAppointments,
+        ];
+
+        // Set the combined appointments
+        setAppointments(allAppointments);
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -59,41 +98,26 @@ const Booking = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      fetchAppointments();
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
-
   const fetchAppointments = async () => {
     try {
-      const userId = getCurrentUserId();
+      const loggedInUserId = getCurrentUserId();
+      const userAppointments = await getUserAppointments(loggedInUserId);
+      const approvedAppointments = await getApprovedAppointments();
 
-      // Fetch user's own appointments
-      const userAppointments = await getUserAppointments(userId);
-
-      // Fetch all approved appointments
-      let approvedAppointments = await getApprovedAppointments();
-
-      // Filter out user's own approved appointments from the approvedAppointments array
-      approvedAppointments = approvedAppointments.filter(
-        (appointment) => appointment.userId !== userId
+      const filteredApprovedAppointments = approvedAppointments.filter(
+        (appointment) => appointment.userId !== loggedInUserId
       );
 
-      // Combine user's own appointments and approved appointments
-      const allAppointments = [...approvedAppointments, ...userAppointments];
-
-      // Set the combined appointments
+      const allAppointments = [
+        ...filteredApprovedAppointments,
+        ...userAppointments,
+      ];
       setAppointments(allAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error.message);
     }
   };
-  fetchAppointments();
+
   const handleEventClick = async (eventInfo) => {
     try {
       const loggedInUserId = getCurrentUserId(); // Get the current user's ID
@@ -125,9 +149,8 @@ const Booking = () => {
       } else {
         Swal.fire({
           title: "Error",
-          text: "You cannot edit or delete appointments that do not belong to you.",
+          text: "You cannot edit or delete appointments that do not belong to you or are not pending.",
           icon: "error",
-          type: "error",
           heightAuto: false,
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Confirm",
@@ -136,7 +159,7 @@ const Booking = () => {
             Toast.fire({
               icon: "error",
               title:
-                "You cannot edit or delete appointments that do not belong to you.",
+                "You cannot edit or delete appointments that do not belong to you or are not pending.",
             });
           }
         });
@@ -153,6 +176,7 @@ const Booking = () => {
 
     if (formData.appointmentId) {
       Swal.fire({
+        icon: "question",
         title: "Do you want to edit this appointment?",
         showDenyButton: true,
         confirmButtonText: "Yes",
@@ -189,10 +213,12 @@ const Booking = () => {
               });
             }
           });
+          fetchAppointments();
         }
       });
     } else {
       Swal.fire({
+        icon: "question",
         title: "Do you want to create this appointment?",
         showDenyButton: true,
         confirmButtonText: "Yes",
@@ -220,7 +246,6 @@ const Booking = () => {
             title: "success",
             text: "Appointment created successfully",
             icon: "success",
-            type: "success",
             heightAuto: false,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Confirm",
@@ -232,55 +257,134 @@ const Booking = () => {
               });
             }
           });
+          fetchAppointments();
         }
       });
     }
-    fetchAppointments();
   };
 
   const handleDeleteAppointment = async () => {
     try {
       if (formData.appointmentId) {
-        Swal.fire({
-          title: "Do you want to delete this appointment?",
-          showDenyButton: true,
-          confirmButtonText: "Yes",
-          denyButtonText: `No`,
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            await deleteAppointment(formData.appointmentId);
-            toast.success("Appointment deleted successfully");
-            fetchAppointments();
-            setIsFormOpen(false);
-            setIsValidDaySelected(false);
-            setFormData({
-              name: "",
-              appointmentType: "",
-              serviceType: "",
-              petName: "",
-            });
-            Swal.fire({
-              title: "success",
-              text: "Appointment deleted successfully",
-              icon: "success",
-              type: "success",
-              heightAuto: false,
-              confirmButtonColor: "#3085d6",
-              confirmButtonText: "Confirm",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Toast.fire({
-                  icon: "success",
-                  title: "Appointment deleted successfully",
-                });
-              }
-            });
-          }
-        });
+        const loggedInUserId = getCurrentUserId(); // Get the current user's ID
+        const clickedAppointment = appointments.find(
+          (appointment) => appointment.id === formData.appointmentId
+        );
+
+        if (!clickedAppointment) {
+          console.error("Appointment not found.");
+          return;
+        }
+
+        // Check if the user is an admin
+        const userRole = await getUserRoleFirestore(loggedInUserId);
+        if (userRole === "admin") {
+          Swal.fire({
+            icon: "question",
+            title: "Do you want to delete this appointment?",
+            showDenyButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`,
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              // If the user is an admin, delete the appointment without further checks
+              await deleteAppointment(formData.appointmentId);
+              setIsFormOpen(false);
+              setIsValidDaySelected(false);
+              setFormData({
+                name: "",
+                appointmentType: "",
+                serviceType: "",
+                petName: "",
+              });
+              fetchAppointments();
+              Swal.fire({
+                title: "success",
+                text: "Appointment deleted successfully",
+                icon: "success",
+                type: "success",
+                heightAuto: false,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Confirm",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Toast.fire({
+                    icon: "success",
+                    title: "Appointment deleted successfully",
+                  });
+                }
+              });
+              return;
+            }
+          });
+        }
+
+        // If the user is not an admin, check if the appointment belongs to the current user and if its status is pending
+        else if (
+          clickedAppointment.userId === loggedInUserId &&
+          clickedAppointment.status === "pending"
+        ) {
+          Swal.fire({
+            icon: "question",
+            title: "Do you want to delete this appointment?",
+            showDenyButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`,
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              await deleteAppointment(formData.appointmentId);
+              setIsFormOpen(false);
+              setIsValidDaySelected(false);
+              setFormData({
+                name: "",
+                appointmentType: "",
+                serviceType: "",
+                petName: "",
+              });
+              Swal.fire({
+                title: "success",
+                text: "Appointment deleted successfully",
+                icon: "success",
+                type: "success",
+                heightAuto: false,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Confirm",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Toast.fire({
+                    icon: "success",
+                    title: "Appointment deleted successfully",
+                  });
+                }
+              });
+              fetchAppointments();
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "You cannot delete appointments that do not belong to you or are not pending.",
+            icon: "error",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "error",
+                title:
+                  "You cannot delete appointments that do not belong to you or are not pending.",
+              });
+            }
+          });
+        }
       }
     } catch (error) {
       console.error("Error deleting appointment:", error);
-      toast.error("Error deleting appointment");
+      Toast.fire({
+        icon: "error",
+        title: "Error deleting appointment",
+      });
     }
   };
 
@@ -291,11 +395,38 @@ const Booking = () => {
     const currentDate = new Date().toISOString().split("T")[0];
 
     if (startDate >= currentDate) {
+      // Check if the user already has a pending appointment
+      const userPendingAppointments = appointments.filter(
+        (appointment) =>
+          appointment.userId === loggedInUserId &&
+          appointment.status === "pending"
+      );
+
       setSelectedDate(startDate);
       setIsValidDaySelected(true);
       const calendarApi = calendarRef.current.getApi();
       if (selectInfo.view.type === "timeGridDay") {
         if (userRole === "user") {
+          if (userPendingAppointments.length > 0) {
+            // Notify the user that they already have a pending appointment
+            Swal.fire({
+              title: "Information",
+              text: "You already have a pending appointment. Please wait for it to be processed.",
+              icon: "info",
+              heightAuto: false,
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Toast.fire({
+                  icon: "info",
+                  title:
+                    "You already have a pending appointment. Please wait for it to be processed.",
+                });
+              }
+            });
+            return;
+          }
           setIsFormOpen(true);
         }
       } else {
@@ -344,6 +475,8 @@ const Booking = () => {
             interactionPlugin,
           ]}
           initialView="timeGridDay"
+          initialDate={new Date().toISOString()} // Set initial date to current date/time
+          timeZone="Asia/Manila" // Set timezone to Asia/Manila
           headerToolbar={{
             left: "prev,next today",
             center: "title",
@@ -351,8 +484,9 @@ const Booking = () => {
           }}
           events={appointments.map((appointment) => ({
             id: appointment.id,
-            title: "Appointment",
+            title: appointment.name,
             start: appointment.date,
+            backgroundColor: getStatusColor(appointment.status), // Set color based on status
           }))}
           editable={true}
           selectable={true}
@@ -361,6 +495,7 @@ const Booking = () => {
           slotDuration="01:00:00"
           allDaySlot={false}
           datesSet={handleViewChange}
+          themeSystem="Sketchy" // Set theme to Sketchy
         />
       </div>
       <div style={{ flex: 1 }}>
@@ -432,12 +567,11 @@ const Booking = () => {
                 Submit
               </button>
               {/* Conditionally render the delete button */}
-              {getUserRoleFirestore(getCurrentUserId()) === "admin" && formData.appointmentId && (
+              {formData.appointmentId && (
                 <button type="button" onClick={handleDeleteAppointment}>
                   Delete
                 </button>
               )}
-              
             </form>
           </>
         )}

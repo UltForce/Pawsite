@@ -21,12 +21,12 @@ import {
   where,
   query,
 } from "firebase/firestore";
-
+import { saveAs } from "file-saver"; // Import saveAs function from file-saver
+import * as XLSX from "xlsx";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-{
-  /*
-const firebaseConfig = {
+
+const afirebaseConfig = {
   apiKey: "AIzaSyANevoJMHQyCnWqcJJ71YUKIsKQjSDcUPA",
   authDomain: "pawsite-30215.firebaseapp.com",
   projectId: "pawsite-30215",
@@ -35,10 +35,8 @@ const firebaseConfig = {
   appId: "1:1068739245102:web:6492dc28800c7a176e5bbf",
   measurementId: "G-BKJW8Y1Y9N",
 };
-*/
-}
 
-const firebaseConfig = {
+const bfirebaseConfig = {
   apiKey: "AIzaSyCI_yV6J0RXtIxKKOTCRWdzOFowCGX7Z7Y",
   authDomain: "pawsite2.firebaseapp.com",
   projectId: "pawsite2",
@@ -46,6 +44,15 @@ const firebaseConfig = {
   messagingSenderId: "998834889315",
   appId: "1:998834889315:web:100880b154398f7443ce56",
   measurementId: "G-SX530VTRW7",
+};
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-LkbWv8Fte-6QsadlNH2fukivyuUI8hM",
+  authDomain: "pawsite3.firebaseapp.com",
+  projectId: "pawsite3",
+  storageBucket: "pawsite3.appspot.com",
+  messagingSenderId: "178181519652",
+  appId: "1:178181519652:web:20e6fd819fe42618e5dbb1",
 };
 
 // Initialize Firebase
@@ -156,8 +163,8 @@ const getUserAppointments = async (userId) => {
 // Function to retrieve all appointments
 const getAllAppointments = async () => {
   try {
-    // Query the "appointments" collection where userId matches
-    const appointmentsQuery = query(collection(dba, "appointments"));
+    // Query the "appointments" collection
+    const appointmentsQuery = collection(dba, "appointments");
     const snapshot = await getDocs(appointmentsQuery);
     const appointments = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -196,9 +203,49 @@ const deleteAppointment = async (appointmentId) => {
   }
 };
 
+const generateReports = async () => {
+  try {
+    // Query the appointments collection
+    const appointmentsQuery = await getDocs(collection(dba, "appointments"));
+
+    // Extract appointment data from query snapshot
+    const appointmentsData = appointmentsQuery.docs.map((doc) => doc.data());
+
+    // Query the users collection
+    const usersQuery = await getDocs(collection(dba, "users"));
+
+    // Extract user data from query snapshot
+    const usersData = usersQuery.docs.map((doc) => doc.data());
+
+    // Define Excel workbook and worksheets
+    const wb = XLSX.utils.book_new();
+    const appointmentsWs = XLSX.utils.json_to_sheet(appointmentsData);
+    const usersWs = XLSX.utils.json_to_sheet(usersData);
+
+    // Add worksheets to workbook
+    XLSX.utils.book_append_sheet(wb, appointmentsWs, "Appointments");
+    XLSX.utils.book_append_sheet(wb, usersWs, "Users");
+
+    // Generate Excel file
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+    // Convert Excel buffer to Blob
+    const excelBlob = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    // Save Blob as Excel file
+    saveAs(excelBlob, "reports.xlsx");
+
+    console.log("Reports generated successfully");
+  } catch (error) {
+    console.error("Error generating reports:", error.message);
+  }
+};
+
 export {
-  getAuth, // Export getAuth directly
-  auth, // Export auth if needed
+  getAuth,
+  auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
@@ -222,4 +269,5 @@ export {
   collection,
   getAllAppointments,
   getCurrentUserId,
+  generateReports,
 };

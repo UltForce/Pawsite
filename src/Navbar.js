@@ -1,9 +1,8 @@
 // Navbar.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "./firebase"; // Import your auth instance
-import "./styles.css"; // Import the styles
-import { toast } from "react-toastify";
+import { auth } from "./firebase";
+import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
@@ -20,16 +19,12 @@ const Toast = Swal.mixin({
 });
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Initially set to false
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
+      setIsLoggedIn(!!user);
     });
 
     return () => unsubscribe();
@@ -71,7 +66,6 @@ const Navbar = () => {
         </li>
         {isLoggedIn ? (
           <>
-            {/* Show Logout when the user is logged in */}
             <li>
               <Link onClick={handleLogout}>Logout</Link>
             </li>
@@ -81,7 +75,6 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {/* Show Login and Register when the user is not logged in */}
             <li>
               <Link to="/login">Login</Link>
             </li>

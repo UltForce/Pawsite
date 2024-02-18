@@ -16,8 +16,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  // Define or import userId here
-  const userId = "your-user-id"; // Replace with the actual userId
   return (
     <Router>
       <Navbar />
@@ -28,14 +26,12 @@ function App() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/booking" element={<Booking />} />{" "}
-        {/* Remove userId prop */}
+        <Route path="/booking" element={<Booking />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/account" element={<Account />} />
         <Route path="/reset" element={<Reset />} />
       </Routes>
-      {/* ToastContainer for displaying notifications */}
       <ToastContainer />
     </Router>
   );

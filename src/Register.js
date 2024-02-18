@@ -4,13 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   auth,
   createUserWithEmailAndPassword,
-  updateProfile,
   dba,
   doc,
   setDoc,
 } from "./firebase";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { sendEmailVerification } from "firebase/auth";
 
@@ -48,14 +46,8 @@ const Register = () => {
         password
       );
 
-      // Additional setup logic for registered users
-      const user = userCredential.user;
-
-      // Fetch the UID of the registered user
-      const userId = user.uid;
-
-      // Send email verification
-      await sendEmailVerification(user);
+      // Access user properties directly from userCredential.user
+      const userId = userCredential.user.uid;
 
       // Store additional user details in Firestore along with the userID
       const userDocRef = doc(dba, "users", userId);
@@ -72,12 +64,13 @@ const Register = () => {
         street,
         unit,
       });
-
+      // Send email verification
+      await sendEmailVerification(userCredential.user);
       Toast.fire({
         icon: "success",
         title: "Successfully Registered",
       });
-      navigate("/Login");
+      navigate("/homepage");
     } catch (error) {
       Toast.fire({
         icon: "error",
