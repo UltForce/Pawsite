@@ -1,3 +1,5 @@
+// Dashboard.js
+
 import React from "react";
 import { generateReports } from "./firebase.js"; // Import the generateReports function
 

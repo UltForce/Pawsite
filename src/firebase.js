@@ -1,3 +1,5 @@
+// firebase.js
+
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -21,11 +23,12 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import { saveAs } from "file-saver"; // Import saveAs function from file-saver
+import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
+// Firebase configuration for the main app
 const firebaseConfig = {
   apiKey: "AIzaSyANevoJMHQyCnWqcJJ71YUKIsKQjSDcUPA",
   authDomain: "pawsite-30215.firebaseapp.com",
@@ -68,12 +71,17 @@ const getCurrentUserId = () => {
   return user ? user.uid : null;
 };
 
+// Function to retrieve the user's role from Firestore
 const getUserRoleFirestore = async (userId) => {
   try {
+    // Construct reference to the user document
     const userDocRef = doc(dba, "users", userId);
+
+    // Get user document snapshot
     const userDocSnapshot = await getDoc(userDocRef);
 
     if (userDocSnapshot.exists()) {
+      // Extract user data and return the user's role (default to "user" if not present)
       const userData = userDocSnapshot.data();
       return userData.role || "user"; // Return the user's role, defaulting to "user" if not present
     } else {

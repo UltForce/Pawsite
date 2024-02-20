@@ -1,3 +1,5 @@
+// Notifications.js
+
 import React from "react";
 
 const Notifications = () => {

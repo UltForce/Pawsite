@@ -1,3 +1,5 @@
+// Booking.js
+
 import React, { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -15,6 +17,7 @@ import {
 } from "./firebase";
 import Swal from "sweetalert2";
 
+// Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -27,24 +30,26 @@ const Toast = Swal.mixin({
   },
 });
 
+// Component for booking appointments
 const Booking = () => {
-  const [userId, setUserId] = useState("");
-  const [appointments, setAppointments] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [userId, setUserId] = useState(""); // State for storing user ID
+  const [appointments, setAppointments] = useState([]); // State for storing appointments
+  const [selectedDate, setSelectedDate] = useState(null); // State for storing selected date
   const [formData, setFormData] = useState({
+    // State for form data
     name: "",
-    appointmentType: "",
-    serviceType: "",
+    appointmentType: "onsite",
+    serviceType: "bathing",
     petName: "",
     status: "pending",
   });
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isValidDaySelected, setIsValidDaySelected] = useState(false);
-  const [termsChecked, setTermsChecked] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false); // State for controlling form visibility
+  const [isValidDaySelected, setIsValidDaySelected] = useState(false); // State for checking if a valid day is selected
+  const [termsChecked, setTermsChecked] = useState(false); // State for tracking if terms are checked
   const [userRole, setUserRole] = useState(""); // State to store user role
   const calendarRef = useRef(null);
 
-  // Define colors for each status
+  // Object mapping appointment status to colors
   const statusColors = {
     pending: "orange",
     canceled: "red",
@@ -57,18 +62,20 @@ const Booking = () => {
     return statusColors[status] || "gray"; // Default color is gray for unknown status
   };
 
+  // Fetch user role and appointments when component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const loggedInUserId = getCurrentUserId();
+        const loggedInUserId = getCurrentUserId(); // Get current user's ID
         const [role, userAppointments, approvedAppointments] =
           await Promise.all([
+            // Fetch user role and appointments
             getUserRoleFirestore(loggedInUserId),
             getUserAppointments(loggedInUserId),
             getApprovedAppointments(),
           ]);
 
-        setUserRole(role);
+        setUserRole(role); // Set user role
 
         // Filter out user's own approved appointments from the approvedAppointments array
         const filteredApprovedAppointments = approvedAppointments.filter(
@@ -88,36 +95,41 @@ const Booking = () => {
       }
     };
 
-    fetchData();
+    fetchData(); // Fetch data
   }, []);
 
+  // Fetch user ID from local storage when component mounts
   useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
+    const storedUserId = localStorage.getItem("userId"); // Get user ID from local storage
     if (storedUserId) {
-      setUserId(storedUserId);
+      setUserId(storedUserId); // Set user ID
     }
   }, []);
 
+  // Fetch appointments
   const fetchAppointments = async () => {
     try {
-      const loggedInUserId = getCurrentUserId();
-      const userAppointments = await getUserAppointments(loggedInUserId);
-      const approvedAppointments = await getApprovedAppointments();
+      const loggedInUserId = getCurrentUserId(); // Get current user's ID
+      const userAppointments = await getUserAppointments(loggedInUserId); // Fetch user's appointments
+      const approvedAppointments = await getApprovedAppointments(); // Fetch approved appointments
 
       const filteredApprovedAppointments = approvedAppointments.filter(
+        // Filter out user's own approved appointments
         (appointment) => appointment.userId !== loggedInUserId
       );
 
       const allAppointments = [
+        // Combine user's own appointments and filtered approved appointments
         ...filteredApprovedAppointments,
         ...userAppointments,
       ];
-      setAppointments(allAppointments);
+      setAppointments(allAppointments); // Set appointments
     } catch (error) {
       console.error("Error fetching appointments:", error.message);
     }
   };
 
+  // Handle click on calendar event
   const handleEventClick = async (eventInfo) => {
     try {
       const loggedInUserId = getCurrentUserId(); // Get the current user's ID
@@ -125,6 +137,7 @@ const Booking = () => {
 
       const appointmentId = eventInfo.event.id;
       const clickedAppointment = appointments.find(
+        // Find clicked appointment
         (appointment) => appointment.id === appointmentId
       );
 
@@ -138,15 +151,17 @@ const Booking = () => {
         userRole === "admin" // User is an admin
       ) {
         setFormData({
+          // Set form data
           appointmentId: appointmentId,
           name: clickedAppointment.name,
           appointmentType: clickedAppointment.appointmentType,
           serviceType: clickedAppointment.serviceType,
           petName: clickedAppointment.petName,
         });
-        setSelectedDate(clickedAppointment.date);
-        setIsFormOpen(true);
+        setSelectedDate(clickedAppointment.date); // Set selected date
+        setIsFormOpen(true); // Open form
       } else {
+        // Show error message if user cannot edit/delete appointment
         Swal.fire({
           title: "Error",
           text: "You cannot edit or delete appointments that do not belong to you or are not pending.",
@@ -169,12 +184,28 @@ const Booking = () => {
     }
   };
 
+  // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    const updatedFormData = {
+      ...formData,
+      appointmentType: formData.appointmentType || "onsite",
+      serviceType: formData.serviceType || "bathing",
+    };
+
+    if (!updatedFormData.name || !updatedFormData.petName) {
+      Toast.fire({
+        icon: "error",
+        title: "Please fill in all the fields.",
+      });
+      return; // Exit early if fields are empty
+    }
 
     const loggedInUserId = getCurrentUserId();
 
     if (formData.appointmentId) {
+      // Update appointment
       Swal.fire({
         icon: "question",
         title: "Do you want to edit this appointment?",
@@ -189,7 +220,7 @@ const Booking = () => {
             serviceType: formData.serviceType,
             petName: formData.petName,
           });
-          setIsFormOpen(false);
+          setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
             name: "",
@@ -197,6 +228,7 @@ const Booking = () => {
             serviceType: "",
             petName: "",
           });
+          // Show success message
           Swal.fire({
             title: "success",
             text: "Appointment updated successfully",
@@ -213,10 +245,11 @@ const Booking = () => {
               });
             }
           });
-          fetchAppointments();
+          fetchAppointments(); // Fetch appointments
         }
       });
     } else {
+      // Create new appointment
       Swal.fire({
         icon: "question",
         title: "Do you want to create this appointment?",
@@ -234,7 +267,7 @@ const Booking = () => {
             petName: formData.petName,
             status: formData.status,
           });
-          setIsFormOpen(false);
+          setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
             name: "",
@@ -242,6 +275,7 @@ const Booking = () => {
             serviceType: "",
             petName: "",
           });
+          // Show success message
           Swal.fire({
             title: "success",
             text: "Appointment created successfully",
@@ -257,17 +291,19 @@ const Booking = () => {
               });
             }
           });
-          fetchAppointments();
+          fetchAppointments(); // Fetch appointments
         }
       });
     }
   };
 
+  // Handle deletion of appointment
   const handleDeleteAppointment = async () => {
     try {
       if (formData.appointmentId) {
         const loggedInUserId = getCurrentUserId(); // Get the current user's ID
         const clickedAppointment = appointments.find(
+          // Find clicked appointment
           (appointment) => appointment.id === formData.appointmentId
         );
 
@@ -287,9 +323,9 @@ const Booking = () => {
             denyButtonText: `No`,
           }).then(async (result) => {
             if (result.isConfirmed) {
-              // If the user is an admin, delete the appointment without further checks
+              // If user is admin, delete appointment
               await deleteAppointment(formData.appointmentId);
-              setIsFormOpen(false);
+              setIsFormOpen(false); // Close form
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
@@ -297,7 +333,8 @@ const Booking = () => {
                 serviceType: "",
                 petName: "",
               });
-              fetchAppointments();
+              fetchAppointments(); // Fetch appointments
+              // Show success message
               Swal.fire({
                 title: "success",
                 text: "Appointment deleted successfully",
@@ -319,21 +356,21 @@ const Booking = () => {
           });
         }
 
-        // If the user is not an admin, check if the appointment belongs to the current user and if its status is pending
+        // If user is not admin and appointment is pending, cancel appointment
         else if (
           clickedAppointment.userId === loggedInUserId &&
           clickedAppointment.status === "pending"
         ) {
           Swal.fire({
             icon: "question",
-            title: "Do you want to delete this appointment?",
+            title: "Do you want to cancel this appointment?",
             showDenyButton: true,
             confirmButtonText: "Yes",
             denyButtonText: `No`,
           }).then(async (result) => {
             if (result.isConfirmed) {
               await deleteAppointment(formData.appointmentId);
-              setIsFormOpen(false);
+              setIsFormOpen(false); // Close form
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
@@ -341,9 +378,10 @@ const Booking = () => {
                 serviceType: "",
                 petName: "",
               });
+              // Show success message
               Swal.fire({
                 title: "success",
-                text: "Appointment deleted successfully",
+                text: "Appointment canceled successfully",
                 icon: "success",
                 type: "success",
                 heightAuto: false,
@@ -353,17 +391,18 @@ const Booking = () => {
                 if (result.isConfirmed) {
                   Toast.fire({
                     icon: "success",
-                    title: "Appointment deleted successfully",
+                    title: "Appointment canceled successfully",
                   });
                 }
               });
-              fetchAppointments();
+              fetchAppointments(); // Fetch appointments
             }
           });
         } else {
           Swal.fire({
+            // Show error message if user cannot cancel appointment
             title: "Error",
-            text: "You cannot delete appointments that do not belong to you or are not pending.",
+            text: "You cannot cancel appointments that do not belong to you or are not pending.",
             icon: "error",
             heightAuto: false,
             confirmButtonColor: "#3085d6",
@@ -388,24 +427,28 @@ const Booking = () => {
     }
   };
 
+  // Handle selection of date on calendar
   const handleDateSelect = async (selectInfo) => {
     const loggedInUserId = getCurrentUserId(); // Get the current user's ID
     const userRole = await getUserRoleFirestore(loggedInUserId); // Get the user's role
-    const startDate = selectInfo.startStr;
-    const currentDate = new Date().toISOString().split("T")[0];
+    const startDate = selectInfo.startStr; // Get selected date
+    const currentDate = new Date().toISOString().split("T")[0]; // Get current date
 
     if (startDate >= currentDate) {
+      // Check if selected date is valid
       // Check if the user already has a pending appointment
       const userPendingAppointments = appointments.filter(
+        // Filter user's pending appointments
         (appointment) =>
           appointment.userId === loggedInUserId &&
           appointment.status === "pending"
       );
 
-      setSelectedDate(startDate);
-      setIsValidDaySelected(true);
+      setSelectedDate(startDate); // Set selected date
+      setIsValidDaySelected(true); // Set valid day selected
       const calendarApi = calendarRef.current.getApi();
       if (selectInfo.view.type === "timeGridDay") {
+        // Open form when day view is selected
         if (userRole === "user") {
           if (userPendingAppointments.length > 0) {
             // Notify the user that they already have a pending appointment
@@ -427,17 +470,19 @@ const Booking = () => {
             });
             return;
           }
-          setIsFormOpen(true);
+          setIsFormOpen(true); // Open form
         }
       } else {
+        // Change view to day grid when other views are selected
         calendarApi.changeView("timeGridDay", startDate);
       }
     } else {
-      setIsFormOpen(false);
+      setIsFormOpen(false); // Close form if selected date is invalid
       setIsValidDaySelected(false);
       console.log("Cannot select past dates.");
     }
     setFormData({
+      // Reset form data
       name: "",
       appointmentType: "",
       serviceType: "",
@@ -445,21 +490,24 @@ const Booking = () => {
     });
   };
 
+  // Handle view change on calendar
   const handleViewChange = (viewInfo) => {
     if (
-      viewInfo.view.type !== "timeGrid" &&
+      viewInfo.view.type !== "timeGrid" && // Close form when view is not time grid or day grid month
       viewInfo.view.type !== "dayGridMonth"
     ) {
-      setIsFormOpen(false);
+      setIsFormOpen(false); // Close form
     }
 
     if (isValidDaySelected && viewInfo.view.type === "timeGrid") {
-      setIsFormOpen(true);
+      // Open form when valid day is selected and view is time grid
+      setIsFormOpen(true); // Open form
     }
   };
 
+  // Handle terms checkbox change
   const handleTermsChange = (e) => {
-    setTermsChecked(e.target.checked);
+    setTermsChecked(e.target.checked); // Set terms checked
   };
 
   return (

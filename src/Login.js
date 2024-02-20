@@ -28,6 +28,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    // Check if email or password is empty
+    if (!email) {
+      Toast.fire({
+        icon: "error",
+        title: "Please enter your email",
+      });
+      return; // Exit early if fields are empty
+    } else if (!password) {
+      Toast.fire({
+        icon: "error",
+        title: "Please enter your password.",
+      });
+      return;
+    }
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // Display success notification
