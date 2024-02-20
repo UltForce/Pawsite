@@ -1,4 +1,5 @@
 // Register.js
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -39,6 +40,25 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    if (
+      !email ||
+      !password ||
+      !firstname ||
+      !lastname ||
+      !mobilenumber ||
+      !landlinenumber ||
+      !region ||
+      !city ||
+      !barangay ||
+      !street ||
+      !unit
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "Please fill in all the fields.",
+      });
+      return; // Exit early if fields are empty
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -74,9 +94,9 @@ const Register = () => {
     } catch (error) {
       Toast.fire({
         icon: "error",
-        title: "Error registering.",
+        title: "Email is already registered.",
       });
-      console.error("Error registering user:", error.message);
+      console.error("Email is already registered.", error.message);
     }
   };
 

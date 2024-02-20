@@ -37,16 +37,42 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      navigate("/login"); // Redirect to the login page after logout
-      Toast.fire({
-        icon: "success",
-        title: "Successfully Logout",
-      });
-    } catch (error) {
-      console.error("Error logging out:", error.message);
-    }
+    Swal.fire({
+      icon: "question",
+      title: "Do you want to logout?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await auth.signOut();
+          navigate("/login"); // Redirect to the login page after logout
+          Toast.fire({
+            icon: "success",
+            title: "Successfully Logout",
+          });
+        } catch (error) {
+          console.error("Error logging out:", error.message);
+        }
+        Swal.fire({
+          title: "success",
+          text: "Account successfully logout.",
+          icon: "success",
+          type: "success",
+          heightAuto: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Confirm",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Toast.fire({
+              icon: "success",
+              title: "Account successfully logout.",
+            });
+          }
+        });
+      }
+    });
   };
 
   return (
