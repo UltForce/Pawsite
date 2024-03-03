@@ -226,7 +226,7 @@ const Services = () => {
 
   return (
     <div className="centered">
-      <h2>Services</h2>
+      <h1 className="page-title">Services</h1>
       {isAdmin && (
         <form onSubmit={handleSubmit}>
           <label>Name:</label>

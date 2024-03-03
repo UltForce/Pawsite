@@ -513,7 +513,7 @@ const Booking = () => {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ flex: 1 }}>
-        <h2>My Appointments</h2>
+        <h1>My Appointments</h1>
         <FullCalendar
           ref={calendarRef}
           plugins={[

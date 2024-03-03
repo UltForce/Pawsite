@@ -5,8 +5,8 @@ import React from "react";
 const account = () => {
   return (
     <div className="centered">
-      <h2>Account</h2>
-      <p>Welcome to the account!</p>
+      <h1 className="page-title">Account</h1>
+      <p class="lead">Welcome to the account!</p>
     </div>
   );
 };
