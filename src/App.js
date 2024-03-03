@@ -1,4 +1,5 @@
 // App.js
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login";
@@ -11,6 +12,8 @@ import Services from "./services";
 import Booking from "./Booking";
 import FAQs from "./FAQs";
 import Terms from "./Terms";
+import Account from "./account";
+import Reset from "./reset";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,8 +31,9 @@ function App() {
         <Route path="/booking" element={<Booking />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/reset" element={<Reset />} />
       </Routes>
-      {/* ToastContainer for displaying notifications */}
       <ToastContainer />
     </Router>
   );
