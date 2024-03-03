@@ -187,6 +187,53 @@ const getAllAppointments = async () => {
   }
 };
 
+const getAllUsers = async () => {
+  try {
+    // Query the "appointments" collection
+    const usersQuery = collection(dba, "users");
+    const snapshot = await getDocs(usersQuery);
+    const users = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return users;
+  } catch (error) {
+    console.error("Error getting appointments:", error.message);
+    return [];
+  }
+};
+
+const getAllData = async () => {
+  try {
+    const dataQuery = collection(dba, "users", "appointments");
+    const snapshot = await getDocs(dataQuery);
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return data;
+  } catch (error) {
+    console.error("Error getting appointments:", error.message);
+    return [];
+  }
+};
+
+const getData = async () => {
+  const data = await getAllData();
+  return data;
+}
+
+
+const getUsers = async () => {
+  const users = await getAllUsers();
+  return users;
+};
+
+const getAppointments = async () => {
+  const appointments = await getAllAppointments();
+  return appointments
+};
+
 // Function to update an appointment
 const updateAppointment = async (userId, appointmentId, newData) => {
   try {
@@ -283,4 +330,9 @@ export {
   getAllAppointments,
   getCurrentUserId,
   generateReports,
+  getAllUsers,
+  getUsers,
+  getAppointments,
+  getData,
+  getAllData,
 };

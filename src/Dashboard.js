@@ -1,10 +1,16 @@
 // Dashboard.js
 
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { generateReports } from "./firebase.js"; // Import the generateReports function
-import "./dashboard.css";
+import { getAllUsers, getAllAppointments, getAllData, getAppointments, getUsers, getData, } from "./firebase.js";
+import './dashboard.css'
 
 const Dashboard = () => {
+  const [users, setUsers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const handleGenerateReports = async () => {
     try {
       // Call the generateReports function
@@ -15,6 +21,27 @@ const Dashboard = () => {
       alert("An error occurred while generating reports.");
     }
   };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users = await getUsers();
+        const appointments = await getAppointments();
+        setAppointments(appointments);
+        setUsers(users);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -49,49 +76,34 @@ const Dashboard = () => {
         {/* New customer table */}
         <div class="customerReport">
           <h3>New Customers</h3>
+          {users.map((users, appointments) => (
           <table class="w3-table">
             <thead>
               <tr>
-                <td>First Name</td>
-                <td>Last Name</td>
-                <td>Email</td>
-                <td>Mobile Number</td>
-                <td>Appointment Date</td>
-                <td>Service</td>
-                <td>Appointment Status</td>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Mobile Number</th>
+                <th>Appointment Date</th>
+                <th>Service</th>
+                <th>Appointment Status</th>
               </tr>
             </thead>
             <br></br>
-            <tbody>
-              <tr>
-                <td>Vincent</td>
-                <td>Vega</td>
-                <td>vincent_vega@gmail.com</td>
-                <td>XXXXXXXXXXX</td>
-                <td>December 22, 2023 Friday</td>
-                <td>Home Grooming</td>
-                <td>Accepted</td>
-              </tr>
-              <tr>
-                <td>Jane</td>
-                <td>Doe</td>
-                <td>jane_doe@outlook.com</td>
-                <td>XXXXXXXXXXX</td>
-                <td>December 21, 2023 Thursday</td>
-                <td>On-Site Grooming</td>
-                <td>Accepted</td>
-              </tr>
-              <tr>
-                <td>Jeff</td>
-                <td>Doe</td>
-                <td>jeff_doe@outlook.com</td>
-                <td>XXXXXXXXXXX</td>
-                <td>December 20, 2023 Wednesday</td>
-                <td>On-site Grooming</td>
-                <td>Accepted</td>
-              </tr>
-            </tbody>
+            <tbody>  
+    <tr>  
+        <td>{users.firstname}</td>  
+        <td>{users.lastname}</td>  
+        <td>{users.mobilenumber}</td>  
+        <td>{users.region}</td> 
+        <td>{users.city}</td>  
+        <td>{users.barangay}</td>  
+        <td>{appointments.status}</td> 
+  
+    </tr>
+    </tbody>
           </table>
+          ))}
         </div>
         <br></br>
         {/* New customer table */}
