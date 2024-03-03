@@ -6,11 +6,11 @@ const Homepage = () => {
   return (
     <div className="homepage">
       <header>
-        <h1>Welcome to Our Website</h1>
+        <h1>Welcome to Our Website!</h1>
       </header>
       <main>
         <section className="hero">
-          <h2>Discover Something Amazing</h2>
+          <h2>Discover Something Amazing!</h2>
           <p>Explore our latest offerings and find what interests you!</p>
         </section>
         <section className="featured">
