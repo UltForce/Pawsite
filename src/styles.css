@@ -100,3 +100,26 @@ footer {
   margin-top: 20px;
   text-align: center;
 }
+
+.notification {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification .content {
+  flex: 1;
+}
+
+.dismiss-button {
+  background-color: #ccc;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
