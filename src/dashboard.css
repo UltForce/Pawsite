@@ -1,0 +1,29 @@
+/* dashboard css starts here */
+
+.appointmentReport {
+  margin-right: 51%;
+  display: block;
+  border: 1px solid black;
+  padding: 25px;
+  position: relative;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 15px;
+}
+
+.customerReport {
+  border: 1px solid black;
+  align-items: flex-start;
+  padding: 25px;
+}
+
+.th,
+td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* dashboard css ends here */

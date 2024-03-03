@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -62,6 +63,7 @@ const cfirebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(); // Get authentication instance directly using getAuth
 const dba = getFirestore(); // Use dba as Firestore instance
+
 const getCurrentUserId = () => {
   // Check if a user is currently signed in
   const user = auth.currentUser;
@@ -260,6 +262,9 @@ export {
   doc,
   setDoc,
   getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   getUserRoleFirestore,
   sendEmailVerification,
   sendPasswordResetEmail,

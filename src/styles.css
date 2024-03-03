@@ -43,3 +43,15 @@ ul.centered li {
   align-items: center;
   flex-direction: column;
 }
+.image-container {
+  width: 200px; /* Adjust as needed */
+  height: 200px; /* Adjust as needed */
+  overflow: hidden;
+  border: 2px solid #ccc; /* Border style */
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+}
