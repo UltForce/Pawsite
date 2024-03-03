@@ -43,15 +43,60 @@ ul.centered li {
   align-items: center;
   flex-direction: column;
 }
+
 .image-container {
-  width: 200px; /* Adjust as needed */
-  height: 200px; /* Adjust as needed */
+  width: 200px;
+  /* Adjust as needed */
+  height: 200px;
+  /* Adjust as needed */
   overflow: hidden;
-  border: 2px solid #ccc; /* Border style */
+  border: 2px solid #ccc;
+  /* Border style */
 }
 
 .image-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+  object-fit: cover;
+  /* Maintain aspect ratio and cover the entire container */
+}
+
+/* styles.css */
+.homepage {
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 20px;
+}
+
+header h1 {
+  font-size: 2em;
+}
+
+section.hero {
+  background-color: #f0f0f0;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+section.hero h2 {
+  color: #333;
+}
+
+section.featured {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  width: 45%;
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
 }
