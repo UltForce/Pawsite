@@ -1,11 +1,15 @@
 /* dashboard css starts here */
 
+.centered {
+  display: flex;
+  flex-wrap: wrap; /* Ensure elements wrap to next line if there's not enough space */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+}
+
 .appointmentReport {
-  margin-right: 55%;
-  display: block;
+  flex: 0 0 48%; /* Set width to 48% to leave space for the other column */
   border: 1px solid black;
   padding: 25px;
-  position: relative;
 }
 
 .column {
@@ -15,8 +19,8 @@
 }
 
 .customerReport {
+  flex: 0 0 48%; /* Set width to 48% to leave space for the other column */
   border: 1px solid black;
-  align-items: flex-start;
   padding: 25px;
 }
 

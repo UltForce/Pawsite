@@ -1,9 +1,16 @@
 // Dashboard.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { generateReports } from "./firebase.js"; // Import the generateReports function
-import { getAllUsers, getAllAppointments, getAllData, getAppointments, getUsers, getData, } from "./firebase.js";
-import './dashboard.css'
+import {
+  getAllUsers,
+  getAllAppointments,
+  getAllData,
+  getAppointments,
+  getUsers,
+  getData,
+} from "./firebase.js";
+import "./dashboard.css";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -22,6 +29,19 @@ const Dashboard = () => {
     }
   };
 
+  // Function to format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      month: "long",
+      day: "numeric",
+      weekday: "long",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    return date.toLocaleString("en-US", options);
+  };
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -31,7 +51,7 @@ const Dashboard = () => {
         setUsers(users);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching users:', error.message);
+        console.error("Error fetching users:", error.message);
         setLoading(false);
       }
     };
@@ -76,7 +96,7 @@ const Dashboard = () => {
         {/* New customer table */}
         <div class="customerReport">
           <h3>New Customers</h3>
-          {users.map((users, appointments) => (
+
           <table class="w3-table">
             <thead>
               <tr>
@@ -90,20 +110,26 @@ const Dashboard = () => {
               </tr>
             </thead>
             <br></br>
-            <tbody>  
-    <tr>  
-        <td>{users.firstname}</td>  
-        <td>{users.lastname}</td>  
-        <td>{users.mobilenumber}</td>  
-        <td>{users.region}</td> 
-        <td>{users.city}</td>  
-        <td>{users.barangay}</td>  
-        <td>{appointments.status}</td> 
-  
-    </tr>
-    </tbody>
+            <tbody>
+              {appointments.map((appointment) => {
+                // Find the user corresponding to this appointment
+                const user = users.find(
+                  (user) => user.userId === appointment.userId
+                );
+                return (
+                  <tr key={appointment.appointmentId}>
+                    <td>{user.firstname}</td>
+                    <td>{user.lastname}</td>
+                    <td>{user.email}</td>
+                    <td>{user.mobilenumber}</td>
+                    <td>{formatDate(appointment.date)}</td>
+                    <td>{appointment.appointmentType}</td>
+                    <td>{appointment.status}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
           </table>
-          ))}
         </div>
         <br></br>
         {/* New customer table */}
