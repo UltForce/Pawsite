@@ -225,49 +225,55 @@ const Services = () => {
   }, []);
 
   return (
-    <div className="centered">
-      <h1 className="page-title">Services</h1>
-      {isAdmin && (
-        <form onSubmit={handleSubmit}>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          <label>Description:</label>
-          <input
-            type="text"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-          />
-          <label>Image:</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <button type="submit">{formData.id ? "Update" : "Add"}</button>
-        </form>
-      )}
-      <div className="service-cards">
-        {services.map((service) => (
-          <div className="service-card" key={service.id}>
-            <h3>{service.name}</h3>
-            <p>{service.description}</p>
-            <div className="image-container">
-              <img src={service.image} alt={service.name} />
-            </div>
-            {isAdmin && (
-              <div>
-                <button onClick={() => handleEdit(service)}>Edit</button>
-                <button onClick={() => handleDelete(service.id, service.image)}>
-                  Delete
-                </button>
+    <section className="background-image-bigger">
+      <div className="centered">
+        <h1 className="page-title">Services</h1>
+        {isAdmin && (
+          <form onSubmit={handleSubmit}>
+            <label>Name:</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+            <label>Description:</label>
+            <input
+              type="text"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+            <label>Image:</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <button type="submit">{formData.id ? "Update" : "Add"}</button>
+          </form>
+        )}
+        <div className="service-cards">
+          {services.map((service) => (
+            <div className="service-card" key={service.id}>
+              <h3>{service.name}</h3>
+              <p>{service.description}</p>
+              <div className="image-container">
+                <img src={service.image} alt={service.name} />
               </div>
-            )}
-          </div>
-        ))}
+              {isAdmin && (
+                <div>
+                  <button onClick={() => handleEdit(service)}>Edit</button>
+                  <button
+                    onClick={() => handleDelete(service.id, service.image)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

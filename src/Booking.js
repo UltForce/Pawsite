@@ -511,120 +511,122 @@ const Booking = () => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1 }}>
-        <h1>My Appointments</h1>
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            listPlugin,
-            interactionPlugin,
-          ]}
-          initialView="timeGridDay"
-          initialDate={new Date().toISOString()} // Set initial date to current date/time
-          timeZone="Asia/Manila" // Set timezone to Asia/Manila
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek,listDay",
-          }}
-          events={appointments.map((appointment) => ({
-            id: appointment.id,
-            title: appointment.name,
-            start: appointment.date,
-            backgroundColor: getStatusColor(appointment.status), // Set color based on status
-          }))}
-          editable={true}
-          selectable={true}
-          select={handleDateSelect}
-          eventClick={handleEventClick}
-          slotDuration="01:00:00"
-          allDaySlot={false}
-          datesSet={handleViewChange}
-          themeSystem="Sketchy" // Set theme to Sketchy
-        />
-      </div>
-      <div style={{ flex: 1 }}>
-        {isFormOpen && (
-          <>
-            <h2>Appointment Form</h2>
-            <form onSubmit={handleFormSubmit}>
-              {/* Existing form fields */}
-              <div>
-                <label>Name:</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Appointment Type:</label>
-                <select
-                  value={formData.appointmentType}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      appointmentType: e.target.value,
-                    })
-                  }
-                >
-                  <option value="onsite">Onsite</option>
-                  <option value="home">Home</option>
-                </select>
-              </div>
-              <div>
-                <label>Service Type:</label>
-                <select
-                  value={formData.serviceType}
-                  onChange={(e) =>
-                    setFormData({ ...formData, serviceType: e.target.value })
-                  }
-                >
-                  <option value="bathing">Bathing</option>
-                  <option value="haircutting">Haircutting</option>
-                  <option value="nail trimming">Nail Trimming</option>
-                  <option value="ear trimming">Ear Trimming</option>
-                </select>
-              </div>
-              <div>
-                <label>Pet Name:</label>
-                <input
-                  type="text"
-                  value={formData.petName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, petName: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  checked={termsChecked}
-                  onChange={handleTermsChange}
-                />
-                <label htmlFor="terms">
-                  I agree to the <a href="/terms">Terms and Conditions</a>.
-                </label>
-              </div>
-              <button type="submit" disabled={!termsChecked}>
-                Submit
-              </button>
-              {/* Conditionally render the delete button */}
-              {formData.appointmentId && (
-                <button type="button" onClick={handleDeleteAppointment}>
-                  Delete
+    <section className="background-image">
+      <div style={{ display: "flex" }}>
+        <div style={{ flex: 1 }}>
+          <h1>My Appointments</h1>
+          <FullCalendar
+            ref={calendarRef}
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              listPlugin,
+              interactionPlugin,
+            ]}
+            initialView="timeGridDay"
+            initialDate={new Date().toISOString()} // Set initial date to current date/time
+            timeZone="Asia/Manila" // Set timezone to Asia/Manila
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek,listDay",
+            }}
+            events={appointments.map((appointment) => ({
+              id: appointment.id,
+              title: appointment.name,
+              start: appointment.date,
+              backgroundColor: getStatusColor(appointment.status), // Set color based on status
+            }))}
+            editable={true}
+            selectable={true}
+            select={handleDateSelect}
+            eventClick={handleEventClick}
+            slotDuration="01:00:00"
+            allDaySlot={false}
+            datesSet={handleViewChange}
+            themeSystem="Sketchy" // Set theme to Sketchy
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          {isFormOpen && (
+            <>
+              <h2>Appointment Form</h2>
+              <form onSubmit={handleFormSubmit}>
+                {/* Existing form fields */}
+                <div>
+                  <label>Name:</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Appointment Type:</label>
+                  <select
+                    value={formData.appointmentType}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        appointmentType: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="onsite">Onsite</option>
+                    <option value="home">Home</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Service Type:</label>
+                  <select
+                    value={formData.serviceType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, serviceType: e.target.value })
+                    }
+                  >
+                    <option value="bathing">Bathing</option>
+                    <option value="haircutting">Haircutting</option>
+                    <option value="nail trimming">Nail Trimming</option>
+                    <option value="ear trimming">Ear Trimming</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Pet Name:</label>
+                  <input
+                    type="text"
+                    value={formData.petName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, petName: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={termsChecked}
+                    onChange={handleTermsChange}
+                  />
+                  <label htmlFor="terms">
+                    I agree to the <a href="/terms">Terms and Conditions</a>.
+                  </label>
+                </div>
+                <button type="submit" disabled={!termsChecked}>
+                  Submit
                 </button>
-              )}
-            </form>
-          </>
-        )}
+                {/* Conditionally render the delete button */}
+                {formData.appointmentId && (
+                  <button type="button" onClick={handleDeleteAppointment}>
+                    Delete
+                  </button>
+                )}
+              </form>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

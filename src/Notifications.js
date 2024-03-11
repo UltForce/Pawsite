@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './styles.css'; // Import CSS file for styling
+import React, { useState } from "react";
+import "./styles.css"; // Import CSS file for styling
 
 const Notifications = ({ message }) => {
   const [dismissed, setDismissed] = useState(false);
@@ -14,6 +14,7 @@ const Notifications = ({ message }) => {
   }
 
   return (
+    // <section className="background-image">
     <div className="notification">
       <div className="content">
         <h2>Notification</h2>
@@ -23,6 +24,7 @@ const Notifications = ({ message }) => {
         Dismiss
       </button>
     </div>
+    // </section>
   );
 };
 
