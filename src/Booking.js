@@ -540,6 +540,9 @@ const Booking = ({ addNotification }) => {
       setIsValidDaySelected(false);
       console.log("Cannot select past dates.");
     }
+    if (userRole === "admin") {
+      setIsFormOpen(false);
+    }
     setFormData({
       // Reset form data
       name: "",
