@@ -31,7 +31,6 @@ const Dashboard = () => {
   const [appointmentsLast15Days, setAppointmentsLast15Days] = useState([]); // Define state for appointments in last 15 days
   const [appointmentsToday, setAppointmentsToday] = useState([]); // Define state for appointments today
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -65,10 +64,8 @@ const Dashboard = () => {
         setAppointmentsLast30Days(appointmentsLast30Days);
         setAppointmentsLast15Days(appointmentsLast15Days);
         setAppointmentsToday(appointmentsToday);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching appointments:", error.message);
-        setLoading(false);
       }
     };
 
@@ -108,25 +105,18 @@ const Dashboard = () => {
         const appointments = await getAppointments();
         setAppointments(appointments);
         setUsers(users);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error.message);
-        setLoading(false);
       }
     };
 
     fetchUsers();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <>
-      <section className="background-image">
-        <div className="centered">
-          <h1 className="page-title">Dashboard</h1>
+    <section className="background-image">
+      <div className="centered">
+        <h1 className="page-title">Dashboard</h1>
 
         {/* Appointment column */}
         <div className="appointmentReport">
@@ -140,17 +130,17 @@ const Dashboard = () => {
               </tr>
             </thead>
 
-              <tbody>
-                <tr>
-                  <td>Last 30 days</td>
-                  <td>Last 15 days</td>
-                  <td>Today</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <br></br>
-          {/* Appointment Column */}
+            <tbody>
+              <tr>
+                <td>Last 30 days</td>
+                <td>Last 15 days</td>
+                <td>Today</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br></br>
+        {/* Appointment Column */}
 
         {/* New customer table */}
         <div class="customerReport">
@@ -199,11 +189,10 @@ const Dashboard = () => {
         <br></br>
         {/* New customer table */}
 
-          {/* Button to trigger report generation */}
-          <button onClick={handleGenerateReports}>Generate Reports</button>
-        </div>
-      </section>
-    </>
+        {/* Button to trigger report generation */}
+        <button onClick={handleGenerateReports}>Generate Reports</button>
+      </div>
+    </section>
   );
 };
 

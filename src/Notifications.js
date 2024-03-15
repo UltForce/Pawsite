@@ -29,31 +29,31 @@ const Notifications = () => {
   };
 
   return (
-     // <section className="background-image">
-    <div>
-      <h1>Notifications</h1>
-      {notifications && notifications.length > 0 ? (
-        <ul>
-          {notifications.map((notification, index) => (
-            <li key={index}>
-              {notification.message}
-              {/* Check if notification.data is defined before parsing it */}
-              {notification.data &&
-                Object.entries(JSON.parse(notification.data)).map(
-                  ([key, value]) => (
-                    <div key={key}>
-                      <strong>{key}:</strong> {value}
-                    </div>
-                  )
-                )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No notifications</p>
-      )}
-    </div>
-    // </section>
+    <section className="background-image">
+      <div className="centered">
+        <h1>Notifications</h1>
+        {notifications && notifications.length > 0 ? (
+          <ul>
+            {notifications.map((notification, index) => (
+              <li key={index}>
+                {notification.message}
+                {/* Check if notification.data is defined before parsing it */}
+                {notification.data &&
+                  Object.entries(JSON.parse(notification.data)).map(
+                    ([key, value]) => (
+                      <div key={key}>
+                        <strong>{key}:</strong> {value}
+                      </div>
+                    )
+                  )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No notifications</p>
+        )}
+      </div>
+    </section>
   );
 };
 

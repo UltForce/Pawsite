@@ -1,5 +1,5 @@
 // Booking.js
-
+import "bootstrap";
 import React, { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -573,162 +573,316 @@ const Booking = ({ addNotification }) => {
     setTermsChecked(e.target.checked); // Set terms checked
   };
 
+  const handleStatusChange = async (status) => {
+    try {
+      const loggedInUserId = getCurrentUserId();
+      const clickedAppointment = appointments.find(
+        (appointment) => appointment.id === formData.appointmentId
+      );
+
+      if (!clickedAppointment) {
+        console.error("Appointment not found.");
+        return;
+      }
+
+      const userRole = await getUserRoleFirestore(loggedInUserId);
+
+      if (userRole === "admin") {
+        await updateAppointment(loggedInUserId, formData.appointmentId, {
+          status: status,
+        });
+        setIsFormOpen(false);
+        setIsValidDaySelected(false);
+        setFormData({
+          name: "",
+          appointmentType: "onsite",
+          serviceType: "bathing",
+          petName: "",
+          species: "",
+          breed: "",
+          weight: "",
+          age: "",
+        });
+        addNotification({
+          id: Date.now(),
+          message: `Appointment status updated successfully:`,
+          data: `${JSON.stringify(formData)}`,
+        });
+        fetchAppointments();
+        Swal.fire({
+          title: "success",
+          text: "Appointment status updated successfully",
+          icon: "success",
+          heightAuto: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Confirm",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Toast.fire({
+              icon: "success",
+              title: "Appointment status updated successfully",
+            });
+          }
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "You are not authorized to update appointment status.",
+          icon: "error",
+          heightAuto: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Confirm",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Toast.fire({
+              icon: "error",
+              title: "You are not authorized to update appointment status.",
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error updating appointment status:", error.message);
+      Toast.fire({
+        icon: "error",
+        title: "Error updating appointment status",
+      });
+    }
+  };
+
   return (
-    <section className="background-image">
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, marginRight: "50px" }}>
-        <h1>My Appointments</h1>
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            listPlugin,
-            interactionPlugin,
-            bootstrap5Plugin,
-          ]}
-          themeSystem="bootstrap5"
-          initialView="timeGridDay"
-          initialDate={new Date().toISOString()} // Set initial date to current date/time
-          timeZone="Asia/Manila" // Set timezone to Asia/Manila
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek,listDay",
-          }}
-          events={appointments.map((appointment) => ({
-            id: appointment.id,
-            title: appointment.name,
-            start: appointment.date,
-            backgroundColor: getStatusColor(appointment.status), // Set color based on status
-          }))}
-          editable={true}
-          selectable={true}
-          select={handleDateSelect}
-          eventClick={handleEventClick}
-          slotDuration="01:00:00"
-          allDaySlot={false}
-          datesSet={handleViewChange}
-        />
-      </div>
-      <div style={{ flex: 0.3 }}>
-        {isFormOpen && (
-          <>
-            <h2>Appointment Form</h2>
-            <form onSubmit={handleFormSubmit}>
-              <div>
-                <label>Name:</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Appointment Type:</label>
-                <select
-                  value={formData.appointmentType}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      appointmentType: e.target.value,
-                    })
-                  }
-                >
-                  <option value="onsite">Onsite</option>
-                  <option value="home">Home</option>
-                </select>
-              </div>
-              <div>
-                <label>Service Type:</label>
-                <select
-                  value={formData.serviceType}
-                  onChange={(e) =>
-                    setFormData({ ...formData, serviceType: e.target.value })
-                  }
-                >
-                  <option value="bathing">Bathing</option>
-                  <option value="haircutting">Haircutting</option>
-                  <option value="nail trimming">Nail Trimming</option>
-                  <option value="ear trimming">Ear Trimming</option>
-                </select>
-              </div>
-              <div>
-                <label>Pet Name:</label>
-                <input
-                  type="text"
-                  value={formData.petName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, petName: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Species:</label>
-                <input
-                  type="text"
-                  value={formData.species}
-                  onChange={(e) =>
-                    setFormData({ ...formData, species: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Breed:</label>
-                <input
-                  type="text"
-                  value={formData.breed}
-                  onChange={(e) =>
-                    setFormData({ ...formData, breed: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Weight:</label>
-                <input
-                  type="number"
-                  value={formData.weight}
-                  onChange={(e) =>
-                    setFormData({ ...formData, weight: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Age:</label>
-                <input
-                  type="number"
-                  value={formData.age}
-                  onChange={(e) =>
-                    setFormData({ ...formData, age: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  checked={termsChecked}
-                  onChange={handleTermsChange}
-                />
-                <label htmlFor="terms">
-                  I agree to the <a href="/terms">Terms and Conditions</a>.
-                </label>
-              </div>
-              <button type="submit" disabled={!termsChecked}>
-                Submit
-              </button>
-              {/* Conditionally render the delete button */}
-              {formData.appointmentId && (
-                <button type="button" onClick={handleDeleteAppointment}>
-                  Delete
+    <section className="background-image-bigger">
+      <div style={{ display: "flex" }}>
+        <div style={{ flex: 1, marginRight: "50px" }}>
+          <h1>My Appointments</h1>
+          <FullCalendar
+            ref={calendarRef}
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              listPlugin,
+              interactionPlugin,
+              bootstrap5Plugin,
+            ]}
+            themeSystem="bootstrap5"
+            initialView="timeGridDay"
+            initialDate={new Date().toISOString()} // Set initial date to current date/time
+            timeZone="Asia/Manila" // Set timezone to Asia/Manila
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek,listDay",
+            }}
+            events={appointments.map((appointment) => ({
+              id: appointment.id,
+              title: appointment.name,
+              start: appointment.date,
+              backgroundColor: getStatusColor(appointment.status), // Set color based on status
+            }))}
+            editable={true}
+            selectable={true}
+            select={handleDateSelect}
+            eventClick={handleEventClick}
+            slotDuration="01:00:00"
+            allDaySlot={false}
+            datesSet={handleViewChange}
+          />
+        </div>
+        <div style={{ flex: 0.3 }}>
+          {isFormOpen && (
+            <>
+              <h2>Appointment Form</h2>
+              <form onSubmit={handleFormSubmit}>
+                <div>
+                  <label>Name:</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Appointment Type:</label>
+                  <select
+                    value={formData.appointmentType}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        appointmentType: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="onsite">Onsite</option>
+                    <option value="home">Home</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Service Type:</label>
+                  <select
+                    value={formData.serviceType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, serviceType: e.target.value })
+                    }
+                  >
+                    <option value="bathing">Bathing</option>
+                    <option value="haircutting">Haircutting</option>
+                    <option value="nail trimming">Nail Trimming</option>
+                    <option value="ear trimming">Ear Trimming</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Pet Name:</label>
+                  <input
+                    type="text"
+                    value={formData.petName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, petName: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Species:</label>
+                  <input
+                    type="text"
+                    value={formData.species}
+                    onChange={(e) =>
+                      setFormData({ ...formData, species: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Breed:</label>
+                  <input
+                    type="text"
+                    value={formData.breed}
+                    onChange={(e) =>
+                      setFormData({ ...formData, breed: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Weight:</label>
+                  <input
+                    type="number"
+                    value={formData.weight}
+                    onChange={(e) =>
+                      setFormData({ ...formData, weight: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Age:</label>
+                  <input
+                    type="number"
+                    value={formData.age}
+                    onChange={(e) =>
+                      setFormData({ ...formData, age: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={termsChecked}
+                    onChange={handleTermsChange}
+                  />
+                  <label htmlFor="terms">
+                    I agree to the <a href="/terms">Terms and Conditions</a>.
+                  </label>
+                </div>
+                <button type="submit" disabled={!termsChecked}>
+                  Submit
                 </button>
-              )}
-            </form>
-          </>
-        )}
+                {/* Conditionally render the delete button */}
+                {formData.appointmentId && (
+                  <button type="button" onClick={handleDeleteAppointment}>
+                    Delete
+                  </button>
+                )}
+
+                {userRole === "admin" && (
+                  <div className="dropdown">
+                    <button
+                      className={`btn btn-${getStatusColor(
+                        formData.status ? formData.status : "pending"
+                      )} dropdown-toggle`}
+                      type="button"
+                      id="statusDropdown"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {formData.status
+                        ? formData.status.charAt(0).toUpperCase() +
+                          formData.status.slice(1)
+                        : "Status"}
+                    </button>
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="statusDropdown"
+                    >
+                      {formData.status !== "pending" && (
+                        <li>
+                          <button
+                            className={`dropdown-item btn btn-${getStatusColor(
+                              "pending"
+                            )}`}
+                            type="button"
+                            onClick={() => handleStatusChange("pending")}
+                          >
+                            Pending
+                          </button>
+                        </li>
+                      )}
+                      {formData.status !== "approved" && (
+                        <li>
+                          <button
+                            className={`dropdown-item btn btn-${getStatusColor(
+                              "approved"
+                            )}`}
+                            type="button"
+                            onClick={() => handleStatusChange("approved")}
+                          >
+                            Approved
+                          </button>
+                        </li>
+                      )}
+                      {formData.status !== "canceled" && (
+                        <li>
+                          <button
+                            className={`dropdown-item btn btn-${getStatusColor(
+                              "canceled"
+                            )}`}
+                            type="button"
+                            onClick={() => handleStatusChange("canceled")}
+                          >
+                            Canceled
+                          </button>
+                        </li>
+                      )}
+                      {formData.status !== "completed" && (
+                        <li>
+                          <button
+                            className={`dropdown-item btn btn-${getStatusColor(
+                              "completed"
+                            )}`}
+                            type="button"
+                            onClick={() => handleStatusChange("completed")}
+                          >
+                            Completed
+                          </button>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </form>
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </section>
   );
 };
