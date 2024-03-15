@@ -101,90 +101,92 @@ const Register = () => {
   };
 
   return (
-    <div className="centered">
-      <h2>Register</h2>
-      <label>First Name:</label>
-      <input
-        type="text"
-        value={firstname}
-        onChange={(e) => setFirstname(e.target.value)}
-      />
-      <br />
-      <label>Last Name:</label>
-      <input
-        type="text"
-        value={lastname}
-        onChange={(e) => setLastname(e.target.value)}
-      />
-      <br />
-      <label>Mobile Number:</label>
-      <input
-        type="number"
-        value={mobilenumber}
-        onChange={(e) => setMobilenumber(e.target.value)}
-      />
-      <br />
-      <label>Landline Number:</label>
-      <input
-        type="number"
-        value={landlinenumber}
-        onChange={(e) => setLandlinenumber(e.target.value)}
-      />
-      <br />
-      <label>Region:</label>
-      <input
-        type="text"
-        value={region}
-        onChange={(e) => setRegion(e.target.value)}
-      />
-      <br />
-      <label>City:</label>
-      <input
-        type="text"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-      />
-      <br />
-      <label>Barangay:</label>
-      <input
-        type="text"
-        value={barangay}
-        onChange={(e) => setBarangay(e.target.value)}
-      />
-      <br />
-      <label>Street:</label>
-      <input
-        type="text"
-        value={street}
-        onChange={(e) => setStreet(e.target.value)}
-      />
-      <br />
-      <label>Unit:</label>
-      <input
-        type="text"
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-      />
-      <br />
-      <label>Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br />
-      <label>Password:</label>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br />
-      <button onClick={handleRegister}>Register</button>
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>.
-      </p>
-    </div>
+    <section className="background-image-bigger">
+      <div className="centered">
+        <h2>Register</h2>
+        <label>First Name:</label>
+        <input
+          type="text"
+          value={firstname}
+          onChange={(e) => setFirstname(e.target.value)}
+        />
+        <br />
+        <label>Last Name:</label>
+        <input
+          type="text"
+          value={lastname}
+          onChange={(e) => setLastname(e.target.value)}
+        />
+        <br />
+        <label>Mobile Number:</label>
+        <input
+          type="number"
+          value={mobilenumber}
+          onChange={(e) => setMobilenumber(e.target.value)}
+        />
+        <br />
+        <label>Landline Number:</label>
+        <input
+          type="number"
+          value={landlinenumber}
+          onChange={(e) => setLandlinenumber(e.target.value)}
+        />
+        <br />
+        <label>Region:</label>
+        <input
+          type="text"
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+        />
+        <br />
+        <label>City:</label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+        <br />
+        <label>Barangay:</label>
+        <input
+          type="text"
+          value={barangay}
+          onChange={(e) => setBarangay(e.target.value)}
+        />
+        <br />
+        <label>Street:</label>
+        <input
+          type="text"
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
+        />
+        <br />
+        <label>Unit:</label>
+        <input
+          type="text"
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+        />
+        <br />
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br />
+        <button onClick={handleRegister}>Register</button>
+        <p>
+          Already have an account? <Link to="/login">Login here</Link>.
+        </p>
+      </div>
+    </section>
   );
 };
 

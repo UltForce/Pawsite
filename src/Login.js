@@ -76,30 +76,32 @@ const Login = () => {
     return () => unsubscribe();
   }, [navigate]);
   return (
-    <div className="centered">
-      <h2>Login</h2>
-      <label>Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br />
-      <label>Password:</label>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br />
-      <button onClick={handleLogin}>Login</button>
-      <p>
-        Don't have an account? <Link to="/register">Register here</Link>.
-      </p>
-      <p>
-        Forgot Password? <Link to="/reset">Recover</Link>.
-      </p>
-    </div>
+    <section className="background-image">
+      <div className="centered">
+        <h2>Login</h2>
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br />
+        <button onClick={handleLogin}>Login</button>
+        <p>
+          Don't have an account? <Link to="/register">Register here</Link>.
+        </p>
+        <p>
+          Forgot Password? <Link to="/reset">Recover</Link>.
+        </p>
+      </div>
+    </section>
   );
 };
 

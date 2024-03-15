@@ -61,6 +61,7 @@ const Account = () => {
   };
 
   return (
+    <section className="background-image">
     <div className="centered">
       <h1 className="page-title">Account</h1>
       {user && userData && (
@@ -80,6 +81,7 @@ const Account = () => {
       )}
       <button onClick={handleReset}>Send Change Password Email</button>
     </div>
+    </section>
   );
 };
 

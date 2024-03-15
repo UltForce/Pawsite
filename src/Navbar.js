@@ -87,7 +87,7 @@ const Navbar = () => {
               </li>
             )}
             <li>
-              <Link to="/homepage">Homepage</Link>
+              <Link to="/homepage">Home</Link>
             </li>
             <li>
               <Link to="/notifications">Notifications</Link>
@@ -99,16 +99,16 @@ const Navbar = () => {
               <Link to="/booking">Booking</Link>
             </li>
             <li>
-              <Link to="/FAQs">FAQs</Link>
-            </li>
-            <li>
               <Link to="/terms">Terms & Conditions</Link>
             </li>
             <li>
-              <Link onClick={handleLogout}>Logout</Link>
+              <Link to="/FAQs">FAQs</Link>
             </li>
             <li>
               <Link to="/account">Account</Link>
+            </li>
+            <li>
+              <Link onClick={handleLogout}>Logout</Link>
             </li>
           </>
         ) : (

@@ -124,9 +124,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="centered">
-        <h2>Dashboard</h2>
-        <p>Welcome to the dashboard!</p>
+      <section className="background-image">
+        <div className="centered">
+          <h1 className="page-title">Dashboard</h1>
 
         {/* Appointment column */}
         <div className="appointmentReport">
@@ -140,17 +140,17 @@ const Dashboard = () => {
               </tr>
             </thead>
 
-            <tbody>
-              <tr>
-                <td>Last 30 days</td>
-                <td>Last 15 days</td>
-                <td>Today</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <br></br>
-        {/* Appointment Column */}
+              <tbody>
+                <tr>
+                  <td>Last 30 days</td>
+                  <td>Last 15 days</td>
+                  <td>Today</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br></br>
+          {/* Appointment Column */}
 
         {/* New customer table */}
         <div class="customerReport">
@@ -199,9 +199,10 @@ const Dashboard = () => {
         <br></br>
         {/* New customer table */}
 
-        {/* Button to trigger report generation */}
-        <button onClick={handleGenerateReports}>Generate Reports</button>
-      </div>
+          {/* Button to trigger report generation */}
+          <button onClick={handleGenerateReports}>Generate Reports</button>
+        </div>
+      </section>
     </>
   );
 };

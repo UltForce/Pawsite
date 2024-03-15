@@ -574,6 +574,7 @@ const Booking = ({ addNotification }) => {
   };
 
   return (
+    <section className="background-image">
     <div style={{ display: "flex" }}>
       <div style={{ flex: 1, marginRight: "50px" }}>
         <h1>My Appointments</h1>
@@ -728,6 +729,7 @@ const Booking = ({ addNotification }) => {
         )}
       </div>
     </div>
+    </section>
   );
 };
 

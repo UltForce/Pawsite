@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-
+import "./styles.css"; // Import CSS file for styling
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
 
@@ -29,6 +29,7 @@ const Notifications = () => {
   };
 
   return (
+     // <section className="background-image">
     <div>
       <h1>Notifications</h1>
       {notifications && notifications.length > 0 ? (
@@ -52,6 +53,7 @@ const Notifications = () => {
         <p>No notifications</p>
       )}
     </div>
+    // </section>
   );
 };
 
