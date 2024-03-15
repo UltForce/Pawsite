@@ -217,12 +217,32 @@ const getAllData = async () => {
     return [];
   }
 };
+// Function to fetch user data from Firestore based on userId
+const getUserData = async (userId) => {
+  try {
+    // Construct reference to the user document
+    const userDocRef = doc(dba, "users", userId);
+
+    // Get user document snapshot
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      // Return user data
+      return userDocSnapshot.data();
+    } else {
+      console.error("User document not found in Firestore.");
+      return null; // Return null if user document doesn't exist
+    }
+  } catch (error) {
+    console.error("Error fetching user data from Firestore:", error.message);
+    throw error; // You can handle this error in the calling code
+  }
+};
 
 const getData = async () => {
   const data = await getAllData();
   return data;
-}
-
+};
 
 const getUsers = async () => {
   const users = await getAllUsers();
@@ -231,7 +251,7 @@ const getUsers = async () => {
 
 const getAppointments = async () => {
   const appointments = await getAllAppointments();
-  return appointments
+  return appointments;
 };
 
 // Function to update an appointment
@@ -335,4 +355,5 @@ export {
   getAppointments,
   getData,
   getAllData,
+  getUserData,
 };

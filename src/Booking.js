@@ -6,6 +6,8 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 import {
   createAppointment,
   updateAppointment,
@@ -16,7 +18,6 @@ import {
   getCurrentUserId,
 } from "./firebase";
 import Swal from "sweetalert2";
-
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
@@ -31,7 +32,7 @@ const Toast = Swal.mixin({
 });
 
 // Component for booking appointments
-const Booking = () => {
+const Booking = ({ addNotification }) => {
   const [userId, setUserId] = useState(""); // State for storing user ID
   const [appointments, setAppointments] = useState([]); // State for storing appointments
   const [selectedDate, setSelectedDate] = useState(null); // State for storing selected date
@@ -41,6 +42,10 @@ const Booking = () => {
     appointmentType: "onsite",
     serviceType: "bathing",
     petName: "",
+    species: "",
+    breed: "",
+    weight: "",
+    age: "",
     status: "pending",
   });
   const [isFormOpen, setIsFormOpen] = useState(false); // State for controlling form visibility
@@ -157,6 +162,10 @@ const Booking = () => {
           appointmentType: clickedAppointment.appointmentType,
           serviceType: clickedAppointment.serviceType,
           petName: clickedAppointment.petName,
+          species: clickedAppointment.species,
+          breed: clickedAppointment.breed,
+          weight: clickedAppointment.weight,
+          age: clickedAppointment.age,
         });
         setSelectedDate(clickedAppointment.date); // Set selected date
         setIsFormOpen(true); // Open form
@@ -194,7 +203,14 @@ const Booking = () => {
       serviceType: formData.serviceType || "bathing",
     };
 
-    if (!updatedFormData.name || !updatedFormData.petName) {
+    if (
+      !updatedFormData.name ||
+      !updatedFormData.petName ||
+      !updatedFormData.species ||
+      !updatedFormData.breed ||
+      !updatedFormData.weight ||
+      !updatedFormData.age
+    ) {
       Toast.fire({
         icon: "error",
         title: "Please fill in all the fields.",
@@ -219,21 +235,33 @@ const Booking = () => {
             appointmentType: formData.appointmentType,
             serviceType: formData.serviceType,
             petName: formData.petName,
+            species: formData.species,
+            breed: formData.breed,
+            weight: formData.weight,
+            age: formData.age,
           });
+          addNotification({
+            id: Date.now(),
+            message: `Appointment updated successfully:`,
+            data: `${JSON.stringify(formData)}`,
+          }); // Pass formData containing appointment detailsls
           setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
             name: "",
-            appointmentType: "",
-            serviceType: "",
+            appointmentType: "onsite",
+            serviceType: "bathing",
             petName: "",
+            species: "",
+            breed: "",
+            weight: "",
+            age: "",
           });
           // Show success message
           Swal.fire({
             title: "success",
             text: "Appointment updated successfully",
             icon: "success",
-            type: "success",
             heightAuto: false,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Confirm",
@@ -265,15 +293,28 @@ const Booking = () => {
             appointmentType: formData.appointmentType,
             serviceType: formData.serviceType,
             petName: formData.petName,
+            species: formData.species,
+            breed: formData.breed,
+            weight: formData.weight,
+            age: formData.age,
             status: formData.status,
           });
+          addNotification({
+            id: Date.now(),
+            message: `Appointment created successfully:`,
+            data: `${JSON.stringify(formData)}`,
+          }); // Pass formData containing appointment detailsls
           setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
             name: "",
-            appointmentType: "",
-            serviceType: "",
+            appointmentType: "onsite",
+            serviceType: "bathing",
             petName: "",
+            species: "",
+            breed: "",
+            weight: "",
+            age: "",
           });
           // Show success message
           Swal.fire({
@@ -329,10 +370,19 @@ const Booking = () => {
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
-                appointmentType: "",
-                serviceType: "",
+                appointmentType: "onsite",
+                serviceType: "bathing",
                 petName: "",
+                species: "",
+                breed: "",
+                weight: "",
+                age: "",
               });
+              addNotification({
+                id: Date.now(),
+                message: `Appointment deleted successfully:`,
+                data: `${JSON.stringify(formData)}`,
+              }); // Pass formData containing appointment detailsls
               fetchAppointments(); // Fetch appointments
               // Show success message
               Swal.fire({
@@ -374,10 +424,19 @@ const Booking = () => {
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
-                appointmentType: "",
-                serviceType: "",
+                appointmentType: "onsite",
+                serviceType: "bathing",
                 petName: "",
+                species: "",
+                breed: "",
+                weight: "",
+                age: "",
               });
+              addNotification({
+                id: Date.now(),
+                message: `Appointment deleted successfully:`,
+                data: `${JSON.stringify(formData)}`,
+              }); // Pass formData containing appointment detailsls
               // Show success message
               Swal.fire({
                 title: "success",
@@ -484,9 +543,13 @@ const Booking = () => {
     setFormData({
       // Reset form data
       name: "",
-      appointmentType: "",
-      serviceType: "",
+      appointmentType: "onsite",
+      serviceType: "bathing",
       petName: "",
+      species: "",
+      breed: "",
+      weight: "",
+      age: "",
     });
   };
 
@@ -512,7 +575,7 @@ const Booking = () => {
 
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, marginRight: "50px" }}>
         <h1>My Appointments</h1>
         <FullCalendar
           ref={calendarRef}
@@ -521,7 +584,9 @@ const Booking = () => {
             timeGridPlugin,
             listPlugin,
             interactionPlugin,
+            bootstrap5Plugin,
           ]}
+          themeSystem="bootstrap5"
           initialView="timeGridDay"
           initialDate={new Date().toISOString()} // Set initial date to current date/time
           timeZone="Asia/Manila" // Set timezone to Asia/Manila
@@ -543,15 +608,13 @@ const Booking = () => {
           slotDuration="01:00:00"
           allDaySlot={false}
           datesSet={handleViewChange}
-          themeSystem="Sketchy" // Set theme to Sketchy
         />
       </div>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 0.3 }}>
         {isFormOpen && (
           <>
             <h2>Appointment Form</h2>
             <form onSubmit={handleFormSubmit}>
-              {/* Existing form fields */}
               <div>
                 <label>Name:</label>
                 <input
@@ -598,6 +661,46 @@ const Booking = () => {
                   value={formData.petName}
                   onChange={(e) =>
                     setFormData({ ...formData, petName: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Species:</label>
+                <input
+                  type="text"
+                  value={formData.species}
+                  onChange={(e) =>
+                    setFormData({ ...formData, species: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Breed:</label>
+                <input
+                  type="text"
+                  value={formData.breed}
+                  onChange={(e) =>
+                    setFormData({ ...formData, breed: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Weight:</label>
+                <input
+                  type="number"
+                  value={formData.weight}
+                  onChange={(e) =>
+                    setFormData({ ...formData, weight: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Age:</label>
+                <input
+                  type="number"
+                  value={formData.age}
+                  onChange={(e) =>
+                    setFormData({ ...formData, age: e.target.value })
                   }
                 />
               </div>

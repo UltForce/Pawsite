@@ -1,6 +1,5 @@
 // App.js
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
@@ -18,6 +17,18 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (notification) => {
+    const updatedNotifications = [...notifications, { ...notification }];
+    setNotifications(updatedNotifications);
+    // Store updated notifications in session storage
+    sessionStorage.setItem(
+      "notifications",
+      JSON.stringify(updatedNotifications)
+    );
+  };
+
   return (
     <Router>
       <Navbar />
@@ -28,7 +39,10 @@ function App() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/booking" element={<Booking />} />
+        <Route
+          path="/booking"
+          element={<Booking addNotification={addNotification} />}
+        />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/account" element={<Account />} />

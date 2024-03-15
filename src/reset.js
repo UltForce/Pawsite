@@ -27,10 +27,13 @@ const Reset = () => {
         title: "Please enter your email",
       });
       return; // Exit early if fields are empty
-    } 
+    }
     try {
       await sendPasswordResetEmail(auth, email);
-
+      Toast.fire({
+        icon: "success",
+        title: "Password reset link has been sent to email.",
+      });
       // Update state to indicate that reset email has been sent
       setResetSent(true);
     } catch (error) {

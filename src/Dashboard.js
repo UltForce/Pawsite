@@ -11,18 +11,77 @@ import {
   getData,
 } from "./firebase.js";
 import "./dashboard.css";
+import Swal from "sweetalert2";
 
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [appointmentsLast30Days, setAppointmentsLast30Days] = useState([]); // Define state for appointments in last 30 days
+  const [appointmentsLast15Days, setAppointmentsLast15Days] = useState([]); // Define state for appointments in last 15 days
+  const [appointmentsToday, setAppointmentsToday] = useState([]); // Define state for appointments today
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const appointments = await getAppointments();
 
+        // Get the current date
+        const currentDate = new Date();
+
+        // Calculate the date 30 days ago
+        const last30DaysDate = new Date();
+        last30DaysDate.setDate(currentDate.getDate() - 30);
+
+        // Calculate the date 15 days ago
+        const last15DaysDate = new Date();
+        last15DaysDate.setDate(currentDate.getDate() - 15);
+
+        // Filter appointments based on date ranges
+        const appointmentsLast30Days = appointments.filter(
+          (appointment) => new Date(appointment.date) >= last30DaysDate
+        );
+        const appointmentsLast15Days = appointments.filter(
+          (appointment) => new Date(appointment.date) >= last15DaysDate
+        );
+        const appointmentsToday = appointments.filter(
+          (appointment) =>
+            new Date(appointment.date).toDateString() ===
+            currentDate.toDateString()
+        );
+
+        // Update state with filtered appointments
+        setAppointmentsLast30Days(appointmentsLast30Days);
+        setAppointmentsLast15Days(appointmentsLast15Days);
+        setAppointmentsToday(appointmentsToday);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching appointments:", error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
   const handleGenerateReports = async () => {
     try {
       // Call the generateReports function
       await generateReports();
-      alert("Reports generated successfully!");
+      Toast.fire({
+        icon: "success",
+        title: "Reports successfully generated..",
+      });
     } catch (error) {
       console.error("Error generating reports:", error.message);
       alert("An error occurred while generating reports.");
@@ -75,9 +134,9 @@ const Dashboard = () => {
           <table class="w3-table">
             <thead>
               <tr>
-                <th>60</th>
-                <th>15</th>
-                <th>4</th>
+                <th>{appointmentsLast30Days.length}</th>
+                <th>{appointmentsLast15Days.length}</th>
+                <th>{appointmentsToday.length}</th>
               </tr>
             </thead>
 
@@ -95,18 +154,21 @@ const Dashboard = () => {
 
         {/* New customer table */}
         <div class="customerReport">
-          <h3>New Customers</h3>
+          <h3>Appointment List</h3>
 
           <table class="w3-table">
             <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Appointment Date</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Type</th>
                 <th>Service</th>
-                <th>Appointment Status</th>
+                <th>Pet Name</th>
+                <th>Species</th>
+                <th>Breed</th>
+                <th>Weight</th>
+                <th>Age</th>
+                <th>Status</th>
               </tr>
             </thead>
             <br></br>
@@ -118,12 +180,15 @@ const Dashboard = () => {
                 );
                 return (
                   <tr key={appointment.appointmentId}>
-                    <td>{user.firstname}</td>
-                    <td>{user.lastname}</td>
-                    <td>{user.email}</td>
-                    <td>{user.mobilenumber}</td>
+                    <td>{appointment.name}</td>
                     <td>{formatDate(appointment.date)}</td>
                     <td>{appointment.appointmentType}</td>
+                    <td>{appointment.serviceType}</td>
+                    <td>{appointment.petName}</td>
+                    <td>{appointment.species}</td>
+                    <td>{appointment.breed}</td>
+                    <td>{appointment.weight}</td>
+                    <td>{appointment.age}</td>
                     <td>{appointment.status}</td>
                   </tr>
                 );

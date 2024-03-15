@@ -1,27 +1,56 @@
-import React, { useState } from 'react';
-import './styles.css'; // Import CSS file for styling
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
-const Notifications = ({ message }) => {
-  const [dismissed, setDismissed] = useState(false);
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
 
-  const handleDismiss = () => {
-    setDismissed(true);
+  useEffect(() => {
+    // Load notifications from session storage when component mounts
+    const storedNotifications = sessionStorage.getItem("notifications");
+    if (storedNotifications) {
+      setNotifications(JSON.parse(storedNotifications));
+    }
+  }, []);
+
+  const dismissNotification = (id) => {
+    // Update the state using functional update to ensure it's based on the latest state
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((n) => n.id !== id)
+    );
+
+    // Retrieve the updated notifications from the state
+    const updatedNotifications = notifications.filter((n) => n.id !== id);
+
+    // Store the updated notifications in session storage
+    sessionStorage.setItem(
+      "notifications",
+      JSON.stringify(updatedNotifications)
+    );
   };
 
-  // Return null if dismissed to hide the notification
-  if (dismissed) {
-    return null;
-  }
-
   return (
-    <div className="notification">
-      <div className="content">
-        <h2>Notification</h2>
-        <p>{message}</p>
-      </div>
-      <button className="dismiss-button" onClick={handleDismiss}>
-        Dismiss
-      </button>
+    <div>
+      <h1>Notifications</h1>
+      {notifications && notifications.length > 0 ? (
+        <ul>
+          {notifications.map((notification, index) => (
+            <li key={index}>
+              {notification.message}
+              {/* Check if notification.data is defined before parsing it */}
+              {notification.data &&
+                Object.entries(JSON.parse(notification.data)).map(
+                  ([key, value]) => (
+                    <div key={key}>
+                      <strong>{key}:</strong> {value}
+                    </div>
+                  )
+                )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No notifications</p>
+      )}
     </div>
   );
 };
