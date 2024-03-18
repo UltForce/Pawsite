@@ -19,6 +19,13 @@ import {
   deleteObject,
 } from "firebase/storage";
 import Swal from "sweetalert2";
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa"; // Import FontAwesome icons
 
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
@@ -43,6 +50,10 @@ const Services = () => {
     description: "",
     image: null, // State to hold the selected image file
   });
+  // State to hold current index for pagination
+  const [currentIndex, setCurrentIndex] = useState(0);
+  // Number of cards to display at a time
+  const cardsPerPage = 5;
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -69,71 +80,91 @@ const Services = () => {
     }
   };
 
-  // Function to handle form submission for adding/editing a service
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.description || !formData.image) {
-      Toast.fire({
-        icon: "error",
-        title: "Please fill in all the fields.",
-      });
-      return; // Exit early if fields are empty
-    }
+  // Function to handle pagination - move to the next set of cards
+  const nextCards = () => {
+    setCurrentIndex((prevIndex) => prevIndex + cardsPerPage);
+  };
+
+  // Function to handle pagination - move to the previous set of cards
+  const prevCards = () => {
+    setCurrentIndex((prevIndex) => Math.max(prevIndex - cardsPerPage, 0));
+  };
+
+  const handleSubmit = async () => {
     Swal.fire({
-      icon: "question",
-      title: "Do you want to add this service?",
-      showDenyButton: true,
-      confirmButtonText: "Yes",
-      denyButtonText: `No`,
+      title: "Add a Service",
+      html:
+        '<input id="swal-input-name" class="swal2-input" placeholder="Name">' +
+        '<input id="swal-input-description" class="swal2-input" placeholder="Description">' +
+        '<input type="file" id="swal-input-image" class="swal2-file">',
+      focusConfirm: false,
+      preConfirm: () => {
+        const name = document.getElementById("swal-input-name").value;
+        const description = document.getElementById(
+          "swal-input-description"
+        ).value;
+        const image = document.getElementById("swal-input-image").files[0];
+
+        return { name, description, image };
+      },
+      showCancelButton: true,
+      confirmButtonText: "Submit",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: () => !Swal.isLoading(),
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          let imageUrl = formData.image; // Default to the current image URL if not uploading a new image
+        const { name, description, image } = result.value;
 
-          if (formData.image) {
-            // If an image file is selected
-            const storage = getStorage();
-            const storageRef = ref(storage, `images/${formData.image.name}`);
-            await uploadBytes(storageRef, formData.image); // Upload the image file to Firebase Storage
-            imageUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded image
-          }
-
-          if (formData.id) {
-            // Update existing service
-            await updateDoc(doc(dba, "services", formData.id), {
-              name: formData.name,
-              description: formData.description,
-              image: imageUrl, // Store the image URL in Firestore
-            });
-          } else {
-            // Add new service
-            await addDoc(collection(dba, "services"), {
-              name: formData.name,
-              description: formData.description,
-              image: imageUrl, // Store the image URL in Firestore
-            });
-          }
-          // Clear form data after submission
-          setFormData({ name: "", description: "", image: null });
-          // Fetch updated services data
-          fetchServices();
-        } catch (error) {
-          console.error("Error submitting service:", error.message);
+        if (!name || !description || !image) {
+          Toast.fire({
+            icon: "error",
+            title: "Please fill in all the fields.",
+          });
+          return; // Exit early if fields are empty
         }
-        // Show success message
+
         Swal.fire({
-          title: "success",
-          text: "Service created successfully",
-          icon: "success",
-          heightAuto: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Confirm",
-        }).then((result) => {
+          icon: "question",
+          title: "Do you want to add this service?",
+          showDenyButton: true,
+          confirmButtonText: "Yes",
+          denyButtonText: "No",
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            Toast.fire({
-              icon: "success",
-              title: "Service created successfully",
-            });
+            try {
+              const storage = getStorage();
+              const storageRef = ref(storage, `images/${image.name}`);
+              await uploadBytes(storageRef, image);
+              const imageUrl = await getDownloadURL(storageRef);
+
+              await addDoc(collection(dba, "services"), {
+                name,
+                description,
+                image: imageUrl,
+              });
+
+              // Fetch updated services data
+              fetchServices();
+
+              // Show success message
+              Swal.fire({
+                title: "Success",
+                text: "Service created successfully",
+                icon: "success",
+                heightAuto: false,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Confirm",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Toast.fire({
+                    icon: "success",
+                    title: "Service created successfully",
+                  });
+                }
+              });
+            } catch (error) {
+              console.error("Error submitting service:", error.message);
+            }
           }
         });
       }
@@ -186,29 +217,90 @@ const Services = () => {
     });
   };
 
-  // Function to handle editing of a service
   const handleEdit = (service) => {
     Swal.fire({
-      icon: "question",
-      title: "Do you want to edit this service?",
-      showDenyButton: true,
-      confirmButtonText: "Yes",
-      denyButtonText: `No`,
+      title: "Edit Service",
+      html: `
+        <input id="swal-input-name" class="swal2-input" placeholder="Name" value="${service.name}">
+        <input id="swal-input-description" class="swal2-input" placeholder="Description" value="${service.description}">
+        <input type="file" id="swal-input-image" class="swal2-file">
+      `,
+      focusConfirm: false,
+      preConfirm: async () => {
+        const name = document.getElementById("swal-input-name").value;
+        const description = document.getElementById(
+          "swal-input-description"
+        ).value;
+        const image = document.getElementById("swal-input-image").files[0];
+
+        return { name, description, image };
+      },
+      showCancelButton: true,
+      confirmButtonText: "Submit",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: () => !Swal.isLoading(),
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          // Delete the previous image from Firebase Storage if it exists
-          if (service.image) {
-            const storage = getStorage();
-            const imageRef = ref(storage, service.image);
-            await deleteObject(imageRef);
-          }
+        const { name, description, image } = result.value;
 
-          // Set the form data to the selected service
-          setFormData({ ...service });
-        } catch (error) {
-          console.error("Error editing service:", error.message);
+        if (!name || !description) {
+          Toast.fire({
+            icon: "error",
+            title: "Please fill in all the fields.",
+          });
+          return; // Exit early if fields are empty
         }
+
+        Swal.fire({
+          icon: "question",
+          title: "Do you want to update this service?",
+          showDenyButton: true,
+          confirmButtonText: "Yes",
+          denyButtonText: "No",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              let imageUrl = service.image; // Default to the current image URL
+
+              if (image) {
+                // If a new image is selected, upload it and get the new URL
+                const storage = getStorage();
+                const storageRef = ref(storage, `images/${image.name}`);
+                await uploadBytes(storageRef, image);
+                imageUrl = await getDownloadURL(storageRef);
+              }
+
+              // Update the service document in Firestore with the new data
+              await updateDoc(doc(dba, "services", service.id), {
+                name,
+                description,
+                image: imageUrl,
+              });
+
+              // Fetch updated services data
+              fetchServices();
+
+              // Show success message
+              Swal.fire({
+                title: "Success",
+                text: "Service updated successfully",
+                icon: "success",
+                heightAuto: false,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Confirm",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Toast.fire({
+                    icon: "success",
+                    title: "Service updated successfully",
+                  });
+                }
+              });
+            } catch (error) {
+              console.error("Error updating service:", error.message);
+            }
+          }
+        });
       }
     });
   };
@@ -225,52 +317,49 @@ const Services = () => {
   }, []);
 
   return (
-    <section className="background-image-bigger">
+    <section className="background-image">
       <div className="centered">
         <h1 className="page-title">Services</h1>
         {isAdmin && (
-          <form onSubmit={handleSubmit}>
-            <label>Name:</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-            <label>Description:</label>
-            <input
-              type="text"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <label>Image:</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button type="submit">{formData.id ? "Update" : "Add"}</button>
-          </form>
+          <div>
+            <button onClick={handleSubmit}>
+              {" "}
+              <FaPlus />
+            </button>
+          </div>
         )}
-        <div className="service-cards">
-          {services.map((service) => (
-            <div className="service-card" key={service.id}>
-              <h3>{service.name}</h3>
-              <p>{service.description}</p>
-              <div className="image-container">
-                <img src={service.image} alt={service.name} />
-              </div>
-              {isAdmin && (
-                <div>
-                  <button onClick={() => handleEdit(service)}>Edit</button>
-                  <button
-                    onClick={() => handleDelete(service.id, service.image)}
-                  >
-                    Delete
-                  </button>
+        <div className="service-cards-container">
+          <button className="pagination-buttons" onClick={prevCards}>
+            <FaChevronLeft />
+          </button>
+          <div className="service-cards">
+            {services
+              .slice(currentIndex, currentIndex + cardsPerPage)
+              .map((service) => (
+                <div className="service-card" key={service.id}>
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
+                  <div className="image-container">
+                    <img src={service.image} alt={service.name} />
+                  </div>
+                  {isAdmin && (
+                    <div>
+                      <button onClick={() => handleEdit(service)}>
+                        <FaEdit /> {/* FontAwesome edit icon */}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(service.id, service.image)}
+                      >
+                        <FaTrash /> {/* FontAwesome trash icon */}
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              ))}
+          </div>
+          <button className="pagination-buttons" onClick={nextCards}>
+            <FaChevronRight />
+          </button>
         </div>
       </div>
     </section>

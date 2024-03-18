@@ -38,14 +38,14 @@ ul.centered li {
 }
 
 .background-image {
-  height: 100vh;
+  min-height: 93vh;
   background-image: url("./image/sl_011023_55240_03.jpg");
   background-size: cover;
   box-shadow: inset 0 0 2000px rgba(0, 0, 0, 0.5);
 }
 
 .background-image-bigger {
-  height: 175vh;
+  min-height: 175vh;
   background-image: url("./image/sl_011023_55240_03.jpg");
   background-size: cover;
   box-shadow: inset 0 0 2000px rgba(0, 0, 0, 0.5);
@@ -83,7 +83,39 @@ ul.centered li {
   object-fit: cover;
   /* Maintain aspect ratio and cover the entire container */
 }
+.service-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 
+.service-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.service-card {
+  width: calc(20% - 20px); /* Adjust width based on number of cards per row */
+  margin-bottom: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.pagination-buttons {
+  margin-top: 150px;
+  height: 50px;
+}
+
+.pagination-buttons button {
+  margin-right: 10px;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .service-card {
+    width: calc(50% - 20px); /* Adjust width for smaller screens */
+  }
+}
 /* styles.css */
 .homepage {
   font-family: Arial, sans-serif;

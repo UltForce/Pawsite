@@ -78,6 +78,9 @@ const Navbar = () => {
   return (
     <nav>
       <ul className="centeredNav">
+        <li>
+          <img src="pawsite2.png" height="50px" />
+        </li>
         {isLoggedIn ? (
           <>
             {/* Render Dashboard link only if the user is an admin */}

@@ -654,7 +654,7 @@ const Booking = ({ addNotification }) => {
   };
 
   return (
-    <section className="background-image-bigger">
+    <section className="background-image">
       <div style={{ display: "flex" }}>
         <div style={{ flex: 1, marginRight: "50px" }}>
           <h1>My Appointments</h1>
@@ -689,6 +689,7 @@ const Booking = ({ addNotification }) => {
             slotDuration="01:00:00"
             allDaySlot={false}
             datesSet={handleViewChange}
+            height="640px"
           />
         </div>
         <div style={{ flex: 0.3 }}>

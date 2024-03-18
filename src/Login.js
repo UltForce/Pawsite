@@ -78,6 +78,7 @@ const Login = () => {
   return (
     <section className="background-image">
       <div className="centered">
+        <img src="pawsite2.png" height="200px" />
         <h2>Login</h2>
         <label>Email:</label>
         <input

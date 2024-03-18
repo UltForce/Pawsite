@@ -47,7 +47,7 @@ const Reset = () => {
   };
 
   return (
-    <div>
+    <div className="centered">
       <h2>Password Reset</h2>
       {resetSent ? (
         <p>
