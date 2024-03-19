@@ -27,6 +27,38 @@ nav a:hover {
   color: black;
 }
 
+/* Add this CSS rule to define hover effect for buttons */
+button:hover {
+  background-color: #ddd;
+  color: black;
+  transform: scale(1.1); /* Increase size by 10% */
+}
+
+/* Update the CSS selector to target the active link */
+nav ul.centeredNav li.active a:hover,
+nav ul.centeredNav li.active a {
+  background-color: #ddd;
+  color: black;
+  transform: scale(1.1); /* Increase size by 10% */
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.back-to-top:hover {
+  background-color: #555;
+}
+
 ul.centeredNav {
   display: flex;
   justify-content: center;
@@ -177,4 +209,99 @@ footer {
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.account-table {
+  width: 100%;
+  border-collapse: collapse; /* Remove border spacing */
+}
+
+.account-table th,
+.account-table td {
+  border: 1px solid #ddd; /* Add border to cells */
+  padding: 8px;
+  text-align: left;
+}
+
+.account-table th {
+  background-color: #333; /* Header background color */
+  color: white; /* Header text color */
+}
+
+.account-table th:first-child,
+.account-table td:first-child {
+  background-color: #333; /* Highlight the first column */
+  color: white; /* Text color for the first column */
+}
+
+.notification-content {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.notification-header {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.notification-message {
+  flex: 1;
+}
+
+.notification-value {
+  flex: 1;
+}
+
+.notification-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.notification-table th,
+.notification-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.notification-table th {
+  background-color: #333;
+  color: white;
+}
+
+.notification-table th:first-child,
+.notification-table td:first-child {
+  background-color: #333;
+  color: white;
+}
+
+.notification-table tbody td {
+  vertical-align: center; /* Align cell content to the top */
+}
+
+.notification-content {
+  margin-bottom: 4px;
+}
+
+.notification-content strong {
+  margin-right: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

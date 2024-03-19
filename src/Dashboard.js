@@ -115,7 +115,7 @@ const Dashboard = () => {
 
   return (
     <section className="background-image">
-      <div className="centered">
+      <div className="centered page-transition">
         <h1 className="page-title">Dashboard</h1>
 
         {/* Appointment column */}
@@ -124,17 +124,17 @@ const Dashboard = () => {
           <table class="w3-table">
             <thead>
               <tr>
-                <th>{appointmentsLast30Days.length}</th>
-                <th>{appointmentsLast15Days.length}</th>
-                <th>{appointmentsToday.length}</th>
+                <th>Last 30 days</th>
+                <th>Last 15 days</th>
+                <th>Today</th>
               </tr>
             </thead>
 
             <tbody>
               <tr>
-                <td>Last 30 days</td>
-                <td>Last 15 days</td>
-                <td>Today</td>
+                <td>{appointmentsLast30Days.length}</td>
+                <td>{appointmentsLast15Days.length}</td>
+                <td>{appointmentsToday.length}</td>
               </tr>
             </tbody>
           </table>
@@ -161,7 +161,7 @@ const Dashboard = () => {
                 <th>Status</th>
               </tr>
             </thead>
-            <br></br>
+
             <tbody>
               {appointments.map((appointment) => {
                 // Find the user corresponding to this appointment

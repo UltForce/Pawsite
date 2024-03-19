@@ -62,25 +62,54 @@ const Account = () => {
 
   return (
     <section className="background-image">
-    <div className="centered">
-      <h1 className="page-title">Account</h1>
-      {user && userData && (
-        <div>
-          <p className="lead">
-            Welcome, {userData.firstname} {userData.lastname}!
-          </p>
-          <p>Email: {user.email}</p>
-          <p>Mobile Number: {userData.mobilenumber}</p>
-          <p>Landline Number: {userData.landlinenumber}</p>
-          <p>Region: {userData.region}</p>
-          <p>City: {userData.city}</p>
-          <p>Barangay: {userData.barangay}</p>
-          <p>Street: {userData.street}</p>
-          <p>Unit: {userData.unit}</p>
-        </div>
-      )}
-      <button onClick={handleReset}>Send Change Password Email</button>
-    </div>
+      <div className="centered page-transition">
+        <h1 className="page-title">Account</h1>
+        {user && userData && (
+          <div className="centered">
+            <p className="lead">
+              Welcome, {userData.firstname} {userData.lastname}!
+            </p>
+            <table className="account-table">
+              <tbody>
+                <tr>
+                  <th>Email:</th>
+                  <td>{user.email}</td>
+                </tr>
+                <tr>
+                  <th>Mobile Number:</th>
+                  <td>{userData.mobilenumber}</td>
+                </tr>
+                <tr>
+                  <th>Landline Number:</th>
+                  <td>{userData.landlinenumber}</td>
+                </tr>
+                <tr>
+                  <th>Region:</th>
+                  <td>{userData.region}</td>
+                </tr>
+                <tr>
+                  <th>City:</th>
+                  <td>{userData.city}</td>
+                </tr>
+                <tr>
+                  <th>Barangay:</th>
+                  <td>{userData.barangay}</td>
+                </tr>
+                <tr>
+                  <th>Street:</th>
+                  <td>{userData.street}</td>
+                </tr>
+                <tr>
+                  <th>Unit:</th>
+                  <td>{userData.unit}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+        <br></br>
+        <button onClick={handleReset}>Send Change Password Email</button>
+      </div>
     </section>
   );
 };

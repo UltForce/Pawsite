@@ -30,4 +30,27 @@ td {
   padding-right: 15px;
 }
 
+/* Update the table styling to remove white background and center headers */
+.w3-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.w3-table th,
+.w3-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  background-color: transparent; /* Set background color to transparent */
+  text-align: center;
+}
+
+.w3-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #333; /* Header background color */
+  color: white;
+  text-align: center; /* Center align header text */
+}
+
 /* dashboard css ends here */

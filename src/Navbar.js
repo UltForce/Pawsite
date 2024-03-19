@@ -1,6 +1,6 @@
 // Navbar.js
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { auth, getCurrentUserId, getUserRoleFirestore } from "./firebase"; // Assuming you have functions to get the current user ID and fetch user role
 import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,6 +22,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Initially set to false
   const [isAdmin, setIsAdmin] = useState(false); // Initially set to false
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -85,29 +86,33 @@ const Navbar = () => {
           <>
             {/* Render Dashboard link only if the user is an admin */}
             {isAdmin && (
-              <li>
+              <li
+                className={location.pathname === "/dashboard" ? "active" : ""}
+              >
                 <Link to="/dashboard">Dashboard</Link>
               </li>
             )}
-            <li>
+            <li className={location.pathname === "/homepage" ? "active" : ""}>
               <Link to="/homepage">Home</Link>
             </li>
-            <li>
+            <li
+              className={location.pathname === "/notifications" ? "active" : ""}
+            >
               <Link to="/notifications">Notifications</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/services" ? "active" : ""}>
               <Link to="/services">Services</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/booking" ? "active" : ""}>
               <Link to="/booking">Booking</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/terms" ? "active" : ""}>
               <Link to="/terms">Terms & Conditions</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/FAQs" ? "active" : ""}>
               <Link to="/FAQs">FAQs</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/account" ? "active" : ""}>
               <Link to="/account">Account</Link>
             </li>
             <li>
@@ -116,10 +121,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <li>
+            <li className={location.pathname === "/login" ? "active" : ""}>
               <Link to="/login">Login</Link>
             </li>
-            <li>
+            <li className={location.pathname === "/register" ? "active" : ""}>
               <Link to="/register">Register</Link>
             </li>
           </>

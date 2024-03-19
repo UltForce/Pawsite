@@ -1,8 +1,25 @@
 // FAQs.js
-
-import React from "react";
+import React, { useState } from "react";
 
 const FAQs = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const toggleVisibility = () => {
+    if (window.pageYOffset > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  };
+  window.addEventListener("scroll", toggleVisibility);
+
   return (
     <section className="background-image-bigger">
       <div className="centered">
@@ -98,6 +115,11 @@ const FAQs = () => {
           </div>
         </div>
       </div>
+      {isVisible && (
+        <button className="back-to-top" onClick={scrollToTop}>
+          Back to Top
+        </button>
+      )}
     </section>
   );
 };
