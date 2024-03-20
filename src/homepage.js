@@ -7,9 +7,15 @@ const Homepage = () => {
     <section className="background-image">
       <div className="homepage">
         <header>
-          <h1>Welcome to Our Website!</h1>
+          <h1>Welcome to Pawsite!</h1>
+          <h4>Be part of the pack.</h4>
         </header>
         <main>
+          <p>
+            Your neighbourhood source of pet supplies and pet grooming services
+            We sell dog food, cat food and other pet supplies. COD available via
+            grab, lalamove or Mr. Speedy.
+          </p>
           <section className="hero">
             <h2>Discover Something Amazing!</h2>
             <p>Explore our latest offerings and find what interests you!</p>
@@ -26,9 +32,6 @@ const Homepage = () => {
             </div>
           </section>
         </main>
-        <footer>
-          <p>&copy; 2024 Pawsite. All rights reserved.</p>
-        </footer>
       </div>
     </section>
   );

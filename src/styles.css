@@ -287,6 +287,35 @@ footer {
   margin-right: 4px;
 }
 
+.footer {
+  margin-top: 0;
+  background-color: #333;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.social-media a {
+  color: white;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.contact-info p {
+  margin: 0;
+}
+
+.contact-info p:first-child {
+  margin-bottom: 5px;
+}
 ::-webkit-scrollbar {
   width: 10px;
 }

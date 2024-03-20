@@ -13,6 +13,10 @@ import FAQs from "./FAQs";
 import Terms from "./Terms";
 import Account from "./account";
 import Reset from "./reset";
+import Footer from "./Footer";
+import About from "./About";
+import Gallery from "./Gallery";
+import Shop from "./Shop";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -37,6 +41,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/shop" element={<Shop />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/services" element={<Services />} />
         <Route
@@ -48,6 +55,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/reset" element={<Reset />} />
       </Routes>
+      <Footer />
       <ToastContainer />
     </Router>
   );
