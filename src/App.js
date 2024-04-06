@@ -17,6 +17,7 @@ import Footer from "./Footer";
 import About from "./About";
 import Gallery from "./Gallery";
 import Shop from "./Shop";
+import Audit from "./Audit";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -54,6 +55,7 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/account" element={<Account />} />
         <Route path="/reset" element={<Reset />} />
+        <Route path="/Audit" element={<Audit />} />
       </Routes>
       <Footer />
       <ToastContainer />

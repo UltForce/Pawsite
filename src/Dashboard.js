@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { generateReports } from "./firebase.js";
-import { getAppointments } from "./firebase.js";
+import { getAppointments, getCurrentUserId, AuditLogger } from "./firebase.js";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 const Toast = Swal.mixin({
@@ -69,6 +69,16 @@ const Dashboard = () => {
         icon: "success",
         title: "Reports successfully generated..",
       });
+      const userId = getCurrentUserId();
+      // Example event object
+      const event = {
+        type: "Report", // Type of event
+        userId: userId, // User ID associated with the event
+        details: "User generated a report", // Details of the event
+      };
+
+      // Call the AuditLogger function with the event object
+      AuditLogger({ event });
     } catch (error) {
       console.error("Error generating reports:", error.message);
       alert("An error occurred while generating reports.");

@@ -17,6 +17,7 @@ const Homepage = () => {
             We sell dog food, cat food and other pet supplies. COD available via
             grab, lalamove or Mr. Speedy.
           </p>
+          
           <section className="hero">
             <h2>Discover Something Amazing!</h2>
             <p>Explore our latest offerings and find what interests you!</p>

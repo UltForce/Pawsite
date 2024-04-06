@@ -8,6 +8,7 @@ import {
   dba,
   doc,
   setDoc,
+  AuditLogger,
 } from "./firebase";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
@@ -94,6 +95,15 @@ const Register = () => {
           });
           // Send email verification
           await sendEmailVerification(userCredential.user);
+
+          const event = {
+            type: "Register", // Type of event
+            userId: userId, // User ID associated with the event
+            details: "User registered", // Details of the event
+          };
+
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
           Swal.fire({
             title: "success",
             text: "Account registered successfully",

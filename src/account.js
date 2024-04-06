@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { auth, sendPasswordResetEmail, getUserData } from "./firebase"; // Make sure to import the necessary Firebase authentication and Firestore functions
+import {
+  auth,
+  sendPasswordResetEmail,
+  getUserData,
+  AuditLogger,
+} from "./firebase"; // Make sure to import the necessary Firebase authentication and Firestore functions
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -55,6 +60,15 @@ const Account = () => {
       if (result.isConfirmed) {
         try {
           await sendPasswordResetEmail(auth, user.email);
+          // Example event object
+          const event = {
+            type: "Password", // Type of event
+            userId: user.uid, // User ID associated with the event
+            details: "Change Password link sent", // Details of the event
+          };
+    
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
           Swal.fire({
             title: "success",
             text: "Password reset link sent successfully.",

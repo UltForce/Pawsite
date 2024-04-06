@@ -5,6 +5,7 @@ import {
   auth,
   signInWithEmailAndPassword,
   getUserRoleFirestore,
+  AuditLogger,
 } from "./firebase";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -42,12 +43,26 @@ const Login = () => {
       return;
     }
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
       // Display success notification
       Toast.fire({
         icon: "success",
         title: "Successfully Login",
       });
+      const event = {
+        type: "Login", // Type of event
+        userId: user.uid, // User ID associated with the event
+        details: "User logged in", // Details of the event
+      };
+
+      // Call the AuditLogger function with the event object
+      AuditLogger({ event });
     } catch (error) {
       Toast.fire({
         icon: "error",

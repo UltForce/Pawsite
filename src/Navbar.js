@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { auth, getCurrentUserId, getUserRoleFirestore } from "./firebase";
+import {
+  auth,
+  getCurrentUserId,
+  getUserRoleFirestore,
+  AuditLogger,
+} from "./firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -16,6 +21,7 @@ import {
   faTag,
   faAddressBook,
   faClapperboard,
+  faClipboard,
 } from "@fortawesome/free-solid-svg-icons";
 import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -62,12 +68,21 @@ const Navbar = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          const userId = getCurrentUserId();
           await auth.signOut();
           navigate("/login");
           Toast.fire({
             icon: "success",
             title: "Successfully Logout",
           });
+          const event = {
+            type: "Logout", // Type of event
+            userId: userId, // User ID associated with the event
+            details: "User logged out", // Details of the event
+          };
+    
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
         } catch (error) {
           console.error("Error logging out:", error.message);
         }
@@ -171,6 +186,14 @@ const Navbar = () => {
                 <span className="nav-label"> Account</span>
               </Link>
             </li>
+            {isAdmin && (
+              <li className={location.pathname === "/Audit" ? "active" : ""}>
+                <Link to="/Audit">
+                  <FontAwesomeIcon icon={faClipboard} />
+                  <span className="nav-label"> Audit</span>
+                </Link>
+              </li>
+            )}
             <li>
               <Link onClick={handleLogout}>
                 <FontAwesomeIcon icon={faSignOutAlt} />

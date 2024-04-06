@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
-
+import React, { useEffect, useState } from "react";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -310,6 +310,26 @@ const generateReports = async () => {
   }
 };
 
+const AuditLogger = async ({ event }) => {
+  try {
+    console.log("Event object:", event); // Log the event object
+    if (!event || !event.type || !event.userId || !event.details) {
+      throw new Error("Invalid event object");
+    }
+    // Log the event by adding a document to the "auditLogs" collection
+    const auditLogRef = await addDoc(collection(dba, "auditLogs"), {
+      eventType: event.type,
+      userId: event.userId,
+      timestamp: new Date(),
+      details: event.details,
+    });
+
+    console.log("Audit log added successfully with ID: ", auditLogRef.id);
+  } catch (error) {
+    console.error("Error adding audit log:", error.message);
+  }
+};
+
 export {
   getAuth,
   auth,
@@ -346,4 +366,5 @@ export {
   getData,
   getAllData,
   getUserData,
+  AuditLogger,
 };

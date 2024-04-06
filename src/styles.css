@@ -396,3 +396,34 @@ footer {
 .custom-event {
   width: 150px; /* Adjust the width as needed */
 }
+.gallery-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* 3 columns */
+  grid-gap: 10px; /* Adjust as needed */
+}
+
+.gallery-container img {
+  width: 100%; /* Ensure images fill their container */
+  height: auto;
+  max-width: 250px; /* Set maximum width for each image */
+  max-height: 250px; /* Set maximum height for each image */
+  object-fit: cover; /* Ensure images are cropped to fit the square shape */
+}
+
+.gallery-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.gallery img {
+  width: 100%; /* Ensure images fill their container */
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px; /* Adjust spacing between images */
+}
+
+.shop {
+  max-width: 300px; /* Set maximum width for each image */
+  max-height: 3000px; /* Set maximum height for each image */
+}

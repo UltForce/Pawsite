@@ -10,6 +10,7 @@ import {
   auth,
   getUserRoleFirestore,
   getCurrentUserId,
+  AuditLogger,
 } from "./firebase";
 import {
   getStorage,
@@ -148,7 +149,15 @@ const Services = () => {
 
               // Fetch updated services data
               fetchServices();
+              const userId = getCurrentUserId(); // Get the current user's ID
+              const event = {
+                type: "Services", // Type of event
+                userId: userId, // User ID associated with the event
+                details: "User has created a service", // Details of the event
+              };
 
+              // Call the AuditLogger function with the event object
+              AuditLogger({ event });
               // Show success message
               Swal.fire({
                 title: "Success",
@@ -197,6 +206,15 @@ const Services = () => {
 
           // Fetch updated services data after deletion
           fetchServices();
+          const userId = getCurrentUserId(); // Get the current user's ID
+          const event = {
+            type: "Services", // Type of event
+            userId: userId, // User ID associated with the event
+            details: "User has deleted a service", // Details of the event
+          };
+
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
         } catch (error) {
           console.error("Error deleting service:", error.message);
         }
@@ -281,7 +299,15 @@ const Services = () => {
 
               // Fetch updated services data
               fetchServices();
+              const userId = getCurrentUserId(); // Get the current user's ID
+              const event = {
+                type: "Services", // Type of event
+                userId: userId, // User ID associated with the event
+                details: "User has edited a service", // Details of the event
+              };
 
+              // Call the AuditLogger function with the event object
+              AuditLogger({ event });
               // Show success message
               Swal.fire({
                 title: "Success",

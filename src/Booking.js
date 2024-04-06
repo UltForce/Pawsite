@@ -18,8 +18,10 @@ import {
   getUserAppointments,
   getCurrentUserId,
   getAllAppointments,
+  AuditLogger,
 } from "./firebase";
 import Swal from "sweetalert2";
+import { Timestamp } from "firebase/firestore";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
@@ -218,7 +220,15 @@ const Booking = ({ addNotification }) => {
             id: Date.now(),
             message: `Appointment updated successfully:`,
             data: `${JSON.stringify(formData)}`,
-          }); // Pass formData containing appointment detailsls
+          }); // Pass formData containing appointment details
+          const event = {
+            type: "Appointment", // Type of event
+            userId: loggedInUserId, // User ID associated with the event
+            details: "User edited an existing appointment", // Details of the event
+          };
+
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
           setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
@@ -306,6 +316,14 @@ const Booking = ({ addNotification }) => {
               });
             }
           });
+          const event = {
+            type: "Appointment", // Type of event
+            userId: loggedInUserId, // User ID associated with the event
+            details: "User created a new appointment", // Details of the event
+          };
+
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
           fetchAppointments(); // Fetch appointments
         }
       });
@@ -356,6 +374,14 @@ const Booking = ({ addNotification }) => {
                 message: `Appointment deleted successfully:`,
                 data: `${JSON.stringify(formData)}`,
               }); // Pass formData containing appointment detailsls
+              const event = {
+                type: "Appointment", // Type of event
+                userId: loggedInUserId, // User ID associated with the event
+                details: "User deleted an existing appointment", // Details of the event
+              };
+
+              // Call the AuditLogger function with the event object
+              AuditLogger({ event });
               fetchAppointments(); // Fetch appointments
               // Show success message
               Swal.fire({
@@ -407,9 +433,17 @@ const Booking = ({ addNotification }) => {
               });
               addNotification({
                 id: Date.now(),
-                message: `Appointment deleted successfully:`,
+                message: `Appointment canceled successfully:`,
                 data: `${JSON.stringify(formData)}`,
               }); // Pass formData containing appointment detailsls
+              const event = {
+                type: "Appointment", // Type of event
+                userId: loggedInUserId, // User ID associated with the event
+                details: "User canceled an existing appointment", // Details of the event
+              };
+
+              // Call the AuditLogger function with the event object
+              AuditLogger({ event });
               // Show success message
               Swal.fire({
                 title: "success",
@@ -581,6 +615,14 @@ const Booking = ({ addNotification }) => {
           message: `Appointment status updated successfully:`,
           data: `${JSON.stringify(formData)}`,
         });
+        const event = {
+          type: "Appointment", // Type of event
+          userId: loggedInUserId, // User ID associated with the event
+          details: "User changed the status of an existing appointment", // Details of the event
+        };
+
+        // Call the AuditLogger function with the event object
+        AuditLogger({ event });
         fetchAppointments();
         Swal.fire({
           title: "success",

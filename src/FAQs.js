@@ -117,7 +117,7 @@ const FAQs = () => {
                   aria-expanded="false"
                   aria-controls="collapseFour"
                 >
-                  What grooming services do you offer?
+                  What services do you provide?
                 </button>
               </h2>
               <div
@@ -127,9 +127,9 @@ const FAQs = () => {
                 data-bs-parent="#faqsAccordion"
               >
                 <div className="accordion-body">
-                  We offer a range of grooming services, including bathing,
-                  haircutting, nail trimming, ear cleaning, and more. Please
-                  check our services page for a detailed list.
+                  We are able to groom Dogs and Cats all breeds, ages and coats.
+                  We have a range of services that include,full grooming, basic
+                  grooming and single services.
                 </div>
               </div>
             </div>
@@ -319,6 +319,136 @@ const FAQs = () => {
                 <div className="accordion-body">
                   Yes, we offer discounts. Check our website or contact us for
                   information on current specials.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingTwelve">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseTwelve"
+                  aria-expanded="false"
+                  aria-controls="collapseTwelve"
+                >
+                  Do you have a grooming salon?
+                </button>
+              </h2>
+              <div
+                id="collapseTwelve"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingTwelve"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Yes we do! We are located at 43a Agoncillo apartment Severina
+                  Avenue, Paranaque City. Come by and join the pack!
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingThirteen">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseThirteen"
+                  aria-expanded="false"
+                  aria-controls="collapseThirteen"
+                >
+                  What are your operating salon hours and days?
+                </button>
+              </h2>
+              <div
+                id="collapseThirteen"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingThirteen"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Our groomers provide grooming services from 9am - 6pm daily.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingFourteen">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseFourteen"
+                  aria-expanded="false"
+                  aria-controls="collapseFourteen"
+                >
+                  What do I have to inform the groomer before my appointment?
+                </button>
+              </h2>
+              <div
+                id="collapseFourteen"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingFourteen"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Please inform our groomers of any illnesses, injury/wounds or
+                  aggressive/unpredictable tendencies that your pet might have,
+                  vaccinated or not.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingFifteen">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseFifteen"
+                  aria-expanded="false"
+                  aria-controls="collapseFifteen"
+                >
+                  How do I make a booking?
+                </button>
+              </h2>
+              <div
+                id="collapseFifteen"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingFifteen"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Bookings can be made conveniently through our online booking
+                  portal
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingSixteen">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseSixteen"
+                  aria-expanded="false"
+                  aria-controls="collapseSixteen"
+                >
+                  How long in advance should I make my appointment?
+                </button>
+              </h2>
+              <div
+                id="collapseSixteen"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingSixteen"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  We encourage booking your appointment with us at least 1 day
+                  in advance.
                 </div>
               </div>
             </div>
