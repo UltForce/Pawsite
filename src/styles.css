@@ -33,7 +33,11 @@ button:hover {
   color: black;
   transform: scale(1.1); /* Increase size by 10% */
 }
-
+/* Apply hover effect to the label wrapping the checkbox input */
+.checkbox:hover {
+  background-color: #ddd;
+  color: black;
+}
 /* Update the CSS selector to target the active link */
 nav ul.centeredNav li.active a:hover,
 nav ul.centeredNav li.active a {
@@ -82,7 +86,11 @@ ul.centered li {
   background-size: cover;
   box-shadow: inset 0 0 2000px rgba(0, 0, 0, 0.5);
 }
-
+.background-shadow {
+  min-height: 93vh;
+  background-size: cover;
+  box-shadow: inset 0 0 2000px rgba(0, 0, 0, 0.5);
+}
 .centered {
   display: flex;
   justify-content: center;
@@ -333,4 +341,60 @@ footer {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.two-column-layout {
+  padding-left: 10%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Center the form groups horizontally */
+  width: 50%; /* Adjust the width of the two-column layout */
+  margin: auto; /* Center the layout horizontally */
+}
+
+.form-group {
+  flex: 0 0 48%; /* Set the width of each form group to occupy half of the available space */
+  margin-bottom: 50px; /* Add margin between form groups */
+}
+
+.form-group label {
+  display: block; /* Display the label as a block element */
+  margin-bottom: 5px; /* Add margin below the label */
+}
+
+.form-group input {
+  width: 50%; /* Make the input field occupy the entire width of its container */
+  padding: 8px; /* Add padding to the input field */
+  box-sizing: border-box; /* Ensure that padding and border are included in the width */
+  margin-bottom: 15px; /* Add margin between form groups */
+}
+.booking-form {
+  width: 90%;
+}
+
+.accordion-body {
+  white-space: pre-wrap;
+}
+
+.accordion-container {
+  width: 80%; /* Adjust the width as needed */
+  margin: 0 auto; /* Centers the accordion horizontally */
+}
+
+.accordion {
+  width: 50%;
+}
+.search {
+  width: 300px;
+}
+.search-container {
+  width: 40%; /* Adjust the width to fill the parent container */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-event {
+  width: 150px; /* Adjust the width as needed */
+}
+.dropdown-item {
 }

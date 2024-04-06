@@ -21,105 +21,317 @@ const FAQs = () => {
   window.addEventListener("scroll", toggleVisibility);
 
   return (
-    <section className="background-image-bigger">
-      <div className="centered">
+    <section className="background-image">
+      <div>
         <div>
-          <h1 className="page-title">Frequently Asked Questions</h1>
+          <h1 className="page-title centered">Frequently Asked Questions</h1>
         </div>
-        <div>
-          <div className="div-spacing">
-            <h2>How can I schedule an appointment?</h2>
-            <p class="lead">
-              You can schedule an appointment by calling us, visiting our
-              website, or using our online appointment booking system.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>Can these products be delivered on my home?</h2>
-            <p class="lead">
-              The products are only for promotion and must be bought onsite on
-              the grooming shop itself.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>Can I schedule more than 2 appointments?</h2>
-            <p class="lead">
-              Through the website, a customer can't schedule more than 2
-              appointments until the first one has been finished, if the
-              customer wishes to schedule multiple appointments, the customer
-              has to contact the administrators directly.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>What grooming services do you offer?</h2>
-            <p class="lead">
-              We offer a range of grooming services, including bathing,
-              haircutting, nail trimming, ear cleaning, and more. Please check
-              our services page for a detailed list.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>Is scheduling an appointment through the website necessary?</h2>
-            <p class="lead">
-              While appointments are recommended, we do accept walk-ins based on
-              availability. To ensure your preferred time, it's best to schedule
-              in advance.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>What vaccinations does my pet need for grooming?</h2>
-            <p class="lead">
-              We require pets to be up-to-date on core vaccinations. Please
-              provide proof of vaccinations, including rabies, when you schedule
-              your appointment.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>How long does a grooming session take?</h2>
-            <p class="lead">
-              The duration varies based on the size and breed of your pet, as
-              well as the services requested. On average, a grooming session
-              takes 1 to 3 hours.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>Can I stay with my pet during the grooming process?</h2>
-            <p class="lead">
-              For the safety of our staff and pets, we generally do not allow
-              owners to stay in the grooming area. However, you can discuss any
-              concerns or specific instructions with our groomers.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>What if my pet has special needs or medical conditions?</h2>
-            <p class="lead">
-              Please inform us of any special needs or medical conditions when
-              scheduling your appointment. Our groomers will take extra care to
-              accommodate your pet's requirements.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>What products do you use for grooming?</h2>
-            <p class="lead">
-              We use high-quality, pet-friendly grooming products. If your pet
-              has allergies or specific product preferences, please let us know,
-              and we'll do our best to accommodate.
-            </p>
-          </div>
-          <div className="div-spacing">
-            <h2>Do you offer discounts?</h2>
-            <p class="lead">
-              Yes, we offer discounts. Check our website or contact us for
-              information on current specials.
-            </p>
+        <div className="accordion-container centered">
+          <div className="accordion" id="faqsAccordion">
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingOne">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseOne"
+                  aria-expanded="false"
+                  aria-controls="collapseOne"
+                >
+                  How can I schedule an appointment?
+                </button>
+              </h2>
+              <div
+                id="collapseOne"
+                className="accordion-collapse collapse"
+                aria-labelledby="headingOne"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  You can schedule an appointment by calling us, visiting our
+                  website, or using our online appointment booking system.
+                </div>
+              </div>
+            </div>
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingTwo">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseTwo"
+                  aria-expanded="false"
+                  aria-controls="collapseTwo"
+                >
+                  Can these products be delivered on my home?
+                </button>
+              </h2>
+              <div
+                id="collapseTwo"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingTwo"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  The products are only for promotion and must be bought onsite
+                  on the grooming shop itself.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingThree">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseThree"
+                  aria-expanded="false"
+                  aria-controls="collapseThree"
+                >
+                  Can I schedule more than 2 appointments?
+                </button>
+              </h2>
+              <div
+                id="collapseThree"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingThree"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Through the website, a customer can't schedule more than 2
+                  appointments until the first one has been finished, if the
+                  customer wishes to schedule multiple appointments, the
+                  customer has to contact the administrators directly.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingFour">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseFour"
+                  aria-expanded="false"
+                  aria-controls="collapseFour"
+                >
+                  What grooming services do you offer?
+                </button>
+              </h2>
+              <div
+                id="collapseFour"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingFour"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  We offer a range of grooming services, including bathing,
+                  haircutting, nail trimming, ear cleaning, and more. Please
+                  check our services page for a detailed list.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingFive">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseFive"
+                  aria-expanded="false"
+                  aria-controls="collapseFive"
+                >
+                  Is scheduling an appointment through the website necessary?
+                </button>
+              </h2>
+              <div
+                id="collapseFive"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingFive"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  While appointments are recommended, we do accept walk-ins
+                  based on availability. To ensure your preferred time, it's
+                  best to schedule in advance.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingSix">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseSix"
+                  aria-expanded="false"
+                  aria-controls="collapseSix"
+                >
+                  What vaccinations does my pet need for grooming?
+                </button>
+              </h2>
+              <div
+                id="collapseSix"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingSix"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  We require pets to be up-to-date on core vaccinations. Please
+                  provide proof of vaccinations, including rabies, when you
+                  schedule your appointment.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingSeven">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseSeven"
+                  aria-expanded="false"
+                  aria-controls="collapseSeven"
+                >
+                  How long does a grooming session take?
+                </button>
+              </h2>
+              <div
+                id="collapseSeven"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingSeven"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  The duration varies based on the size and breed of your pet,
+                  as well as the services requested. On average, a grooming
+                  session takes 1 to 3 hours.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingEight">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseEight"
+                  aria-expanded="false"
+                  aria-controls="collapseEight"
+                >
+                  Can I stay with my pet during the grooming process?
+                </button>
+              </h2>
+              <div
+                id="collapseEight"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingEight"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  For the safety of our staff and pets, we generally do not
+                  allow owners to stay in the grooming area. However, you can
+                  discuss any concerns or specific instructions with our
+                  groomers.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingNine">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseNine"
+                  aria-expanded="false"
+                  aria-controls="collapseNine"
+                >
+                  What if my pet has special needs or medical conditions?
+                </button>
+              </h2>
+              <div
+                id="collapseNine"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingNine"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Please inform us of any special needs or medical conditions
+                  when scheduling your appointment. Our groomers will take extra
+                  care to accommodate your pet's requirements.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingTen">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseTen"
+                  aria-expanded="false"
+                  aria-controls="collapseTen"
+                >
+                  What products do you use for grooming?
+                </button>
+              </h2>
+              <div
+                id="collapseTen"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingTen"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  We use high-quality, pet-friendly grooming products. If your
+                  pet has allergies or specific product preferences, please let
+                  us know, and we'll do our best to accommodate.
+                </div>
+              </div>
+            </div>
+
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingEleven">
+                <button
+                  className="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseEleven"
+                  aria-expanded="false"
+                  aria-controls="collapseEleven"
+                >
+                  Do you offer discounts?
+                </button>
+              </h2>
+              <div
+                id="collapseEleven"
+                className="accordion-collapse collapse  "
+                aria-labelledby="headingEleven"
+                data-bs-parent="#faqsAccordion"
+              >
+                <div className="accordion-body">
+                  Yes, we offer discounts. Check our website or contact us for
+                  information on current specials.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <br />
+        {isVisible && (
+          <button className="back-to-top" onClick={scrollToTop}>
+            Back to Top
+          </button>
+        )}
       </div>
-      {isVisible && (
-        <button className="back-to-top" onClick={scrollToTop}>
-          Back to Top
-        </button>
-      )}
     </section>
   );
 };

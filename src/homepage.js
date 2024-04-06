@@ -5,10 +5,11 @@ import React from "react";
 const Homepage = () => {
   return (
     <section className="background-image">
-      <div className="homepage">
+      <div className="homepage centered">
         <header>
           <h1>Welcome to Pawsite!</h1>
           <h4>Be part of the pack.</h4>
+          <img src="pawsite2.png" height="200px" />
         </header>
         <main>
           <p>

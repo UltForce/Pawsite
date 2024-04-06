@@ -45,19 +45,40 @@ const Account = () => {
   };
 
   const handleReset = async () => {
-    try {
-      await sendPasswordResetEmail(auth, user.email);
-      Toast.fire({
-        icon: "success",
-        title: "Password reset link has been sent to email.",
-      });
-    } catch (error) {
-      Toast.fire({
-        icon: "error",
-        title: "Please login first.",
-      });
-      console.error("Error sending password reset email:", error.message);
-    }
+    Swal.fire({
+      icon: "question",
+      title: "Do you want to send a change password link to this email?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await sendPasswordResetEmail(auth, user.email);
+          Swal.fire({
+            title: "success",
+            text: "Password reset link sent successfully.",
+            icon: "success",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "success",
+                title: "Password reset link has been sent to email.",
+              });
+            }
+          });
+        } catch (error) {
+          Toast.fire({
+            icon: "error",
+            title: "Please login first.",
+          });
+          console.error("Error sending password reset email:", error.message);
+        }
+      }
+    });
   };
 
   return (
@@ -108,7 +129,9 @@ const Account = () => {
           </div>
         )}
         <br></br>
-        <button onClick={handleReset}>Send Change Password Email</button>
+        <button class="btn btn-outline-primary" onClick={handleReset}>
+          Send Change Password Email
+        </button>
       </div>
     </section>
   );

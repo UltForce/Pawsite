@@ -80,21 +80,34 @@ const Login = () => {
       <div className="centered">
         <img src="pawsite2.png" height="200px" />
         <h2>Login</h2>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div class="form-floating mb-3">
+          <input
+            type="email"
+            class="form-control"
+            id="floatingInput"
+            placeholder="email@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            id="floatingPassword"
+            placeholder="Password"
+            autocomplete="off"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <label for="floatingPassword">Password</label>
+        </div>
         <br />
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <button class="btn btn-outline-primary" onClick={handleLogin}>
+          Login
+        </button>
         <br />
-        <button onClick={handleLogin}>Login</button>
         <p>
           Don't have an account? <Link to="/register">Register here</Link>.
         </p>

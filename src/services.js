@@ -82,7 +82,10 @@ const Services = () => {
 
   // Function to handle pagination - move to the next set of cards
   const nextCards = () => {
-    setCurrentIndex((prevIndex) => prevIndex + cardsPerPage);
+    const totalCards = services.length;
+    const maxIndex = totalCards - (totalCards % cardsPerPage || cardsPerPage);
+    const nextIndex = Math.min(currentIndex + cardsPerPage, maxIndex);
+    setCurrentIndex(nextIndex);
   };
 
   // Function to handle pagination - move to the previous set of cards
@@ -94,9 +97,9 @@ const Services = () => {
     Swal.fire({
       title: "Add a Service",
       html:
-        '<input id="swal-input-name" class="swal2-input" placeholder="Name">' +
-        '<input id="swal-input-description" class="swal2-input" placeholder="Description">' +
-        '<input type="file" id="swal-input-image" class="swal2-file">',
+        '<div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name"><label for="swal-input-name">Name</label></div>' +
+        '<div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description"><label for="swal-input-description">Description</label></div>' +
+        '<div><input type="file" id="swal-input-image" accept=".jpg, .jpeg, .png" class="form-control">',
       focusConfirm: false,
       preConfirm: () => {
         const name = document.getElementById("swal-input-name").value;
@@ -220,11 +223,10 @@ const Services = () => {
   const handleEdit = (service) => {
     Swal.fire({
       title: "Edit Service",
-      html: `
-        <input id="swal-input-name" class="swal2-input" placeholder="Name" value="${service.name}">
-        <input id="swal-input-description" class="swal2-input" placeholder="Description" value="${service.description}">
-        <input type="file" id="swal-input-image" class="swal2-file">
-      `,
+      html:
+        '<div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name"><label for="swal-input-name">Name</label></div>' +
+        '<div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description"><label for="swal-input-description">Description</label></div>' +
+        '<div><input type="file" id="swal-input-image" accept=".jpg, .jpeg, .png" class="form-control">',
       focusConfirm: false,
       preConfirm: async () => {
         const name = document.getElementById("swal-input-name").value;
@@ -322,15 +324,15 @@ const Services = () => {
         <h1 className="page-title">Services</h1>
         {isAdmin && (
           <div>
-            <button onClick={handleSubmit}>
+            <button className="btn btn-outline-primary" onClick={handleSubmit}>
               {" "}
               <FaPlus />
             </button>
           </div>
         )}
         <div className="service-cards-container">
-          <button className="pagination-buttons" onClick={prevCards}>
-            <FaChevronLeft />
+          <button className="pagination-buttons page-item" onClick={prevCards}>
+            &laquo;
           </button>
           <div className="service-cards">
             {services
@@ -344,10 +346,14 @@ const Services = () => {
                   </div>
                   {isAdmin && (
                     <div>
-                      <button onClick={() => handleEdit(service)}>
+                      <button
+                        className="btn btn-outline-primary"
+                        onClick={() => handleEdit(service)}
+                      >
                         <FaEdit /> {/* FontAwesome edit icon */}
                       </button>
                       <button
+                        className="btn btn-outline-primary"
                         onClick={() => handleDelete(service.id, service.image)}
                       >
                         <FaTrash /> {/* FontAwesome trash icon */}
@@ -357,8 +363,14 @@ const Services = () => {
                 </div>
               ))}
           </div>
-          <button className="pagination-buttons" onClick={nextCards}>
-            <FaChevronRight />
+          <button
+            className={`pagination-buttons page-item ${
+              currentIndex + cardsPerPage >= services.length ? "disabled" : ""
+            }`}
+            onClick={nextCards}
+            disabled={currentIndex + cardsPerPage >= services.length}
+          >
+            &raquo;
           </button>
         </div>
       </div>

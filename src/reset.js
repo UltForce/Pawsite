@@ -28,22 +28,44 @@ const Reset = () => {
       });
       return; // Exit early if fields are empty
     }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      Toast.fire({
-        icon: "success",
-        title: "Password reset link has been sent to email.",
-      });
-      // Update state to indicate that reset email has been sent
-      setResetSent(true);
-    } catch (error) {
-      Toast.fire({
-        icon: "error",
-        title: "Please enter a valid email.",
-      });
-      // Handle error (e.g., display an error message)
-      console.error("Error sending password reset email:", error.message);
-    }
+
+    Swal.fire({
+      icon: "question",
+      title: "Do you want to send a change password link to this email?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await sendPasswordResetEmail(auth, email);
+          Swal.fire({
+            title: "success",
+            text: "Password reset link sent successfully.",
+            icon: "success",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "success",
+                title: "Password reset link has been sent to email.",
+              });
+            }
+          });
+          // Update state to indicate that reset email has been sent
+          setResetSent(true);
+        } catch (error) {
+          Toast.fire({
+            icon: "error",
+            title: "Please enter a valid email.",
+          });
+          // Handle error (e.g., display an error message)
+          console.error("Error sending password reset email:", error.message);
+        }
+      }
+    });
   };
 
   return (
@@ -70,6 +92,7 @@ const Reset = () => {
           <button onClick={handleReset}>Send Reset Email</button>
         </>
       )}
+      <br />
       <p>
         Remember your password? <Link to="/login">Login here</Link>.
       </p>

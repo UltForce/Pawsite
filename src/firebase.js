@@ -122,7 +122,24 @@ const createAppointment = async (userId, appointmentData) => {
     console.error("Error creating appointment:", error.message);
   }
 };
-
+const getUserAppointments = async (userId) => {
+  try {
+    // Query the "appointments" collection where userId matches the logged-in user's ID
+    const appointmentsQuery = query(
+      collection(dba, "appointments"),
+      where("userId", "==", userId)
+    );
+    const snapshot = await getDocs(appointmentsQuery);
+    const appointments = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return appointments;
+  } catch (error) {
+    console.error("Error getting user appointments:", error.message);
+    return [];
+  }
+};
 // Function to get approved appointments
 const getApprovedAppointments = async () => {
   try {
@@ -143,38 +160,11 @@ const getApprovedAppointments = async () => {
   }
 };
 
-const getUserAppointments = async (userId) => {
-  try {
-    // Get the user's role
-    const userRole = await getUserRoleFirestore(userId);
-
-    // If the user is an admin, fetch all appointments
-    if (userRole === "admin") {
-      return await getAllAppointments();
-    }
-
-    // Query the "appointments" collection where userId matches the logged-in user's ID
-    const appointmentsQuery = query(
-      collection(dba, "appointments"),
-      where("userId", "==", userId)
-    );
-    const snapshot = await getDocs(appointmentsQuery);
-    const appointments = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return appointments;
-  } catch (error) {
-    console.error("Error getting user appointments:", error.message);
-    return [];
-  }
-};
-
 // Function to retrieve all appointments
 const getAllAppointments = async () => {
   try {
-    // Query the "appointments" collection
-    const appointmentsQuery = collection(dba, "appointments");
+    // Query the "appointments" collection where status is approved
+    const appointmentsQuery = query(collection(dba, "appointments"));
     const snapshot = await getDocs(appointmentsQuery);
     const appointments = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -182,7 +172,7 @@ const getAllAppointments = async () => {
     }));
     return appointments;
   } catch (error) {
-    console.error("Error getting appointments:", error.message);
+    console.error("Error getting approved appointments:", error.message);
     return [];
   }
 };
