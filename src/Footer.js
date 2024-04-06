@@ -7,12 +7,20 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="social-media">
-          <a href="https://web.facebook.com/woofpack.ph">
+          <a
+            href="https://web.facebook.com/woofpack.ph"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FontAwesomeIcon icon={faFacebook} />
             <span className="social-media-label"> Facebook</span>
           </a>
           <br />
-          <a href="https://www.instagram.com/woofpack.ph/?hl=en">
+          <a
+            href="https://www.instagram.com/woofpack.ph/?hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FontAwesomeIcon icon={faInstagram} />
             <span className="social-media-label"> Instagram</span>
           </a>
