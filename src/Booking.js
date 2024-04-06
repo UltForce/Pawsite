@@ -502,6 +502,8 @@ const Booking = ({ addNotification }) => {
             return;
           }
           setIsFormOpen(true); // Open form
+        } else {
+          setIsFormOpen(true); // Open form
         }
       } else {
         // Change view to day grid when other views are selected
@@ -512,9 +514,7 @@ const Booking = ({ addNotification }) => {
       setIsValidDaySelected(false);
       console.log("Cannot select past dates.");
     }
-    if (isAdmin) {
-      setIsFormOpen(false);
-    }
+
     setFormData({
       // Reset form data
       name: "",

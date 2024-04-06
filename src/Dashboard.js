@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { generateReports } from "./firebase.js";
-import {
-  getAllUsers,
-  getAllAppointments,
-  getAllData,
-  getAppointments,
-  getUsers,
-  getData,
-} from "./firebase.js";
+import { getAppointments } from "./firebase.js";
 import "./dashboard.css";
 import Swal from "sweetalert2";
-import { type } from "@testing-library/user-event/dist/type/index.js";
-
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -28,8 +19,6 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]); // Initialize filteredAppointments state
-  const [appointmentsLast30Days, setAppointmentsLast30Days] = useState([]);
-  const [appointmentsLast15Days, setAppointmentsLast15Days] = useState([]);
   const [appointmentsToday, setAppointmentsToday] = useState([]);
   const [upcomingAppointments, setUpcomingAppointments] = useState([]); // New state for upcoming appointments
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,7 +28,6 @@ const Dashboard = () => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [data, setData] = useState([]);
 
   const typeRef = useRef(null);
   const serviceRef = useRef(null);
@@ -50,33 +38,20 @@ const Dashboard = () => {
       try {
         const appointments = await getAppointments();
         setAppointments(appointments);
-        setFilteredAppointments(appointments);
 
         const currentDate = new Date();
-        const last30DaysDate = new Date();
-        last30DaysDate.setDate(currentDate.getDate() - 30);
 
-        const last15DaysDate = new Date();
-        last15DaysDate.setDate(currentDate.getDate() - 15);
-
-        const appointmentsLast30Days = appointments.filter(
-          (appointment) => new Date(appointment.date) >= last30DaysDate
-        );
-        const appointmentsLast15Days = appointments.filter(
-          (appointment) => new Date(appointment.date) >= last15DaysDate
-        );
         const appointmentsToday = appointments.filter(
           (appointment) =>
             new Date(appointment.date).toDateString() ===
             currentDate.toDateString()
         );
-        // Calculate upcoming appointments
+
         const upcomingAppointments = appointments.filter(
           (appointment) => new Date(appointment.date) > currentDate
         );
 
-        setAppointmentsLast30Days(appointmentsLast30Days);
-        setAppointmentsLast15Days(appointmentsLast15Days);
+        setFilteredAppointments(appointments);
         setAppointmentsToday(appointmentsToday);
         setUpcomingAppointments(upcomingAppointments);
       } catch (error) {
@@ -223,10 +198,29 @@ const Dashboard = () => {
     }
   };
 
-  // Sort filteredAppointments by date before rendering
+  // Sort filteredAppointments by date before rendering, prioritizing upcoming dates
   const sortedAppointments = filteredAppointments.slice().sort((a, b) => {
-    return new Date(a.date) - new Date(b.date);
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+
+    if (dateA > dateB) {
+      return 1; // If dateA is later than dateB, sort dateA after dateB
+    } else if (dateA < dateB) {
+      return -1; // If dateA is earlier than dateB, sort dateA before dateB
+    } else {
+      // If dates are equal, sort based on whether the appointment is past or upcoming
+      const isPastA = dateA < new Date();
+      const isPastB = dateB < new Date();
+      if (isPastA && !isPastB) {
+        return 1; // Sort past dates after upcoming dates
+      } else if (!isPastA && isPastB) {
+        return -1; // Sort upcoming dates before past dates
+      } else {
+        return 0; // If dates are equal and both past or both upcoming, maintain order
+      }
+    }
   });
+
   return (
     <section className="background-image">
       <div className="centered page-transition">
@@ -237,16 +231,44 @@ const Dashboard = () => {
           <table className="w3-table">
             <thead>
               <tr>
-                <th>Last 30 days</th>
-                <th>Last 15 days</th>
+                <th>Pending</th>
+                <th>Approved</th>
+                <th>Completed</th>
+                <th>Canceled</th>
                 <th>Today</th>
                 <th>Upcoming</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>{appointmentsLast30Days.length}</td>
-                <td>{appointmentsLast15Days.length}</td>
+                <td>
+                  {
+                    filteredAppointments.filter(
+                      (appointment) => appointment.status === "pending"
+                    ).length
+                  }
+                </td>
+                <td>
+                  {
+                    filteredAppointments.filter(
+                      (appointment) => appointment.status === "approved"
+                    ).length
+                  }
+                </td>
+                <td>
+                  {
+                    filteredAppointments.filter(
+                      (appointment) => appointment.status === "completed"
+                    ).length
+                  }
+                </td>
+                <td>
+                  {
+                    filteredAppointments.filter(
+                      (appointment) => appointment.status === "canceled"
+                    ).length
+                  }
+                </td>
                 <td>{appointmentsToday.length}</td>
                 <td>{upcomingAppointments.length}</td>{" "}
                 {/* Display count of upcoming appointments */}
@@ -258,15 +280,21 @@ const Dashboard = () => {
 
         <div className="search-container d-flex">
           {/* Search input */}
-          <input
-            type="text"
-            placeholder="Search by Name, Pet name, Weight, or Age"
-            className="form-control me-sm-2 search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div class="form-floating">
+            <input
+              type="text"
+              placeholder="Search by Name, Pet name, Weight, or Age"
+              className="form-control me-sm-3 search"
+              id="floatingSearch"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <label for="floatingSearch">
+              Search by Name, Pet name, Weight, or Age
+            </label>
+          </div>
           {/* Type dropdown */}
-          <div className="dropdown btn-group" ref={typeRef}>
+          <div className="dropdown btn-group me-sm-3" ref={typeRef}>
             <button
               className="btn btn-outline-secondary dropdown-toggle"
               type="button"
@@ -282,7 +310,10 @@ const Dashboard = () => {
               aria-labelledby="btnGroupDrop1"
               className={`dropdown-menu ${showTypeDropdown ? "show" : ""}`}
             >
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="onsite"
@@ -291,7 +322,10 @@ const Dashboard = () => {
                 />
                 Onsite
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="home"
@@ -304,7 +338,7 @@ const Dashboard = () => {
             </div>
           </div>
           {/* Service dropdown */}
-          <div className="dropdown btn-group" ref={serviceRef}>
+          <div className="dropdown btn-group me-sm-3" ref={serviceRef}>
             <button
               className="btn btn-outline-primary dropdown-toggle"
               type="button"
@@ -320,7 +354,10 @@ const Dashboard = () => {
               aria-labelledby="btnGroupDrop2"
               className={`dropdown-menu ${showServiceDropdown ? "show" : ""}`}
             >
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="bathing"
@@ -329,7 +366,10 @@ const Dashboard = () => {
                 />
                 Bathing
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="haircutting"
@@ -338,7 +378,10 @@ const Dashboard = () => {
                 />
                 Haircutting
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="nail trimming"
@@ -347,7 +390,10 @@ const Dashboard = () => {
                 />
                 Nail Trimming
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="ear trimming"
@@ -360,7 +406,7 @@ const Dashboard = () => {
             </div>
           </div>
           {/* Status dropdown */}
-          <div className="dropdown btn-group" ref={statusRef}>
+          <div className="dropdown btn-group me-sm-3" ref={statusRef}>
             <button
               className="btn btn-outline-secondary dropdown-toggle"
               type="button"
@@ -376,7 +422,10 @@ const Dashboard = () => {
               aria-labelledby="btnGroupDrop3"
               className={`dropdown-menu ${showStatusDropdown ? "show" : ""}`}
             >
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="pending"
@@ -385,7 +434,10 @@ const Dashboard = () => {
                 />
                 Pending
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="approved"
@@ -394,7 +446,10 @@ const Dashboard = () => {
                 />
                 Approved
               </label>
-              <label className="dropdown-item checkbox">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="completed"
@@ -403,7 +458,10 @@ const Dashboard = () => {
                 />
                 Completed
               </label>
-              <label className="dropdown-item checkbox ">
+              <label
+                className="dropdown-item checkbox"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <input
                   type="checkbox"
                   value="canceled"
