@@ -1,17 +1,43 @@
 // homepage.js
 import shop1 from "./image/product1.jpg";
 import shop2 from "./image/product2.jpg";
-import React from "react";
+import React, { useEffect } from "react";
 import "./styles.css"; // Import CSS file for styling
+import { useNavigate } from "react-router-dom";
+import { getCurrentUserId } from "./firebase.js";
 const Shop = () => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const userId = getCurrentUserId();
+        if (!userId) {
+          navigate("/login"); // Redirect to login page if user is not logged in
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error.message);
+        navigate("/login"); // Redirect to login page if error occurs
+      }
+    };
+
+    checkLoggedInStatus();
+  }, [navigate]); // Pass navigate as a dependency to useEffect
+
   return (
     <section className="background-image">
-      <div className="homepage">
+      <div /*className="homepage"*/>
         <main>
-          <div className="gallery-container shop">
-            <div className="gallery-row">
-              <img src={shop1} alt="Shop 1" />
-              <img src={shop2} alt="Shop 2" />
+          <div /*className="gallery-container"*/ className="row">
+            <div /*className="gallery-row"*/ className="col-md-6">
+              <center>
+                <img src={shop1} alt="Gallery 1" className="image" />
+              </center>
+            </div>
+            <div /*className="gallery-row"*/ className="col-md-6">
+              <center>
+                <img src={shop2} alt="Gallery 2" className="image" />
+              </center>
             </div>
           </div>
         </main>

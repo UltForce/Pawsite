@@ -22,6 +22,7 @@ import {
 } from "./firebase";
 import Swal from "sweetalert2";
 import { Timestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
@@ -37,6 +38,24 @@ const Toast = Swal.mixin({
 
 // Component for booking appointments
 const Booking = ({ addNotification }) => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const userId = getCurrentUserId();
+        if (!userId) {
+          navigate("/login"); // Redirect to login page if user is not logged in
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error.message);
+        navigate("/login"); // Redirect to login page if error occurs
+      }
+    };
+
+    checkLoggedInStatus();
+  }, [navigate]); // Pass navigate as a dependency to useEffect
+
   const [appointments, setAppointments] = useState([]); // State for storing appointments
   const [selectedDate, setSelectedDate] = useState(null); // State for storing selected date
   const [formData, setFormData] = useState({

@@ -1,35 +1,56 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getFirestore, collection, getDocs } from "firebase/firestore"; // Import necessary Firestore functions
-
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getUserData,
+  getUserRoleFirestore,
+  getCurrentUserId,
+} from "./firebase";
+import { useNavigate } from "react-router-dom";
+import $ from "jquery";
+import "datatables.net";
+import "./dashboard.css";
 const Audit = () => {
+  const navigate = useNavigate();
   const [auditLogs, setAuditLogs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [logsPerPage] = useState(10); // Update logsPerPage to 10
-  const [filteredAuditLogs, setFilteredAuditLogs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilters, setTypeFilters] = useState([]);
-  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
-  const typeRef = useRef(null);
+  const dataTableRef = useRef(null);
+
+  useEffect(() => {
+    const checkAdminAndLoginStatus = async () => {
+      try {
+        const userRole = await getUserRoleFirestore(getCurrentUserId());
+        if (userRole !== "admin") {
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error checking user role:", error.message);
+        navigate("/login");
+      }
+    };
+
+    checkAdminAndLoginStatus();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchAuditLogs = async () => {
       try {
         const db = getFirestore();
         const snapshot = await getDocs(collection(db, "auditLogs"));
-        const logs = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const timestamp = data.timestamp
-            ? data.timestamp.toDate().toLocaleString()
-            : "";
-          return {
-            id: doc.id,
-            ...data,
-            timestamp: timestamp,
-          };
-        });
+        const logs = await Promise.all(
+          snapshot.docs.map(async (doc) => {
+            const data = doc.data();
+            const userData = await getUserData(data.userId);
+            const timestamp = data.timestamp ? data.timestamp.toDate() : "";
+            return {
+              id: doc.id,
+              firstname: userData ? userData.firstname : "",
+              lastname: userData ? userData.lastname : "",
+              eventType: data.eventType,
+              timestamp: timestamp,
+              details: data.details,
+            };
+          })
+        );
         setAuditLogs(logs);
-        setFilteredAuditLogs(logs);
-        sortFilteredLogs(logs);
       } catch (error) {
         console.error("Error fetching audit logs:", error);
       }
@@ -38,233 +59,97 @@ const Audit = () => {
     fetchAuditLogs();
   }, []);
 
-  const sortFilteredLogs = (logs) => {
-    const sortedLogs = logs.sort((a, b) => {
-      return new Date(b.timestamp) - new Date(a.timestamp);
-    });
-    setFilteredAuditLogs(sortedLogs);
-  };
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp || isNaN(timestamp)) {
+      return ""; // Return empty string or any other default value
+    }
 
-  const handleSearch = () => {
-    const filtered = auditLogs.filter((log) => {
-      const idMatch = log.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const userIdMatch = log.userId
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const typeFilterMatch =
-        typeFilters.length === 0 || typeFilters.includes(log.eventType);
-      return (idMatch || userIdMatch) && typeFilterMatch;
-    });
+    const dateTime = new Date(timestamp);
 
-    setFilteredAuditLogs(filtered);
-    sortFilteredLogs(filtered);
-    setCurrentPage(1); // Reset current page to 1 after search
+    // Extract date, day of the week, and hour
+    const year = dateTime.getFullYear();
+    const month = ("0" + (dateTime.getMonth() + 1)).slice(-2); // Adding leading zero for single digit months
+    const day = ("0" + dateTime.getDate()).slice(-2); // Adding leading zero for single digit days
+    const hour = ("0" + dateTime.getHours()).slice(-2); // Adding leading zero for single digit hours
+    const minutes = ("0" + dateTime.getMinutes()).slice(-2); // Adding leading zero for single digit minutes
+    const seconds = ("0" + dateTime.getSeconds()).slice(-2); // Adding leading zero for single digit seconds
+
+    // Format date string with spaces and without minutes and seconds
+    return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(event.target) &&
-        !event.target.classList.contains("btn-outline-secondary")
-      ) {
-        setShowTypeDropdown(false);
+    if (auditLogs.length > 0) {
+      if ($.fn.DataTable.isDataTable("#auditTable")) {
+        dataTableRef.current.clear().rows.add(auditLogs).draw();
+      } else {
+        initializeDataTable();
       }
-    };
+    }
+  }, [auditLogs]);
 
-    document.addEventListener("mousedown", handleClickOutside);
+  const initializeDataTable = () => {
+    const dataTable = $("#auditTable").DataTable({
+      lengthMenu: [10, 25, 50, 75, 100],
+      pagingType: "full_numbers",
+      order: [],
+      columnDefs: [{ targets: 2, type: "date" }],
+      drawCallback: function () {
+        $(this.api().table().container())
+          .find("td")
+          .css("border", "1px solid #ddd");
+      },
+      rowCallback: function (row, data, index) {
+        $(row).hover(
+          function () {
+            $(this).addClass("hover");
+          },
+          function () {
+            $(this).removeClass("hover");
+          }
+        );
+      },
+      stripeClasses: ["stripe1", "stripe2"],
+    });
+    dataTableRef.current = dataTable;
+  };
 
+  useEffect(() => {
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      // Cleanup function to destroy DataTable instance when component unmounts
+      if ($.fn.DataTable.isDataTable("#auditTable")) {
+        dataTableRef.current.destroy();
+      }
     };
   }, []);
 
-  const handleTypeFilterChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setTypeFilters([...typeFilters, value]);
-    } else {
-      setTypeFilters(typeFilters.filter((filter) => filter !== value));
-    }
-  };
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Logic for pagination
-  const indexOfLastLog = currentPage * logsPerPage;
-  const indexOfFirstLog = indexOfLastLog - logsPerPage;
-  const currentLogs = filteredAuditLogs.slice(indexOfFirstLog, indexOfLastLog);
-
   return (
-    <div className="background-image customerReport">
-      <h2>Audit Logs</h2>
-      <div className="search-container d-flex">
-        {/* Search input */}
-        <div className="form-floating">
-          <input
-            type="text"
-            placeholder="Search by id or User ID"
-            className="form-control me-sm-3 search"
-            id="floatingSearch"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <label htmlFor="floatingSearch">Search by id or User ID</label>
-        </div>
-        {/* Type dropdown */}
-        <div className="dropdown btn-group me-sm-3" ref={typeRef}>
-          <button
-            className="btn btn-outline-secondary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            id="btnGroupDrop1"
-            onClick={() => setShowTypeDropdown(!showTypeDropdown)}
-          >
-            Type
-          </button>
-          <div
-            aria-labelledby="btnGroupDrop1"
-            className={`dropdown-menu ${showTypeDropdown ? "show" : ""}`}
-          >
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Login"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Login")}
-              />
-              Login
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Logout"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Logout")}
-              />
-              Logout
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Report"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Report")}
-              />
-              Report
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Appointment"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Appointment")}
-              />
-              Appointment
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Service"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Service")}
-              />
-              Service
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Password"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Password")}
-              />
-              Password
-            </label>
-            <label
-              className="dropdown-item checkbox"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                value="Register"
-                onChange={handleTypeFilterChange}
-                checked={typeFilters.includes("Register")}
-              />
-              Register
-            </label>
-            {/* Add more checkboxes for other types */}
-          </div>
-        </div>
-
-        <button
-          className="btn btn-secondary my-2 my-sm-0"
-          onClick={handleSearch}
-        >
-          Search
-        </button>
-      </div>
+    <section className="background-image">
       <br />
-      <table className="w3-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Event Type</th>
-            <th>User ID</th>
-            <th>Timestamp</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentLogs.map((log) => (
-            <tr key={log.id}>
-              <td>{log.id}</td>
-              <td>{log.eventType}</td>
-              <td>{log.userId}</td>
-              <td>{log.timestamp}</td>
-              <td>{log.details}</td>
+      <h1 className="centered">Audit Logs</h1>
+      <div className="customerReport">
+        <table id="auditTable" className="display ">
+          <thead>
+            <tr>
+              <th>Event Type</th>
+              <th>Name</th>
+              <th>Timestamp</th>
+              <th>Details</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      {/* Pagination */}
-      <ul className="pagination">
-        {filteredAuditLogs.length > logsPerPage &&
-          Array.from({
-            length: Math.ceil(filteredAuditLogs.length / logsPerPage),
-          }).map((_, index) => (
-            <li key={index} className="page-item">
-              <button
-                onClick={() => paginate(index + 1)}
-                className={`page-link ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-              >
-                {index + 1}
-              </button>
-            </li>
-          ))}
-      </ul>
-    </div>
+          </thead>
+          <tbody>
+            {auditLogs.map((log) => (
+              <tr key={log.id}>
+                <td>{log.eventType}</td>
+                <td>{`${log.firstname} ${log.lastname}`}</td>
+                <td>{formatTimestamp(log.timestamp)}</td>
+                <td>{log.details}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 };
 

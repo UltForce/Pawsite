@@ -1,8 +1,26 @@
 // Terms.js
 
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUserId } from "./firebase.js";
 const Terms = () => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const userId = getCurrentUserId();
+        if (!userId) {
+          navigate("/login"); // Redirect to login page if user is not logged in
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error.message);
+        navigate("/login"); // Redirect to login page if error occurs
+      }
+    };
+
+    checkLoggedInStatus();
+  }, [navigate]); // Pass navigate as a dependency to useEffect
   const [isVisible, setIsVisible] = useState(false);
 
   const scrollToTop = () => {

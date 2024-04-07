@@ -405,9 +405,10 @@ footer {
 .gallery-container img {
   width: 100%; /* Ensure images fill their container */
   height: auto;
-  max-width: 250px; /* Set maximum width for each image */
-  max-height: 250px; /* Set maximum height for each image */
+  max-width: 300px; /* Set maximum width for each image */
+  max-height: 300px; /* Set maximum height for each image */
   object-fit: cover; /* Ensure images are cropped to fit the square shape */
+  margin-bottom: 25px; /* Adjust spacing between images */
 }
 
 .gallery-row {
@@ -420,10 +421,62 @@ footer {
   width: 100%; /* Ensure images fill their container */
   max-width: 100%;
   height: auto;
-  margin-bottom: 10px; /* Adjust spacing between images */
+  margin-bottom: 50px; /* Adjust spacing between images */
+}
+.image {
+  width: 95%;
+}
+label {
+  margin-left: 10px;
+}
+.register-label {
+  color: #888;
+}
+/* Custom CSS for DataTable */
+.dataTables_wrapper {
+  margin-top: 20px;
 }
 
-.shop {
-  max-width: 300px; /* Set maximum width for each image */
-  max-height: 3000px; /* Set maximum height for each image */
+.dataTables_length {
+  margin-bottom: 10px;
+}
+
+.dataTables_filter {
+  margin-bottom: 10px;
+}
+
+.dataTables_info {
+  margin-bottom: 10px;
+}
+
+.dataTables_paginate {
+  margin-top: 10px;
+}
+
+#appointmentsTable th,
+#appointmentsTable td {
+  text-align: left;
+  padding: 8px;
+}
+
+#appointmentsTable th {
+  background-color: #f2f2f2;
+}
+
+#appointmentsTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#appointmentsTable tbody tr:hover {
+  background-color: #ddd;
+}
+
+.report-header {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+}
+
+.report-header h3 {
+  margin: 0; /* Remove default margin */
+  margin-right: 100px;
 }

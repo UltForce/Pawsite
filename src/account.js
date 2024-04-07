@@ -6,7 +6,8 @@ import {
   AuditLogger,
 } from "./firebase"; // Make sure to import the necessary Firebase authentication and Firestore functions
 import Swal from "sweetalert2";
-
+import { useNavigate } from "react-router-dom";
+import { getCurrentUserId } from "./firebase.js";
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -20,6 +21,23 @@ const Toast = Swal.mixin({
 });
 
 const Account = () => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const userId = getCurrentUserId();
+        if (!userId) {
+          navigate("/login"); // Redirect to login page if user is not logged in
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error.message);
+        navigate("/login"); // Redirect to login page if error occurs
+      }
+    };
+
+    checkLoggedInStatus();
+  }, [navigate]); // Pass navigate as a dependency to useEffect
   const [user, setUser] = useState(null); // State to store the current user's data
   const [userData, setUserData] = useState(null); // State to store user data from Firestore
 
@@ -66,7 +84,7 @@ const Account = () => {
             userId: user.uid, // User ID associated with the event
             details: "Change Password link sent", // Details of the event
           };
-    
+
           // Call the AuditLogger function with the event object
           AuditLogger({ event });
           Swal.fire({

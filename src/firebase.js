@@ -207,7 +207,6 @@ const getAllData = async () => {
     return [];
   }
 };
-// Function to fetch user data from Firestore based on userId
 const getUserData = async (userId) => {
   try {
     // Construct reference to the user document

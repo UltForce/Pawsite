@@ -69,7 +69,9 @@ const Navbar = () => {
       if (result.isConfirmed) {
         try {
           const userId = getCurrentUserId();
-          await auth.signOut();
+          setIsLoggedIn(false); // Clear authentication state
+          setIsAdmin(false); // Clear admin state if needed
+          await auth.signOut();    
           navigate("/login");
           Toast.fire({
             icon: "success",
@@ -80,7 +82,7 @@ const Navbar = () => {
             userId: userId, // User ID associated with the event
             details: "User logged out", // Details of the event
           };
-    
+
           // Call the AuditLogger function with the event object
           AuditLogger({ event });
         } catch (error) {

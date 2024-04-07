@@ -104,7 +104,9 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <label for="floatingInput">Email address</label>
+          <label className="register-label" for="floatingInput">
+            Email address
+          </label>
         </div>
         <div class="form-floating">
           <input
@@ -116,7 +118,9 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <label for="floatingPassword">Password</label>
+          <label className="register-label" for="floatingPassword">
+            Password
+          </label>
         </div>
         <br />
         <button class="btn btn-outline-primary" onClick={handleLogin}>

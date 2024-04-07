@@ -24,10 +24,8 @@ import {
   FaEdit,
   FaTrash,
   FaPlus,
-  FaChevronLeft,
-  FaChevronRight,
 } from "react-icons/fa"; // Import FontAwesome icons
-
+import { useNavigate } from "react-router-dom";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
@@ -42,6 +40,24 @@ const Toast = Swal.mixin({
 });
 
 const Services = () => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const userId = getCurrentUserId();
+        if (!userId) {
+          navigate("/login"); // Redirect to login page if user is not logged in
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error.message);
+        navigate("/login"); // Redirect to login page if error occurs
+      }
+    };
+
+    checkLoggedInStatus();
+  }, [navigate]); // Pass navigate as a dependency to useEffect
+
   const [isAdmin, setIsAdmin] = useState(false); // Initially set to false
   // State to hold services data
   const [services, setServices] = useState([]);
@@ -331,12 +347,6 @@ const Services = () => {
         });
       }
     });
-  };
-
-  // Function to handle image input change
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, image: file });
   };
 
   // Fetch services data on component mount
