@@ -21,6 +21,11 @@ const Homepage = () => {
 
     checkLoggedInStatus();
   }, [navigate]); // Pass navigate as a dependency to useEffect
+
+  const handleBookNowClick = () => {
+    navigate("/booking"); // Redirect to booking page when "Book now" button is clicked
+  };
+
   return (
     <section className="background-image">
       <div className="homepage centered">
@@ -53,6 +58,10 @@ const Homepage = () => {
           </section>
         </main>
       </div>
+      {/* Floating "Book now" button */}
+      <button className="book-now-button" onClick={handleBookNowClick}>
+        Book now
+      </button>
     </section>
   );
 };

@@ -480,3 +480,21 @@ label {
   margin: 0; /* Remove default margin */
   margin-right: 100px;
 }
+
+/* Add these styles to your CSS file */
+.book-now-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 3em;
+  padding: 10px 20px;
+  background-color: black;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book-now-button:hover {
+  background-color: white;
+}
