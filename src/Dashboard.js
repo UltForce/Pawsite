@@ -126,6 +126,22 @@ const Dashboard = () => {
     return `${year}-${month}-${day} ${dayOfWeek} ${hour}:${minutes}`;
   };
 
+  const vaccinationformatDateTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    // Check if dateTimeString is not applicable
+    if (!dateTimeString) {
+      return "N/A";
+    }
+    // Extract date, day of the week, and hour
+    const year = dateTime.getFullYear();
+    const month = ("0" + (dateTime.getMonth() + 1)).slice(-2); // Adding leading zero for single digit months
+    const day = ("0" + dateTime.getDate()).slice(-2); // Adding leading zero for single digit days
+    const dayOfWeek = dateTime.toLocaleDateString("en-US", { weekday: "long" });
+
+    // Format date string with spaces and without minutes and seconds
+    return `${year}-${month}-${day} ${dayOfWeek}`;
+  };
+
   return (
     <section className="background-image">
       <h1 className="centered">Dashboard</h1>
@@ -219,10 +235,12 @@ const Dashboard = () => {
                 <td>{appointment.weight}</td>
                 <td>{appointment.age}</td>
                 <td>{appointment.color}</td>
-                <td>{formatDateTime(appointment.birthdate)}</td>
+                <td>{vaccinationformatDateTime(appointment.birthdate)}</td>
                 <td>{appointment.gender}</td>
                 <td>{appointment.vaccination}</td>
-                <td>{formatDateTime(appointment.vaccinationDate)}</td>
+                <td>
+                  {vaccinationformatDateTime(appointment.vaccinationDate)}
+                </td>
                 <td>{appointment.firstGrooming}</td>
                 <td>{appointment.status}</td>
               </tr>

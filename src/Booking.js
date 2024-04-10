@@ -86,6 +86,7 @@ const Booking = ({ addNotification }) => {
   const BreedNumberInputRef = useRef(null);
   const WeightInputRef = useRef(null);
   const AgeInputRef = useRef(null);
+  const ColorInputRef = useRef(null);
 
   const calendarRef = useRef(null);
   // Object mapping appointment status to colors
@@ -766,7 +767,24 @@ const Booking = ({ addNotification }) => {
         WeightInputRef.current.focus();
       } else if (event.target.id === "floatingWeight") {
         AgeInputRef.current.focus();
+      } else if (event.target.id === "floatingAge") {
+        ColorInputRef.current.focus();
       }
+    }
+  };
+  // Define handleVaccinationChange function to update vaccination status and date in formData state
+  const handleVaccinationChange = (e) => {
+    const vaccinationStatus = e.target.value;
+
+    // Update vaccination status
+    setFormData({ ...formData, vaccination: vaccinationStatus });
+
+    // If vaccination status is "no", set vaccination date to "N/A"
+    if (vaccinationStatus === "no") {
+      setFormData({ ...formData, vaccination: "no", vaccinationDate: "" });
+    } else if (formData.vaccination === "no") {
+      // If changing from "no" to "yes", clear vaccination date
+      setFormData({ ...formData, vaccinationDate: "" });
     }
   };
 
@@ -787,9 +805,28 @@ const Booking = ({ addNotification }) => {
   // Define handleVaccinationDateChange function to update vaccination date in formData state
   const handleVaccinationDateChange = (e) => {
     const selectedDate = e.target.value;
+    const petBirthdate = formData.birthdate; // Get pet's birthdate from formData state
+
+    if (!petBirthdate) {
+      // Check if pet's birthdate is not set
+      Toast.fire({
+        icon: "error",
+        title: "Please set the pet's birthdate first",
+      });
+      return; // Exit function early
+    }
+
     // Check if selected date is not in the future
     if (selectedDate <= new Date().toISOString().split("T")[0]) {
-      setFormData({ ...formData, vaccinationDate: selectedDate });
+      // Check if selected date is later than pet's birthdate
+      if (selectedDate >= petBirthdate) {
+        setFormData({ ...formData, vaccinationDate: selectedDate });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "Vaccination date cannot be earlier than pet's birthdate",
+        });
+      }
     } else {
       Toast.fire({
         icon: "error",
@@ -1035,6 +1072,7 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, age: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
                     ref={AgeInputRef}
                   />
                 </div>
@@ -1055,6 +1093,7 @@ const Booking = ({ addNotification }) => {
                       setFormData({ ...formData, color: e.target.value })
                     }
                     onKeyPress={handleKeyPress}
+                    ref={ColorInputRef}
                   />
                 </div>
                 <div>
@@ -1119,7 +1158,7 @@ const Booking = ({ addNotification }) => {
                 <div>
                   <label
                     className="col-form-label col-form-label-sm"
-                    htmlFor="genderOptions"
+                    htmlFor="vaccinationOptions"
                   >
                     Vaccination:
                   </label>
@@ -1154,12 +1193,7 @@ const Booking = ({ addNotification }) => {
                         id="vaccinationno"
                         value="no"
                         checked={formData.vaccination === "no"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            vaccination: e.target.value,
-                          })
-                        }
+                        onChange={handleVaccinationChange}
                       />
                       <label
                         className="form-check-label"

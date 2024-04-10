@@ -56,20 +56,19 @@ const Notifications = () => {
           <table className="account-table centered">
             <tbody>
               {notifications.map((notification, index) => (
-                <p>
-                  {notification.message}
-                  <tr key={index}>
-                    {notification.data &&
-                      Object.entries(JSON.parse(notification.data)).map(
-                        ([key, value]) => (
+                <tr key={index}>
+                  <p>{notification.message}</p>
+                  {notification.data &&
+                    Object.entries(JSON.parse(notification.data)).map(
+                      ([key, value]) =>
+                        key !== "appointmentId" && (
                           <tr className="notification-header" key={key}>
                             <th className="notification-header">{key}:</th>
                             <td className="notification-value">{value}</td>
                           </tr>
                         )
-                      )}
-                  </tr>
-                </p>
+                    )}
+                </tr>
               ))}
             </tbody>
           </table>
