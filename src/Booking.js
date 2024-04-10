@@ -812,6 +812,7 @@ const Booking = ({ addNotification }) => {
                     <option value="Anal Sac">Anal Sac</option>
                     <option value="Bath / Dry">Bath / Dry</option>
                     <option value="Basic Grooming">Basic Grooming</option>
+                    <option value="Full Grooming">Full Grooming</option>
                     <option value="Cat Grooming">Cat Grooming</option>
                   </select>
                 </div>
