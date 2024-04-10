@@ -21,7 +21,6 @@ import {
   AuditLogger,
 } from "./firebase";
 import Swal from "sweetalert2";
-import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
@@ -61,7 +60,7 @@ const Booking = ({ addNotification }) => {
   const [formData, setFormData] = useState({
     // State for form data
     name: "",
-    appointmentType: "onsite",
+    appointmentType: "",
     serviceType: "Nail Trim",
     petName: "",
     species: "",
@@ -69,6 +68,12 @@ const Booking = ({ addNotification }) => {
     weight: "",
     age: "",
     status: "pending",
+    birthdate: "",
+    gender: "",
+    color: "",
+    vaccination: "",
+    vaccinationDate: "N/A",
+    firstGrooming: "",
   });
   const [isFormOpen, setIsFormOpen] = useState(false); // State for controlling form visibility
   const [isValidDaySelected, setIsValidDaySelected] = useState(false); // State for checking if a valid day is selected
@@ -167,6 +172,12 @@ const Booking = ({ addNotification }) => {
           breed: clickedAppointment.breed,
           weight: clickedAppointment.weight,
           age: clickedAppointment.age,
+          birthdate: clickedAppointment.birthdate,
+          gender: clickedAppointment.gender,
+          color: clickedAppointment.color,
+          vaccination: clickedAppointment.vaccination,
+          vaccinationDate: clickedAppointment.vaccinationDate,
+          firstGrooming: clickedAppointment.firstGrooming,
         });
         setSelectedDate(clickedAppointment.date); // Set selected date
         setIsFormOpen(true); // Open form
@@ -200,7 +211,6 @@ const Booking = ({ addNotification }) => {
 
     const updatedFormData = {
       ...formData,
-      appointmentType: formData.appointmentType || "onsite",
       serviceType: formData.serviceType || "Nail Trim",
     };
 
@@ -210,7 +220,12 @@ const Booking = ({ addNotification }) => {
       !updatedFormData.species ||
       !updatedFormData.breed ||
       !updatedFormData.weight ||
-      !updatedFormData.age
+      !updatedFormData.age ||
+      !updatedFormData.birthdate ||
+      !updatedFormData.gender ||
+      !updatedFormData.color ||
+      !updatedFormData.vaccination ||
+      !updatedFormData.firstGrooming
     ) {
       Toast.fire({
         icon: "error",
@@ -240,6 +255,12 @@ const Booking = ({ addNotification }) => {
             breed: formData.breed,
             weight: formData.weight,
             age: formData.age,
+            birthdate: formData.birthdate,
+            gender: formData.gender,
+            color: formData.color,
+            vaccination: formData.vaccination,
+            vaccinationDate: formData.vaccinationDate,
+            firstGrooming: formData.firstGrooming,
           });
           addNotification({
             id: Date.now(),
@@ -258,13 +279,19 @@ const Booking = ({ addNotification }) => {
           setIsValidDaySelected(false);
           setFormData({
             name: "",
-            appointmentType: "onsite",
+            appointmentType: "",
             serviceType: "Nail Trim",
             petName: "",
             species: "",
             breed: "",
             weight: "",
             age: "",
+            birthdate: "",
+            gender: "",
+            color: "",
+            vaccination: "",
+            vaccinationDate: "N/A",
+            firstGrooming: "",
           });
           // Show success message
           Swal.fire({
@@ -307,6 +334,12 @@ const Booking = ({ addNotification }) => {
             weight: formData.weight,
             age: formData.age,
             status: formData.status,
+            birthdate: formData.birthdate,
+            gender: formData.gender,
+            color: formData.color,
+            vaccination: formData.vaccination,
+            vaccinationDate: formData.vaccinationDate,
+            firstGrooming: formData.firstGrooming,
           });
           addNotification({
             id: Date.now(),
@@ -317,13 +350,19 @@ const Booking = ({ addNotification }) => {
           setIsValidDaySelected(false);
           setFormData({
             name: "",
-            appointmentType: "onsite",
+            appointmentType: "",
             serviceType: "Nail Trim",
             petName: "",
             species: "",
             breed: "",
             weight: "",
             age: "",
+            birthdate: "",
+            gender: "",
+            color: "",
+            vaccination: "",
+            vaccinationDate: "N/A",
+            firstGrooming: "",
           });
           // Show success message
           Swal.fire({
@@ -386,13 +425,19 @@ const Booking = ({ addNotification }) => {
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
-                appointmentType: "onsite",
+                appointmentType: "",
                 serviceType: "Nail Trim",
                 petName: "",
                 species: "",
                 breed: "",
                 weight: "",
                 age: "",
+                birthdate: "",
+                gender: "",
+                color: "",
+                vaccination: "",
+                vaccinationDate: "N/A",
+                firstGrooming: "",
               });
               addNotification({
                 id: Date.now(),
@@ -448,13 +493,19 @@ const Booking = ({ addNotification }) => {
               setIsValidDaySelected(false);
               setFormData({
                 name: "",
-                appointmentType: "onsite",
+                appointmentType: "",
                 serviceType: "Nail Trim",
                 petName: "",
                 species: "",
                 breed: "",
                 weight: "",
                 age: "",
+                birthdate: "",
+                gender: "",
+                color: "",
+                vaccination: "",
+                vaccinationDate: "N/A",
+                firstGrooming: "",
               });
               addNotification({
                 id: Date.now(),
@@ -577,13 +628,19 @@ const Booking = ({ addNotification }) => {
     setFormData({
       // Reset form data
       name: "",
-      appointmentType: "onsite",
+      appointmentType: "",
       serviceType: "Nail Trim",
       petName: "",
       species: "",
       breed: "",
       weight: "",
       age: "",
+      birthdate: "",
+      gender: "",
+      color: "",
+      vaccination: "",
+      vaccinationDate: "N/A",
+      firstGrooming: "",
     });
   };
 
@@ -627,13 +684,19 @@ const Booking = ({ addNotification }) => {
         setIsValidDaySelected(false);
         setFormData({
           name: "",
-          appointmentType: "onsite",
+          appointmentType: "",
           serviceType: "Nail Trim",
           petName: "",
           species: "",
           breed: "",
           weight: "",
           age: "",
+          birthdate: "",
+          gender: "",
+          color: "",
+          vaccination: "",
+          vaccinationDate: "N/A",
+          firstGrooming: "",
         });
         addNotification({
           id: Date.now(),
@@ -707,6 +770,34 @@ const Booking = ({ addNotification }) => {
     }
   };
 
+  // Define handleBirthdateChange function to update birthdate in formData state
+  const handleBirthdateChange = (e) => {
+    const selectedDate = e.target.value;
+    // Check if selected date is not in the future
+    if (selectedDate <= new Date().toISOString().split("T")[0]) {
+      setFormData({ ...formData, birthdate: selectedDate });
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: "Birthdate cannot be in the future",
+      });
+    }
+  };
+
+  // Define handleVaccinationDateChange function to update vaccination date in formData state
+  const handleVaccinationDateChange = (e) => {
+    const selectedDate = e.target.value;
+    // Check if selected date is not in the future
+    if (selectedDate <= new Date().toISOString().split("T")[0]) {
+      setFormData({ ...formData, vaccinationDate: selectedDate });
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: "Vaccination date cannot be in the future",
+      });
+    }
+  };
+
   return (
     <section className="background-shadow">
       <div style={{ display: "flex" }}>
@@ -742,7 +833,8 @@ const Booking = ({ addNotification }) => {
             eventClick={handleEventClick}
             allDaySlot={false}
             datesSet={handleViewChange}
-            height="640px"
+            expandRows={true}
+            height="975px"
             eventTimeFormat={{
               // Set custom time format
               hour: "numeric",
@@ -750,8 +842,7 @@ const Booking = ({ addNotification }) => {
             }}
             slotMinTime="08:00:00" // Set the earliest time to 8am
             slotMaxTime="17:30:00" // Set the latest time to 5pm
-            slotDuration="00:30:00" // Set the duration of each time slot to 30 minutes
-            slotLabelInterval="00:30:00" // Show slot labels every hour
+            slotDuration="01:00:00" // Set the duration of each time slot to 30 minutes
           />
         </div>
         <div style={{ flex: 0.3 }}>
@@ -779,20 +870,52 @@ const Booking = ({ addNotification }) => {
                   />
                 </div>
                 <div>
-                  <label>Appointment Type:</label>
-                  <select
-                    class="form-select form-select-sm booking-form"
-                    value={formData.appointmentType}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        appointmentType: e.target.value,
-                      })
-                    }
+                  <label
+                    className="col-form-label col-form-label-sm"
+                    for="typeOptions"
                   >
-                    <option value="onsite">Onsite</option>
-                    <option value="home">Home</option>
-                  </select>
+                    Appointment Type:
+                  </label>
+                  <div id="typeOptions">
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="type"
+                        id="onsite"
+                        value="onsite"
+                        checked={formData.appointmentType === "onsite"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            appointmentType: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="onsite">
+                        Onsite
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="type"
+                        id="home"
+                        value="home"
+                        checked={formData.appointmentType === "home"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            appointmentType: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="home">
+                        Home
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label>Service Type:</label>
@@ -841,7 +964,7 @@ const Booking = ({ addNotification }) => {
                     class="col-form-label col-form-label-sm"
                     for="floatingSpecies"
                   >
-                    Species:
+                    Pet Species:
                   </label>
                   <input
                     type="text"
@@ -861,7 +984,7 @@ const Booking = ({ addNotification }) => {
                     class="col-form-label col-form-label-sm"
                     for="floatingBreed"
                   >
-                    Breed:
+                    Pet Breed:
                   </label>
                   <input
                     type="text"
@@ -881,7 +1004,7 @@ const Booking = ({ addNotification }) => {
                     class="col-form-label col-form-label-sm"
                     for="floatingWeight"
                   >
-                    Weight: (kg)
+                    Pet Weight: (kg)
                   </label>
                   <input
                     type="number"
@@ -901,7 +1024,7 @@ const Booking = ({ addNotification }) => {
                     class="col-form-label col-form-label-sm"
                     for="floatingAge"
                   >
-                    Age:
+                    Pet Age:
                   </label>
                   <input
                     type="number"
@@ -915,7 +1038,205 @@ const Booking = ({ addNotification }) => {
                     ref={AgeInputRef}
                   />
                 </div>
+                <div>
+                  <label
+                    class="col-form-label col-form-label-sm"
+                    for="floatingColor"
+                  >
+                    Pet Color:
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm booking-form"
+                    placeholder="Pet Color"
+                    id="floatingColor"
+                    value={formData.color}
+                    onChange={(e) =>
+                      setFormData({ ...formData, color: e.target.value })
+                    }
+                    onKeyPress={handleKeyPress}
+                  />
+                </div>
+                <div>
+                  <label
+                    class="col-form-label col-form-label-sm"
+                    for="floatingBirthdate"
+                  >
+                    Pet Birthdate:
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control form-control-sm booking-form"
+                    placeholder="Pet Birthdate"
+                    id="floatingBirthdate"
+                    value={formData.birthdate}
+                    onChange={handleBirthdateChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="col-form-label col-form-label-sm"
+                    for="genderOptions"
+                  >
+                    Pet Gender:
+                  </label>
+                  <div id="genderOptions">
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="gender"
+                        id="male"
+                        value="male"
+                        checked={formData.gender === "male"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({ ...formData, gender: e.target.value })
+                        }
+                      />
+                      <label className="form-check-label" for="male">
+                        Male
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="gender"
+                        id="female"
+                        value="female"
+                        checked={formData.gender === "female"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({ ...formData, gender: e.target.value })
+                        }
+                      />
+                      <label className="form-check-label" for="female">
+                        Female
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
+                <div>
+                  <label
+                    className="col-form-label col-form-label-sm"
+                    htmlFor="genderOptions"
+                  >
+                    Vaccination:
+                  </label>
+                  <div id="vaccinationOptions">
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="vaccination"
+                        id="vaccinationyes"
+                        value="yes"
+                        checked={formData.vaccination === "yes"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            vaccination: e.target.value,
+                          })
+                        }
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="vaccinationyes"
+                      >
+                        Yes
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="vaccination"
+                        id="vaccinationno"
+                        value="no"
+                        checked={formData.vaccination === "no"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            vaccination: e.target.value,
+                          })
+                        }
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="vaccinationno"
+                      >
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                {formData.vaccination === "yes" && ( // Conditionally render if vaccination is yes
+                  <div>
+                    <label
+                      className="col-form-label col-form-label-sm"
+                      htmlFor="vaccinationDate"
+                    >
+                      Vaccination Date:
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control form-control-sm booking-form"
+                      id="vaccinationDate"
+                      value={formData.vaccinationDate}
+                      onChange={handleVaccinationDateChange}
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label
+                    className="col-form-label col-form-label-sm"
+                    for="groomingOptions"
+                  >
+                    First Grooming:
+                  </label>
+                  <div id="groomingOptions">
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="grooming"
+                        id="groomingyes"
+                        value="yes"
+                        checked={formData.firstGrooming === "yes"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstGrooming: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="groomingyes">
+                        Yes
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="grooming"
+                        id="groomingno"
+                        value="no"
+                        checked={formData.firstGrooming === "no"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstGrooming: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="groomingno">
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <br />
                 <div>
                   <input
                     type="checkbox"
@@ -1023,6 +1344,7 @@ const Booking = ({ addNotification }) => {
           )}
         </div>
       </div>
+      <br />
     </section>
   );
 };

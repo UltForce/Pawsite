@@ -57,12 +57,7 @@ const Services = () => {
   const [isAdmin, setIsAdmin] = useState(false); // Initially set to false
   // State to hold services data
   const [services, setServices] = useState([]);
-  // State to hold form data
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    image: null, // State to hold the selected image file
-  });
+
   // State to hold current index for pagination
   const [currentIndex, setCurrentIndex] = useState(0);
   // Number of cards to display at a time

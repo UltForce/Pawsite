@@ -111,7 +111,10 @@ const Dashboard = () => {
 
   const formatDateTime = (dateTimeString) => {
     const dateTime = new Date(dateTimeString);
-
+    // Check if dateTimeString is not applicable
+    if (!dateTimeString) {
+      return "N/A";
+    }
     // Extract date, day of the week, and hour
     const year = dateTime.getFullYear();
     const month = ("0" + (dateTime.getMonth() + 1)).slice(-2); // Adding leading zero for single digit months
@@ -190,10 +193,16 @@ const Dashboard = () => {
               <th>Type</th>
               <th>Service</th>
               <th>Pet Name</th>
-              <th>Species</th>
-              <th>Breed</th>
-              <th>Weight (kg)</th>
-              <th>Age</th>
+              <th>Pet Species</th>
+              <th>Pet Breed</th>
+              <th>Pet Weight (kg)</th>
+              <th>Pet Age</th>
+              <th>Pet Color</th>
+              <th>Pet Birthdate</th>
+              <th>Pet Gender</th>
+              <th>Vaccination</th>
+              <th>Vaccination Date</th>
+              <th>First Grooming</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -209,6 +218,12 @@ const Dashboard = () => {
                 <td>{appointment.breed}</td>
                 <td>{appointment.weight}</td>
                 <td>{appointment.age}</td>
+                <td>{appointment.color}</td>
+                <td>{formatDateTime(appointment.birthdate)}</td>
+                <td>{appointment.gender}</td>
+                <td>{appointment.vaccination}</td>
+                <td>{formatDateTime(appointment.vaccinationDate)}</td>
+                <td>{appointment.firstGrooming}</td>
                 <td>{appointment.status}</td>
               </tr>
             ))}
