@@ -68,6 +68,13 @@ const Reset = () => {
     });
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      // Check if the pressed key is Enter
+      handleReset(); // Call handleLogin function when Enter key is pressed
+    }
+  };
+
   return (
     <div className="centered background-image">
       <h2>Password Reset</h2>
@@ -87,9 +94,16 @@ const Reset = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyPress={handleKeyPress} // Call handleKeyPress function on key press
           />
           <br />
-          <button onClick={handleReset}>Send Reset Email</button>
+          <button
+            class="btn btn-outline-primary"
+            onClick={handleReset}
+            onKeyPress={handleKeyPress} // Call handleKeyPress function on key press
+          >
+            Send Reset Email
+          </button>
         </>
       )}
       <br />

@@ -76,6 +76,12 @@ const Booking = ({ addNotification }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const PetNameInputRef = useRef(null);
+  const SpeciesInputRef = useRef(null);
+  const BreedNumberInputRef = useRef(null);
+  const WeightInputRef = useRef(null);
+  const AgeInputRef = useRef(null);
+
   const calendarRef = useRef(null);
   // Object mapping appointment status to colors
   const statusColors = {
@@ -684,6 +690,23 @@ const Booking = ({ addNotification }) => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      // Check if the pressed key is Enter
+      if (event.target.id === "floatingName") {
+        PetNameInputRef.current.focus();
+      } else if (event.target.id === "floatingPet") {
+        SpeciesInputRef.current.focus();
+      } else if (event.target.id === "floatingSpecies") {
+        BreedNumberInputRef.current.focus();
+      } else if (event.target.id === "floatingBreed") {
+        WeightInputRef.current.focus();
+      } else if (event.target.id === "floatingWeight") {
+        AgeInputRef.current.focus();
+      }
+    }
+  };
+
   return (
     <section className="background-shadow">
       <div style={{ display: "flex" }}>
@@ -749,6 +772,7 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
                   />
                 </div>
                 <div>
@@ -798,6 +822,8 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, petName: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
+                    ref={PetNameInputRef}
                   />
                 </div>
                 <div>
@@ -816,6 +842,8 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, species: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
+                    ref={SpeciesInputRef}
                   />
                 </div>
                 <div>
@@ -834,6 +862,8 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, breed: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
+                    ref={BreedNumberInputRef}
                   />
                 </div>
                 <div>
@@ -852,6 +882,8 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, weight: e.target.value })
                     }
+                    onKeyPress={handleKeyPress}
+                    ref={WeightInputRef}
                   />
                 </div>
                 <div>
@@ -870,6 +902,7 @@ const Booking = ({ addNotification }) => {
                     onChange={(e) =>
                       setFormData({ ...formData, age: e.target.value })
                     }
+                    ref={AgeInputRef}
                   />
                 </div>
 

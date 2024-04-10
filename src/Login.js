@@ -1,5 +1,5 @@
 // Login.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   auth,
@@ -25,6 +25,7 @@ const Toast = Swal.mixin({
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const passwordInputRef = useRef(null); // Create a ref for the password input field
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -71,6 +72,18 @@ const Login = () => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      // Check if the pressed key is Enter
+      if (event.target.id === "floatingInput") {
+        // If the Enter key is pressed on the email input field
+        passwordInputRef.current.focus(); // Move focus to the password input field
+      } else {
+        handleLogin(); // Call handleLogin function when Enter key is pressed on password field
+      }
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -103,6 +116,7 @@ const Login = () => {
             placeholder="email@gmail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyPress={handleKeyPress} // Call handleKeyPress function on key press
           />
           <label className="register-label" for="floatingInput">
             Email address
@@ -111,12 +125,14 @@ const Login = () => {
         <div class="form-floating">
           <input
             type="password"
-            class="form-control"
+            className="form-control"
             id="floatingPassword"
             placeholder="Password"
-            autocomplete="off"
+            autoComplete="off"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress} // Call handleKeyPress function on key press
+            ref={passwordInputRef} // Set the ref to the password input field
           />
           <label className="register-label" for="floatingPassword">
             Password

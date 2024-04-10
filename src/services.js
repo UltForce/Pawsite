@@ -20,11 +20,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import Swal from "sweetalert2";
-import {
-  FaEdit,
-  FaTrash,
-  FaPlus,
-} from "react-icons/fa"; // Import FontAwesome icons
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa"; // Import FontAwesome icons
 import { useNavigate } from "react-router-dom";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
@@ -257,10 +253,10 @@ const Services = () => {
   const handleEdit = (service) => {
     Swal.fire({
       title: "Edit Service",
-      html:
-        '<div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name"><label for="swal-input-name">Name</label></div>' +
-        '<div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description"><label for="swal-input-description">Description</label></div>' +
-        '<div><input type="file" id="swal-input-image" accept=".jpg, .jpeg, .png" class="form-control">',
+      html: `
+        <div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name" value="${service.name}" ><label for="swal-input-name">Name</label></div>
+        <div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description" value="${service.description}"><label for="swal-input-description">Description</label></div>
+        <div><input type="file" id="swal-input-image" accept=".jpg, .jpeg, .png" class="form-control" value="${service.image}">`,
       focusConfirm: false,
       preConfirm: async () => {
         const name = document.getElementById("swal-input-name").value;
