@@ -120,7 +120,7 @@ const Register = () => {
               });
             }
           });
-          navigate("/homepage");
+          navigate("/login");
         }
       });
     } catch (error) {

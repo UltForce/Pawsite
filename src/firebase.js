@@ -291,7 +291,6 @@ const generateReports = async () => {
     // Add worksheets to workbook
     XLSX.utils.book_append_sheet(wb, appointmentsWs, "Appointments");
     XLSX.utils.book_append_sheet(wb, usersWs, "Users");
-
     // Generate Excel file
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
 
