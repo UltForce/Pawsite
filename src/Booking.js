@@ -62,7 +62,7 @@ const Booking = ({ addNotification }) => {
     // State for form data
     name: "",
     appointmentType: "onsite",
-    serviceType: "bathing",
+    serviceType: "Nail Trim",
     petName: "",
     species: "",
     breed: "",
@@ -201,7 +201,7 @@ const Booking = ({ addNotification }) => {
     const updatedFormData = {
       ...formData,
       appointmentType: formData.appointmentType || "onsite",
-      serviceType: formData.serviceType || "bathing",
+      serviceType: formData.serviceType || "Nail Trim",
     };
 
     if (
@@ -259,7 +259,7 @@ const Booking = ({ addNotification }) => {
           setFormData({
             name: "",
             appointmentType: "onsite",
-            serviceType: "bathing",
+            serviceType: "Nail Trim",
             petName: "",
             species: "",
             breed: "",
@@ -318,7 +318,7 @@ const Booking = ({ addNotification }) => {
           setFormData({
             name: "",
             appointmentType: "onsite",
-            serviceType: "bathing",
+            serviceType: "Nail Trim",
             petName: "",
             species: "",
             breed: "",
@@ -387,7 +387,7 @@ const Booking = ({ addNotification }) => {
               setFormData({
                 name: "",
                 appointmentType: "onsite",
-                serviceType: "bathing",
+                serviceType: "Nail Trim",
                 petName: "",
                 species: "",
                 breed: "",
@@ -449,7 +449,7 @@ const Booking = ({ addNotification }) => {
               setFormData({
                 name: "",
                 appointmentType: "onsite",
-                serviceType: "bathing",
+                serviceType: "Nail Trim",
                 petName: "",
                 species: "",
                 breed: "",
@@ -578,7 +578,7 @@ const Booking = ({ addNotification }) => {
       // Reset form data
       name: "",
       appointmentType: "onsite",
-      serviceType: "bathing",
+      serviceType: "Nail Trim",
       petName: "",
       species: "",
       breed: "",
@@ -628,7 +628,7 @@ const Booking = ({ addNotification }) => {
         setFormData({
           name: "",
           appointmentType: "onsite",
-          serviceType: "bathing",
+          serviceType: "Nail Trim",
           petName: "",
           species: "",
           breed: "",
