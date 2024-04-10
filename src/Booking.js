@@ -728,7 +728,7 @@ const Booking = ({ addNotification }) => {
             headerToolbar={{
               left: "prev,next today",
               center: "title",
-              right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek,listDay",
+              right: "dayGridMonth,timeGridDay,timeGridWeek,listDay",
             }}
             events={appointments.map((appointment) => ({
               id: appointment.id,
@@ -740,7 +740,6 @@ const Booking = ({ addNotification }) => {
             selectable={true}
             select={handleDateSelect}
             eventClick={handleEventClick}
-            slotDuration="01:00:00"
             allDaySlot={false}
             datesSet={handleViewChange}
             height="640px"
@@ -749,6 +748,10 @@ const Booking = ({ addNotification }) => {
               hour: "numeric",
               minute: "numeric",
             }}
+            slotMinTime="08:00:00" // Set the earliest time to 8am
+            slotMaxTime="17:30:00" // Set the latest time to 5pm
+            slotDuration="00:30:00" // Set the duration of each time slot to 30 minutes
+            slotLabelInterval="00:30:00" // Show slot labels every hour
           />
         </div>
         <div style={{ flex: 0.3 }}>
@@ -800,10 +803,16 @@ const Booking = ({ addNotification }) => {
                       setFormData({ ...formData, serviceType: e.target.value })
                     }
                   >
-                    <option value="bathing">Bathing</option>
-                    <option value="haircutting">Haircutting</option>
-                    <option value="nail trimming">Nail Trimming</option>
-                    <option value="ear trimming">Ear Trimming</option>
+                    <option value="Nail Trim">Nail Trim</option>
+                    <option value="Paw Trim">Paw Trim</option>
+                    <option value="Face Trim">Face Trim</option>
+                    <option value="Sanitary Trim">Sanitary Trim</option>
+                    <option value="Teethbrushing">Teethbrushing</option>
+                    <option value="Ear Cleaning">Ear Cleaning</option>
+                    <option value="Anal Sac">Anal Sac</option>
+                    <option value="Bath / Dry">Bath / Dry</option>
+                    <option value="Basic Grooming">Basic Grooming</option>
+                    <option value="Cat Grooming">Cat Grooming</option>
                   </select>
                 </div>
                 <div>

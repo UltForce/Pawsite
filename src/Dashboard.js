@@ -118,9 +118,9 @@ const Dashboard = () => {
     const day = ("0" + dateTime.getDate()).slice(-2); // Adding leading zero for single digit days
     const dayOfWeek = dateTime.toLocaleDateString("en-US", { weekday: "long" });
     const hour = ("0" + dateTime.getHours()).slice(-2); // Adding leading zero for single digit hours
-
+    const minutes = ("0" + dateTime.getMinutes()).slice(-2); // Adding leading zero for single digit hours
     // Format date string with spaces and without minutes and seconds
-    return `${year}-${month}-${day} ${dayOfWeek} ${hour}:00`;
+    return `${year}-${month}-${day} ${dayOfWeek} ${hour}:${minutes}`;
   };
 
   return (
