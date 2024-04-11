@@ -163,7 +163,7 @@ const Dashboard = () => {
                 <th>Pending</th>
                 <th>Approved</th>
                 <th>Completed</th>
-                <th>Canceled</th>
+                <th>Cancelled</th>
               </tr>
             </thead>
             <tbody>
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 <td>
                   {
                     appointments.filter(
-                      (appointment) => appointment.status === "canceled"
+                      (appointment) => appointment.status === "cancelled"
                     ).length
                   }
                 </td>
