@@ -70,15 +70,31 @@ const Register = () => {
       });
       return; // Exit early if fields are empty
     }
-    try {
-      Swal.fire({
-        icon: "question",
-        title: "Do you want to register this account?",
-        showDenyButton: true,
-        confirmButtonText: "Yes",
-        denyButtonText: `No`,
-      }).then(async (result) => {
-        if (result.isConfirmed) {
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Toast.fire({
+        icon: "error",
+        title: "Invalid email address.",
+      });
+      return; // Exit early if email is invalid
+    }
+
+    if (password.length < 6) {
+      Toast.fire({
+        icon: "error",
+        title: "Password must be at least 6 characters long.",
+      });
+      return; // Exit early if password is less than 6 characters
+    }
+
+    Swal.fire({
+      icon: "question",
+      title: "Do you want to register this account?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
           const userCredential = await createUserWithEmailAndPassword(
             auth,
             email,
@@ -131,15 +147,23 @@ const Register = () => {
             }
           });
           navigate("/login");
+        } catch (error) {
+          console.log("Firebase error:", error.code); // Add this line to log the error code
+          if (error.code === "auth/email-already-in-use") {
+            Toast.fire({
+              icon: "error",
+              title: "Email is already registered.",
+            });
+          } else {
+            Toast.fire({
+              icon: "error",
+              title: "An error occurred. Please try again later.",
+            });
+          }
+          console.error("Email is already registered.", error.message);
         }
-      });
-    } catch (error) {
-      Toast.fire({
-        icon: "error",
-        title: "Email is already registered.",
-      });
-      console.error("Email is already registered.", error.message);
-    }
+      }
+    });
   };
 
   const handleKeyPress = (event) => {
