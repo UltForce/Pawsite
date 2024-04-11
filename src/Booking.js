@@ -905,9 +905,12 @@ const Booking = ({ addNotification }) => {
                     placeholder="Name"
                     id="floatingName"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const namevalue = e.target.value;
+                      if (namevalue.length <= 128) {
+                        setFormData({ ...formData, name: e.target.value });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                   />
                 </div>
@@ -994,9 +997,12 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Name"
                     id="floatingPet"
                     value={formData.petName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, petName: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 128) {
+                        setFormData({ ...formData, petName: e.target.value });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={PetNameInputRef}
                   />
@@ -1014,9 +1020,12 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Species"
                     id="floatingSpecies"
                     value={formData.species}
-                    onChange={(e) =>
-                      setFormData({ ...formData, species: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 128) {
+                        setFormData({ ...formData, species: e.target.value });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={SpeciesInputRef}
                   />
@@ -1034,9 +1043,12 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Breed"
                     id="floatingBreed"
                     value={formData.breed}
-                    onChange={(e) =>
-                      setFormData({ ...formData, breed: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 128) {
+                        setFormData({ ...formData, breed: e.target.value });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={BreedNumberInputRef}
                   />
@@ -1056,7 +1068,7 @@ const Booking = ({ addNotification }) => {
                     value={formData.weight}
                     onChange={(e) => {
                       const weightValue = e.target.value;
-                      if (weightValue >= 0) {
+                      if (weightValue >= 0 && weightValue.length <= 128) {
                         // Check if the value is positive or zero
                         setFormData({ ...formData, weight: weightValue });
                       }
@@ -1080,7 +1092,7 @@ const Booking = ({ addNotification }) => {
                     value={formData.age}
                     onChange={(e) => {
                       const ageValue = e.target.value;
-                      if (ageValue >= 0) {
+                      if (ageValue >= 0 && ageValue.length <= 128) {
                         // Check if the value is positive or zero
                         setFormData({ ...formData, age: ageValue });
                       }
@@ -1103,9 +1115,12 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Color"
                     id="floatingColor"
                     value={formData.color}
-                    onChange={(e) =>
-                      setFormData({ ...formData, color: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 128) {
+                        setFormData({ ...formData, color: e.target.value });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={ColorInputRef}
                   />

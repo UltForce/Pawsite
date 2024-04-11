@@ -210,8 +210,15 @@ const Register = () => {
                   id="floatingFirst"
                   placeholder="First Name"
                   value={firstname}
-                  onChange={(e) => setFirstname(e.target.value)}
+                  //onChange={(e) => setFirstname(e.target.value)}
                   onKeyPress={handleKeyPress}
+                  onChange={(e) => {
+                    const firstnamevalue = e.target.value;
+                    if (firstnamevalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setFirstname(firstnamevalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingFirst">
                   First Name
@@ -225,9 +232,16 @@ const Register = () => {
                   id="floatingLast"
                   placeholder="Last Name"
                   value={lastname}
-                  onChange={(e) => setLastname(e.target.value)}
+                  //onChange={(e) => setLastname(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={LastNameInputRef}
+                  onChange={(e) => {
+                    const lastnamevalue = e.target.value;
+                    if (lastnamevalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setLastname(lastnamevalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingLast">
                   Last Name
@@ -270,7 +284,10 @@ const Register = () => {
                   ref={LandlineNumberInputRef}
                   onChange={(e) => {
                     const landlinenumbervalue = e.target.value;
-                    if (landlinenumbervalue >= 0) {
+                    if (
+                      landlinenumbervalue >= 0 &&
+                      landlinenumbervalue.length <= 128
+                    ) {
                       // Check if the value is positive or zero
                       setLandlinenumber(landlinenumbervalue);
                     }
@@ -287,7 +304,14 @@ const Register = () => {
                   id="floatingRegion"
                   placeholder="Region"
                   value={region}
-                  onChange={(e) => setRegion(e.target.value)}
+                  //onChange={(e) => setRegion(e.target.value)}
+                  onChange={(e) => {
+                    const regionvalue = e.target.value;
+                    if (regionvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setRegion(regionvalue);
+                    }
+                  }}
                   onKeyPress={handleKeyPress}
                   ref={RegionInputRef}
                 />
@@ -302,9 +326,16 @@ const Register = () => {
                   id="floatingCity"
                   placeholder="City"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  //onChange={(e) => setCity(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={CityInputRef}
+                  onChange={(e) => {
+                    const cityvalue = e.target.value;
+                    if (cityvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setCity(cityvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingCity">
                   City
@@ -317,9 +348,16 @@ const Register = () => {
                   id="floatingBarangay"
                   placeholder="Barangay"
                   value={barangay}
-                  onChange={(e) => setBarangay(e.target.value)}
+                  //onChange={(e) => setBarangay(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={BarangayInputRef}
+                  onChange={(e) => {
+                    const barangayvalue = e.target.value;
+                    if (barangayvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setBarangay(barangayvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingBarangay">
                   Barangay
@@ -332,9 +370,16 @@ const Register = () => {
                   id="floatingStreet"
                   placeholder="Street"
                   value={street}
-                  onChange={(e) => setStreet(e.target.value)}
+                  //onChange={(e) => setStreet(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={StreetInputRef}
+                  onChange={(e) => {
+                    const streetvalue = e.target.value;
+                    if (streetvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setStreet(streetvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingStreet">
                   Street
@@ -347,9 +392,16 @@ const Register = () => {
                   id="floatingUnit"
                   placeholder="Unit"
                   value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
+                  //onChange={(e) => setUnit(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={UnitInputRef}
+                  onChange={(e) => {
+                    const unitvalue = e.target.value;
+                    if (unitvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setUnit(unitvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingUnit">
                   Unit
@@ -363,9 +415,16 @@ const Register = () => {
                   id="floatingEmail"
                   placeholder="Email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  //onChange={(e) => setEmail(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={EmailInputRef}
+                  onChange={(e) => {
+                    const emailvalue = e.target.value;
+                    if (emailvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setEmail(emailvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingEmail">
                   Email
@@ -378,9 +437,16 @@ const Register = () => {
                   id="floatingPass"
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  //onChange={(e) => setPassword(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={PasswordInputRef}
+                  onChange={(e) => {
+                    const passwordvalue = e.target.value;
+                    if (passwordvalue.length <= 128) {
+                      // Check if the value is positive or zero
+                      setPassword(passwordvalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingPass">
                   Password
