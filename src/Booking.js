@@ -226,6 +226,8 @@ const Booking = ({ addNotification }) => {
       !updatedFormData.gender ||
       !updatedFormData.color ||
       !updatedFormData.vaccination ||
+      (updatedFormData.vaccination === "yes" &&
+        !updatedFormData.vaccinationDate) ||
       !updatedFormData.firstGrooming
     ) {
       Toast.fire({
@@ -840,6 +842,7 @@ const Booking = ({ addNotification }) => {
       <div style={{ display: "flex" }}>
         <div style={{ flex: 1, marginRight: "50px" }}>
           <h1>My Appointments</h1>
+
           <FullCalendar
             ref={calendarRef}
             plugins={[
@@ -872,6 +875,7 @@ const Booking = ({ addNotification }) => {
             datesSet={handleViewChange}
             expandRows={true}
             height="975px"
+            eventMinWidth={1000}
             eventTimeFormat={{
               // Set custom time format
               hour: "numeric",
@@ -882,6 +886,7 @@ const Booking = ({ addNotification }) => {
             slotDuration="01:00:00" // Set the duration of each time slot to 30 minutes
           />
         </div>
+
         <div style={{ flex: 0.3 }}>
           {isFormOpen && (
             <>
@@ -1049,9 +1054,13 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Weight"
                     id="floatingWeight"
                     value={formData.weight}
-                    onChange={(e) =>
-                      setFormData({ ...formData, weight: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const weightValue = e.target.value;
+                      if (weightValue >= 0) {
+                        // Check if the value is positive or zero
+                        setFormData({ ...formData, weight: weightValue });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={WeightInputRef}
                   />
@@ -1069,13 +1078,18 @@ const Booking = ({ addNotification }) => {
                     placeholder="Pet Age"
                     id="floatingAge"
                     value={formData.age}
-                    onChange={(e) =>
-                      setFormData({ ...formData, age: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const ageValue = e.target.value;
+                      if (ageValue >= 0) {
+                        // Check if the value is positive or zero
+                        setFormData({ ...formData, age: ageValue });
+                      }
+                    }}
                     onKeyPress={handleKeyPress}
                     ref={AgeInputRef}
                   />
                 </div>
+
                 <div>
                   <label
                     class="col-form-label col-form-label-sm"

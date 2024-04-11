@@ -240,9 +240,19 @@ const Register = () => {
                   id="floatingMobile"
                   placeholder="Mobile Number"
                   value={mobilenumber}
-                  onChange={(e) => setMobilenumber(e.target.value)}
+                  //onChange={(e) => setMobilenumber(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={MobileNumberInputRef}
+                  onChange={(e) => {
+                    const mobilenumbervalue = e.target.value;
+                    if (
+                      mobilenumbervalue >= 0 &&
+                      mobilenumbervalue.length <= 13
+                    ) {
+                      // Check if the value is positive or zero
+                      setMobilenumber(mobilenumbervalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingMobile">
                   Mobile Number
@@ -255,9 +265,16 @@ const Register = () => {
                   id="floatingLand"
                   placeholder="Landline Number"
                   value={landlinenumber}
-                  onChange={(e) => setLandlinenumber(e.target.value)}
+                  //onChange={(e) => setLandlinenumber(e.target.value)}
                   onKeyPress={handleKeyPress}
                   ref={LandlineNumberInputRef}
+                  onChange={(e) => {
+                    const landlinenumbervalue = e.target.value;
+                    if (landlinenumbervalue >= 0) {
+                      // Check if the value is positive or zero
+                      setLandlinenumber(landlinenumbervalue);
+                    }
+                  }}
                 />
                 <label className="register-label" for="floatingLand">
                   Landline Number

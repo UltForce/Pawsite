@@ -497,3 +497,6 @@ label {
 .book-now-button:hover {
   background-color: white;
 }
+.calendar-container {
+  width: 90%;
+}
