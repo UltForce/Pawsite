@@ -22,6 +22,7 @@ import {
 } from "./firebase";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
 // Toast configuration for displaying messages
 const Toast = Swal.mixin({
   toast: true,
@@ -575,57 +576,83 @@ const Booking = ({ addNotification }) => {
   // Handle selection of date on calendar
   const handleDateSelect = async (selectInfo) => {
     const loggedInUserId = getCurrentUserId(); // Get the current user's ID
-    const startDate = selectInfo.startStr; // Get selected date
-    const currentDate = new Date().toISOString().split("T")[0]; // Get current date
-
-    if (startDate >= currentDate) {
-      // Check if selected date is valid
-      // Check if the user already has a pending appointment
-      const userPendingAppointments = appointments.filter(
-        // Filter user's pending appointments
-        (appointment) =>
-          appointment.userId === loggedInUserId &&
-          appointment.status === "pending"
-      );
-
-      setSelectedDate(startDate); // Set selected date
-      setIsValidDaySelected(true); // Set valid day selected
-      const calendarApi = calendarRef.current.getApi();
-      if (selectInfo.view.type === "timeGridDay") {
-        // Open form when day view is selected
-        if (!isAdmin) {
-          if (userPendingAppointments.length > 0) {
-            // Notify the user that they already have a pending appointment
-            Swal.fire({
-              title: "Information",
-              text: "You already have a pending appointment. Please wait for it to be processed.",
-              icon: "info",
-              heightAuto: false,
-              confirmButtonColor: "#3085d6",
-              confirmButtonText: "OK",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Toast.fire({
-                  icon: "info",
-                  title:
-                    "You already have a pending appointment. Please wait for it to be processed.",
-                });
-              }
-            });
-            return;
-          }
-          setIsFormOpen(true); // Open form
-        } else {
-          setIsFormOpen(true); // Open form
-        }
-      } else {
-        // Change view to day grid when other views are selected
-        calendarApi.changeView("timeGridDay", startDate);
+    const startDate = moment(selectInfo.startStr).tz("Asia/Manila"); // Convert selected date to Singapore Time (GMT+8)
+    const currentDate = moment().tz("Asia/Manila"); // Get current date in Singapore Time
+    const calendarApi = calendarRef.current.getApi();
+    const startDate2 = moment(selectInfo.startStr).tz("Asia/Manila").format(); // Convert selected date to Singapore Time (GMT+8)
+    const currentDate2 = moment().tz("Asia/Manila").format(); // Get current date in Singapore Time
+    console.log(startDate2);
+    console.log(currentDate2);
+    if (selectInfo.view.type === "dayGridMonth") {
+      // Check if the selected date (day) is in the past
+      if (startDate.isBefore(currentDate, "day")) {
+        setIsFormOpen(false); // Close form
+        setIsValidDaySelected(false); // Set day as invalid
+        Toast.fire({
+          icon: "error",
+          title: "Cannot select past dates.",
+        });
+        console.log("Cannot select past dates.");
+        return;
+      }
+      calendarApi.changeView("timeGridDay", startDate);
+    } else if (selectInfo.view.type === "timeGridDay") {
+      // Check if the selected hour is in the past
+      if (startDate.isBefore(currentDate, "hour")) {
+        setIsFormOpen(false); // Close form
+        setIsValidDaySelected(false); // Set day as invalid
+        Toast.fire({
+          icon: "error",
+          title: "Cannot select past dates.",
+        });
+        console.log("Cannot select past dates.");
+        return;
       }
     } else {
-      setIsFormOpen(false); // Close form if selected date is invalid
-      setIsValidDaySelected(false);
-      console.log("Cannot select past dates.");
+      calendarApi.changeView("timeGridDay", startDate);
+    }
+
+    // Check if selected date is valid
+    // Check if the user already has a pending appointment
+    const userPendingAppointments = appointments.filter(
+      // Filter user's pending appointments
+      (appointment) =>
+        appointment.userId === loggedInUserId &&
+        appointment.status === "pending"
+    );
+
+    setSelectedDate(startDate); // Set selected date
+    setIsValidDaySelected(true); // Set valid day selected
+
+    if (selectInfo.view.type === "timeGridDay") {
+      // Open form when day view is selected
+      if (!isAdmin) {
+        if (userPendingAppointments.length > 0) {
+          // Notify the user that they already have a pending appointment
+          Swal.fire({
+            title: "Information",
+            text: "You already have a pending appointment. Please wait for it to be processed.",
+            icon: "info",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "info",
+                title:
+                  "You already have a pending appointment. Please wait for it to be processed.",
+              });
+            }
+          });
+          return;
+        }
+        setIsFormOpen(true); // Open form
+      } else {
+        setIsFormOpen(true); // Open form
+      }
+    } else {
+      // Change view to day grid when other views are selected
     }
 
     setFormData({
@@ -1068,7 +1095,7 @@ const Booking = ({ addNotification }) => {
                     value={formData.weight}
                     onChange={(e) => {
                       const weightValue = e.target.value;
-                      if (weightValue >= 0 && weightValue.length <= 128) {
+                      if (weightValue >= 0 && weightValue.length <= 4) {
                         // Check if the value is positive or zero
                         setFormData({ ...formData, weight: weightValue });
                       }
@@ -1092,7 +1119,7 @@ const Booking = ({ addNotification }) => {
                     value={formData.age}
                     onChange={(e) => {
                       const ageValue = e.target.value;
-                      if (ageValue >= 0 && ageValue.length <= 128) {
+                      if (ageValue >= 0 && ageValue.length <= 3) {
                         // Check if the value is positive or zero
                         setFormData({ ...formData, age: ageValue });
                       }

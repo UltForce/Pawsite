@@ -1,25 +1,26 @@
 // FAQs.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUserId } from "./firebase.js";
+import { getCurrentUserId, getUserRoleFirestore, auth } from "./firebase.js";
 const FAQs = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
-  useEffect(() => {
-    const checkLoggedInStatus = async () => {
-      try {
-        const userId = getCurrentUserId();
-        if (!userId) {
-          navigate("/login"); // Redirect to login page if user is not logged in
-        }
-      } catch (error) {
-        console.error("Error checking login status:", error.message);
-        navigate("/login"); // Redirect to login page if error occurs
-      }
-    };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-    checkLoggedInStatus();
-  }, [navigate]); // Pass navigate as a dependency to useEffect
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setIsLoggedIn(!!user);
+      if (user) {
+        const userId = getCurrentUserId();
+        const userRole = await getUserRoleFirestore(userId);
+        setIsAdmin(userRole === "admin");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const [isVisible, setIsVisible] = useState(false);
   const handleBookNowClick = () => {
     navigate("/booking"); // Redirect to booking page when "Book now" button is clicked
@@ -482,10 +483,14 @@ const FAQs = () => {
           </button>
         )}
       </div>
-            {/* Floating "Book now" button */}
-            <button className="book-now-button" onClick={handleBookNowClick}>
-        Book now
-      </button>
+      {/* Floating "Book now" button */}
+      {isLoggedIn ? (
+        <button className="book-now-button" onClick={handleBookNowClick}>
+          Book now
+        </button>
+      ) : (
+        <></>
+      )}
     </section>
   );
 };

@@ -71,7 +71,7 @@ const Navbar = () => {
           const userId = getCurrentUserId();
           setIsLoggedIn(false); // Clear authentication state
           setIsAdmin(false); // Clear admin state if needed
-          await auth.signOut();    
+          await auth.signOut();
           navigate("/login");
           Toast.fire({
             icon: "success",
@@ -205,6 +205,36 @@ const Navbar = () => {
           </>
         ) : (
           <>
+            <li className={location.pathname === "/homepage" ? "active" : ""}>
+              <Link to="/homepage">
+                <FontAwesomeIcon icon={faHome} />
+                <span className="nav-label"> Home</span>
+              </Link>
+            </li>
+            <li className={location.pathname === "/About" ? "active" : ""}>
+              <Link to="/About">
+                <FontAwesomeIcon icon={faInfoCircle} />
+                <span className="nav-label"> About us</span>
+              </Link>
+            </li>
+            <li className={location.pathname === "/Gallery" ? "active" : ""}>
+              <Link to="/Gallery">
+                <FontAwesomeIcon icon={faImage} />
+                <span className="nav-label"> Gallery</span>
+              </Link>
+            </li>
+            <li className={location.pathname === "/terms" ? "active" : ""}>
+              <Link to="/terms">
+                <FontAwesomeIcon icon={faCog} />
+                <span className="nav-label"> Terms & Conditions</span>
+              </Link>
+            </li>
+            <li className={location.pathname === "/FAQs" ? "active" : ""}>
+              <Link to="/FAQs">
+                <FontAwesomeIcon icon={faQuestionCircle} />
+                <span className="nav-label"> FAQs</span>
+              </Link>
+            </li>
             <li className={location.pathname === "/login" ? "active" : ""}>
               <Link to="/login">
                 <FontAwesomeIcon icon={faUser} />

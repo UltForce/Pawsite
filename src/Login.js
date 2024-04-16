@@ -7,7 +7,9 @@ import {
   getUserRoleFirestore,
   AuditLogger,
 } from "./firebase";
-
+import { GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
+import { FaGoogle } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 const Toast = Swal.mixin({
@@ -59,7 +61,7 @@ const Login = () => {
       const event = {
         type: "Login", // Type of event
         userId: user.uid, // User ID associated with the event
-        details: "User logged in", // Details of the event
+        details: "User logged in with Email and Password", // Details of the event
       };
 
       // Call the AuditLogger function with the event object
@@ -103,6 +105,42 @@ const Login = () => {
 
     return () => unsubscribe();
   }, [navigate]);
+
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Display success notification
+      Toast.fire({
+        icon: "success",
+        title: "Successfully logged in with Google",
+      });
+
+      // Log the login event
+      const event = {
+        type: "Login",
+        userId: user.uid,
+        details: "User logged in with Google",
+      };
+      AuditLogger({ event });
+
+      // Check user role and redirect
+      const userRole = await getUserRoleFirestore(user.uid);
+      if (userRole === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/homepage");
+      }
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      Toast.fire({
+        icon: "error",
+        title: "An error occurred with Google Sign-In. Please try again later.",
+      });
+    }
+  };
   return (
     <section className="background-image">
       <div className="centered">
@@ -141,6 +179,10 @@ const Login = () => {
         <br />
         <button class="btn btn-outline-primary" onClick={handleLogin}>
           Login
+        </button>
+        <br></br>
+        <button className="btn btn-outline-primary" onClick={handleGoogleLogin}>
+          <FaGoogle /> - Google Login
         </button>
         <br />
         <p>

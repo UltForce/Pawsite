@@ -1,19 +1,15 @@
 // Register.js
 
 import React, { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  dba,
-  doc,
-  setDoc,
-  AuditLogger,
-} from "./firebase";
+import { Link } from "react-router-dom";
+import { auth, dba, doc, setDoc, AuditLogger } from "./firebase";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
-import { sendEmailVerification } from "firebase/auth";
-
+import { signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
+import { linkWithCredential } from "firebase/auth";
+import { EmailAuthProvider } from "firebase/auth";
+import { FaGoogle } from "react-icons/fa"; // Import FontAwesome icons
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -27,8 +23,8 @@ const Toast = Swal.mixin({
 });
 
 const Register = () => {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [mobilenumber, setMobilenumber] = useState("");
@@ -38,7 +34,6 @@ const Register = () => {
   const [barangay, setBarangay] = useState("");
   const [street, setStreet] = useState("");
   const [unit, setUnit] = useState("");
-  const navigate = useNavigate();
   const LastNameInputRef = useRef(null);
   const MobileNumberInputRef = useRef(null);
   const LandlineNumberInputRef = useRef(null);
@@ -47,12 +42,11 @@ const Register = () => {
   const BarangayInputRef = useRef(null);
   const StreetInputRef = useRef(null);
   const UnitInputRef = useRef(null);
-  const EmailInputRef = useRef(null);
   const PasswordInputRef = useRef(null);
-
-  const handleRegister = async () => {
+  const ConfirmPasswordInputRef = useRef(null);
+  const handleGoogleSignIn = async () => {
     if (
-      !email ||
+      !confirmPassword ||
       !password ||
       !firstname ||
       !lastname ||
@@ -70,13 +64,6 @@ const Register = () => {
       });
       return; // Exit early if fields are empty
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      Toast.fire({
-        icon: "error",
-        title: "Invalid email address.",
-      });
-      return; // Exit early if email is invalid
-    }
 
     if (password.length < 6) {
       Toast.fire({
@@ -84,6 +71,14 @@ const Register = () => {
         title: "Password must be at least 6 characters long.",
       });
       return; // Exit early if password is less than 6 characters
+    }
+
+    if (password !== confirmPassword) {
+      Toast.fire({
+        icon: "error",
+        title: "Passwords do not match.",
+      });
+      return;
     }
 
     Swal.fire({
@@ -95,19 +90,19 @@ const Register = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
+          const provider = new GoogleAuthProvider();
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
 
-          // Access user properties directly from userCredential.user
-          const userId = userCredential.user.uid;
+          // Retrieve email from Google signup
+          const googleEmail = user.email;
 
-          // Store additional user details in Firestore along with the userID
-          const userDocRef = doc(dba, "users", userId);
+          // Compare Google email with user-entered email
+
+          // Proceed with registration
+          const userDocRef = doc(dba, "users", user.uid);
           await setDoc(userDocRef, {
-            userId, // Include the userID in Firestore document
+            userId: user.uid,
             role: "user",
             firstname,
             lastname,
@@ -118,19 +113,22 @@ const Register = () => {
             barangay,
             street,
             unit,
-            email,
+            email: googleEmail,
           });
-          // Send email verification
-          await sendEmailVerification(userCredential.user);
-
+          //await createUserWithEmailAndPassword(auth, googleEmail, password);
+          // Link Google account to the newly created email/password account
+          await linkWithCredential(
+            user,
+            EmailAuthProvider.credential(googleEmail, password)
+          );
           const event = {
-            type: "Register", // Type of event
-            userId: userId, // User ID associated with the event
-            details: "User registered", // Details of the event
+            type: "Register",
+            userId: user.uid,
+            details: "User registered",
           };
 
-          // Call the AuditLogger function with the event object
           AuditLogger({ event });
+
           Swal.fire({
             title: "success",
             text: "Account registered successfully",
@@ -146,9 +144,8 @@ const Register = () => {
               });
             }
           });
-          navigate("/login");
         } catch (error) {
-          console.log("Firebase error:", error.code); // Add this line to log the error code
+          console.log("Firebase error:", error.code);
           if (error.code === "auth/email-already-in-use") {
             Toast.fire({
               icon: "error",
@@ -160,7 +157,13 @@ const Register = () => {
               title: "An error occurred. Please try again later.",
             });
           }
-          console.error("Email is already registered.", error.message);
+          console.error("Google Sign-In Error:", error);
+          Toast.fire({
+            icon: "error",
+            title:
+              "An error occurred with Google Sign-In. Please try again later.",
+          });
+          return false;
         }
       }
     });
@@ -186,11 +189,11 @@ const Register = () => {
       } else if (event.target.id === "floatingStreet") {
         UnitInputRef.current.focus();
       } else if (event.target.id === "floatingUnit") {
-        EmailInputRef.current.focus();
-      } else if (event.target.id === "floatingEmail") {
         PasswordInputRef.current.focus();
+      } else if (event.target.id === "floatingPass") {
+        ConfirmPasswordInputRef.current.focus();
       } else {
-        handleRegister();
+        handleGoogleSignIn();
       }
     }
   };
@@ -224,7 +227,6 @@ const Register = () => {
                   First Name
                 </label>
               </div>
-
               <div className="  form-floating mb-3  col-md-6">
                 <input
                   type="text"
@@ -408,7 +410,7 @@ const Register = () => {
                 </label>
               </div>
               <div className="col-md-6"></div>
-              <div className=" form-floating mb-3  col-md-6">
+              {/* <div className=" form-floating mb-3  col-md-6">
                 <input
                   type="email"
                   class="form-control"
@@ -429,7 +431,7 @@ const Register = () => {
                 <label className="register-label" for="floatingEmail">
                   Email
                 </label>
-              </div>
+              </div> */}
               <div className=" form-floating mb-3  col-md-6">
                 <input
                   type="password"
@@ -452,13 +454,32 @@ const Register = () => {
                   Password
                 </label>
               </div>
+              <div className="form-floating mb-3  col-md-6">
+                <input
+                  type="password"
+                  className="form-control"
+                  id="floatingConfirmPass"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onKeyPress={handleKeyPress}
+                  ref={ConfirmPasswordInputRef}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <label className="register-label" htmlFor="floatingConfirmPass">
+                  Confirm Password
+                </label>
+              </div>
             </div>
           </div>
           <div className="col-md-1"></div>
         </div>
         <br />
-        <button class="btn btn-outline-primary" onClick={handleRegister}>
-          Register
+
+        <button
+          className="btn btn-outline-primary"
+          onClick={handleGoogleSignIn}
+        >
+          <FaGoogle /> - Register
         </button>
         <br />
         <p>

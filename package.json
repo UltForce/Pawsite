@@ -27,6 +27,7 @@
     "firebase": "^10.8.1",
     "jquery": "^3.7.1",
     "jszip": "^3.10.1",
+    "moment-timezone": "^0.5.45",
     "pawsite": "github:UltForce/Pawsite",
     "pdfmake": "^0.2.10",
     "react": "^18.2.0",
