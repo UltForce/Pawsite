@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { auth, dba, doc, setDoc, AuditLogger } from "./firebase";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
-import { signInWithPopup } from "firebase/auth";
+import { sendEmailVerification, signInWithPopup } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { linkWithCredential } from "firebase/auth";
 import { EmailAuthProvider } from "firebase/auth";
@@ -127,7 +127,7 @@ const Register = () => {
             userId: user.uid,
             details: "User registered",
           };
-
+          await sendEmailVerification(googleEmail);
           AuditLogger({ event });
 
           Swal.fire({

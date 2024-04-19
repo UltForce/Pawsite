@@ -22,6 +22,7 @@ import {
   faAddressBook,
   faClapperboard,
   faClipboard,
+  faDog,
 } from "@fortawesome/free-solid-svg-icons";
 import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -198,6 +199,12 @@ const Navbar = ({ notifications, setNotifications }) => {
               <Link to="/booking">
                 <FontAwesomeIcon icon={faCalendar} />
                 <span className="nav-label"> Book now</span>
+              </Link>
+            </li>
+            <li className={location.pathname === "/Pet" ? "active" : ""}>
+              <Link to="/Pet">
+                <FontAwesomeIcon icon={faDog} />
+                <span className="nav-label"> Pets</span>
               </Link>
             </li>
             <li className={location.pathname === "/terms" ? "active" : ""}>

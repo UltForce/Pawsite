@@ -25,7 +25,6 @@ import {
 } from "firebase/firestore";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
-import React, { useEffect, useState } from "react";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -360,6 +359,83 @@ const getUserEmail = async (userId) => {
   }
 };
 
+const createPet = async (userId, petData) => {
+  try {
+    // Add the userId to the Pet data
+    petData.userId = userId;
+    // Create a new document in the "appointments" collection
+    const petRef = await addDoc(collection(dba, "pets"), petData);
+
+    // Get the ID of the newly created appointment document
+    const petId = petRef.id;
+
+    // Add the appointmentId to the appointment data
+    petData.appointmentId = petId;
+
+    // Update the appointment document with the appointmentId
+    await updateDoc(petRef, { petId: petId });
+
+    console.log("Pet created successfully with ID: ", petId);
+  } catch (error) {
+    console.error("Error creating Pet:", error.message);
+  }
+};
+
+// Function to retrieve all pets
+const getAllPets = async () => {
+  try {
+    // Query the "pets" collection to get all documents
+    const petsQuery = await getDocs(collection(dba, "pets"));
+    const pets = petsQuery.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return pets;
+  } catch (error) {
+    console.error("Error getting pets:", error.message);
+    return [];
+  }
+};
+
+// Function to retrieve a single pet by ID
+const getPetById = async (petId) => {
+  try {
+    // Get a document from the "pets" collection by ID
+    const petDoc = await getDoc(doc(dba, "pets", petId));
+    if (petDoc.exists()) {
+      return { id: petDoc.id, ...petDoc.data() };
+    } else {
+      console.error("Pet document not found");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting pet by ID:", error.message);
+    return null;
+  }
+};
+
+// Function to update a pet by ID
+const updatePet = async (petId, newData) => {
+  try {
+    // Update the document in the "pets" collection with the new data
+    await updateDoc(doc(dba, "pets", petId), newData);
+    console.log("Pet updated successfully!");
+  } catch (error) {
+    console.error("Error updating pet:", error.message);
+  }
+};
+
+// Function to delete a pet by ID
+const deletePet = async (petId) => {
+  try {
+    // Delete the document from the "pets" collection by ID
+    await deleteDoc(doc(dba, "pets", petId));
+    console.log("Pet deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting pet:", error.message);
+  }
+};
+
 export {
   getAuth,
   auth,
@@ -398,4 +474,9 @@ export {
   getUserData,
   AuditLogger,
   getUserEmail,
+  createPet,
+  getAllPets,
+  getPetById,
+  updatePet,
+  deletePet,
 };

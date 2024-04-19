@@ -18,6 +18,7 @@ import About from "./About";
 import Gallery from "./Gallery";
 import Shop from "./Shop";
 import Audit from "./Audit";
+import Pet from "./Pet";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -67,6 +68,7 @@ function App() {
           path="/booking"
           element={<Booking addNotification={addNotification} />}
         />
+        <Route path="/Pet" element={<Pet />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/account" element={<Account />} />

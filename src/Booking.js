@@ -19,7 +19,6 @@ import {
   getCurrentUserId,
   getAllAppointments,
   AuditLogger,
-  getUserEmail,
 } from "./firebase";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -98,17 +97,6 @@ const Booking = ({ addNotification }) => {
     approved: "blue",
     completed: "green",
   };
-
-  // const nodemailer = require("nodemailer");
-
-  // // Create a Nodemailer transporter using Gmail SMTP credentials
-  // const transporter = nodemailer.createTransport({
-  //   service: "gmail",
-  //   auth: {
-  //     user: "gerlanmarkd@gmail.com",
-  //     pass: "dfge owka posl iioj", // Use the app password if generated, otherwise use your Gmail account password
-  //   },
-  // });
 
   // Function to map appointment status to color
   const getStatusColor = (status) => {
@@ -752,23 +740,6 @@ const Booking = ({ addNotification }) => {
           userId: loggedInUserId, // User ID associated with the event
           details: "User changed the status of an existing appointment", // Details of the event
         };
-        // // Get the email of the appointment owner
-        // const ownerEmail = await getUserEmail(clickedAppointment.userId);
-
-        // // Sending email
-        // const mailOptions = {
-        //   from: "gerlanmarkd@gmail.com",
-        //   to: ownerEmail,
-        //   subject: "Woof Pack Appointment",
-        //   text: `Your appointment status has been changed to ${status}`,
-        // };
-        // transporter.sendMail(mailOptions, (error, info) => {
-        //   if (error) {
-        //     console.error("Error sending email:", error);
-        //   } else {
-        //     console.log("Email sent:", info.response);
-        //   }
-        // });
 
         // Call the AuditLogger function with the event object
         AuditLogger({ event });
