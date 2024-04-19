@@ -160,7 +160,8 @@ const Booking = ({ addNotification }) => {
       }
 
       if (
-        clickedAppointment.userId === loggedInUserId || // User owns the appointment
+        (clickedAppointment.userId === loggedInUserId &&
+          clickedAppointment.status === "pending") || // User owns the appointment
         isAdmin // User is an admin
       ) {
         setFormData({
@@ -576,6 +577,7 @@ const Booking = ({ addNotification }) => {
   // Handle selection of date on calendar
   const handleDateSelect = async (selectInfo) => {
     const loggedInUserId = getCurrentUserId(); // Get the current user's ID
+    const startDate3 = selectInfo.startStr; // Get selected date
     const startDate = moment(selectInfo.startStr).tz("Asia/Manila"); // Convert selected date to Singapore Time (GMT+8)
     const currentDate = moment().tz("Asia/Manila"); // Get current date in Singapore Time
     const calendarApi = calendarRef.current.getApi();
@@ -595,7 +597,7 @@ const Booking = ({ addNotification }) => {
         console.log("Cannot select past dates.");
         return;
       }
-      calendarApi.changeView("timeGridDay", startDate);
+      calendarApi.changeView("timeGridDay", startDate3);
     } else if (selectInfo.view.type === "timeGridDay") {
       // Check if the selected hour is in the past
       if (startDate.isBefore(currentDate, "hour")) {
@@ -609,7 +611,7 @@ const Booking = ({ addNotification }) => {
         return;
       }
     } else {
-      calendarApi.changeView("timeGridDay", startDate);
+      calendarApi.changeView("timeGridDay", startDate3);
     }
 
     // Check if selected date is valid
@@ -621,7 +623,7 @@ const Booking = ({ addNotification }) => {
         appointment.status === "pending"
     );
 
-    setSelectedDate(startDate); // Set selected date
+    setSelectedDate(startDate3); // Set selected date
     setIsValidDaySelected(true); // Set valid day selected
 
     if (selectInfo.view.type === "timeGridDay") {
@@ -880,7 +882,7 @@ const Booking = ({ addNotification }) => {
               bootstrap5Plugin,
             ]}
             themeSystem="bootstrap5"
-            initialView="timeGridDay"
+            initialView="dayGridMonth"
             initialDate={new Date().toISOString()} // Set initial date to current date/time
             timeZone="Asia/Manila" // Set timezone to Asia/Manila
             headerToolbar={{

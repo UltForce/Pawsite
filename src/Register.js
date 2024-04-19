@@ -44,6 +44,7 @@ const Register = () => {
   const UnitInputRef = useRef(null);
   const PasswordInputRef = useRef(null);
   const ConfirmPasswordInputRef = useRef(null);
+  const [termsChecked, setTermsChecked] = useState(false); // State for tracking if terms are checked
   const handleGoogleSignIn = async () => {
     if (
       !confirmPassword ||
@@ -168,7 +169,10 @@ const Register = () => {
       }
     });
   };
-
+  // Handle terms checkbox change
+  const handleTermsChange = (e) => {
+    setTermsChecked(e.target.checked); // Set terms checked
+  };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       // Check if the pressed key is Enter
@@ -474,10 +478,21 @@ const Register = () => {
           <div className="col-md-1"></div>
         </div>
         <br />
-
+        <div>
+          <input
+            type="checkbox"
+            checked={termsChecked}
+            onChange={handleTermsChange}
+          />
+          <label htmlFor="terms">
+            I agree to the <a href="/terms">Terms and Conditions</a>.
+          </label>
+        </div>
         <button
           className="btn btn-outline-primary"
+          type="submit"
           onClick={handleGoogleSignIn}
+          disabled={!termsChecked}
         >
           <FaGoogle /> - Register
         </button>

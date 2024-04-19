@@ -39,9 +39,10 @@ const Toast = Swal.mixin({
   },
 });
 
-const Navbar = () => {
+const Navbar = ({ notifications, setNotifications }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,6 +58,29 @@ const Navbar = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    // Check if there are unread notifications
+    const storedNotifications = sessionStorage.getItem("notifications");
+    if (storedNotifications) {
+      const notifications = JSON.parse(storedNotifications);
+      const hasUnread = notifications.some(
+        (notification) => !notification.read
+      );
+      setHasUnreadNotifications(hasUnread);
+    }
+  }, [notifications]);
+
+  const handleMarkAllRead = () => {
+    const updatedNotifications = notifications.map((notification) => {
+      return { ...notification, read: true };
+    });
+    setNotifications(updatedNotifications);
+    sessionStorage.setItem(
+      "notifications",
+      JSON.stringify(updatedNotifications)
+    );
+  };
 
   const handleLogout = async () => {
     Swal.fire({
@@ -146,22 +170,28 @@ const Navbar = () => {
             </li>
             <li className={location.pathname === "/Shop" ? "active" : ""}>
               <Link to="/Shop">
-                <FontAwesomeIcon icon={faShoppingCart} />
-                <span className="nav-label"> Shop</span>
+                <FontAwesomeIcon icon={faTag} />
+                <span className="nav-label"> Services</span>
               </Link>
             </li>
             <li
               className={location.pathname === "/notifications" ? "active" : ""}
             >
-              <Link to="/notifications">
+              <Link to="/notifications" onClick={handleMarkAllRead}>
                 <FontAwesomeIcon icon={faBell} />
-                <span className="nav-label"> Notifications</span>
+                <span className="nav-label">
+                  {" "}
+                  Notifications{" "}
+                  {hasUnreadNotifications && (
+                    <span className="unread-dot"></span>
+                  )}
+                </span>
               </Link>
             </li>
             <li className={location.pathname === "/services" ? "active" : ""}>
               <Link to="/services">
-                <FontAwesomeIcon icon={faTag} />
-                <span className="nav-label"> Services</span>
+                <FontAwesomeIcon icon={faShoppingCart} />
+                <span className="nav-label"> Shop</span>
               </Link>
             </li>
             <li className={location.pathname === "/booking" ? "active" : ""}>

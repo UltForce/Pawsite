@@ -140,13 +140,13 @@ const getUserAppointments = async (userId) => {
     return [];
   }
 };
-// Function to get approved appointments
-const getApprovedAppointments = async () => {
+// Function to get appointments with both pending and approved status
+const getAppointmentsWithStatus = async (status) => {
   try {
-    // Query the "appointments" collection where status is approved
+    // Query the "appointments" collection where status is the specified status
     const appointmentsQuery = query(
       collection(dba, "appointments"),
-      where("status", "==", "approved")
+      where("status", "==", status)
     );
     const snapshot = await getDocs(appointmentsQuery);
     const appointments = snapshot.docs.map((doc) => ({
@@ -154,6 +154,23 @@ const getApprovedAppointments = async () => {
       ...doc.data(),
     }));
     return appointments;
+  } catch (error) {
+    console.error(`Error getting ${status} appointments:`, error.message);
+    return [];
+  }
+};
+
+// Function to get both pending and approved appointments
+const getApprovedAppointments = async () => {
+  try {
+    // Fetch both pending and approved appointments separately
+    const pendingAppointments = await getAppointmentsWithStatus("pending");
+    const approvedAppointments = await getAppointmentsWithStatus("approved");
+
+    // Combine both lists of appointments
+    const allAppointments = [...pendingAppointments, ...approvedAppointments];
+
+    return allAppointments;
   } catch (error) {
     console.error("Error getting approved appointments:", error.message);
     return [];

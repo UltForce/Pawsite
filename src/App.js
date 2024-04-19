@@ -25,7 +25,10 @@ function App() {
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (notification) => {
-    const updatedNotifications = [...notifications, { ...notification }];
+    const updatedNotifications = [
+      ...notifications,
+      { ...notification, read: false },
+    ];
     setNotifications(updatedNotifications);
     // Store updated notifications in session storage
     sessionStorage.setItem(
@@ -36,7 +39,10 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
+      <Navbar
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
@@ -46,7 +52,16 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/notifications" element={<Notifications />} />
+        <Route
+          path="/notifications"
+          element={
+            <Notifications
+              notifications={notifications}
+              setNotifications={setNotifications}
+              addNotification={addNotification}
+            />
+          }
+        />
         <Route path="/services" element={<Services />} />
         <Route
           path="/booking"

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./styles.css"; // Import CSS file for styling
 import { useNavigate } from "react-router-dom";
 import { getCurrentUserId } from "./firebase.js";
+import $ from "jquery";
+import "datatables.net"; // Import DataTables library
 const Notifications = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
@@ -48,33 +50,79 @@ const Notifications = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // Initialize DataTable when notifications change
+    if (notifications.length > 0) {
+      $("#notificationsTable").DataTable({
+        lengthMenu: [10, 25, 50, 75, 100],
+        pagingType: "full_numbers",
+        order: [],
+        columnDefs: [
+          { targets: "no-sort", orderable: false },
+          // Add column definitions here if needed
+        ],
+        drawCallback: function () {
+          $(this.api().table().container())
+            .find("td")
+            .css("border", "1px solid #ddd");
+        },
+        rowCallback: function (row, data, index) {
+          $(row).hover(
+            function () {
+              $(this).addClass("hover");
+            },
+            function () {
+              $(this).removeClass("hover");
+            }
+          );
+        },
+        stripeClasses: ["stripe1", "stripe2"],
+      });
+    }
+  }, [notifications]);
+
   return (
     <section className="background-image">
+      <br />
       <div className="centered">
-        <h1>Notifications</h1>
-        {notifications && notifications.length > 0 ? (
-          <table className="account-table centered">
-            <tbody>
-              {notifications.map((notification, index) => (
-                <tr key={index}>
-                  <p>{notification.message}</p>
-                  {notification.data &&
-                    Object.entries(JSON.parse(notification.data)).map(
-                      ([key, value]) =>
-                        key !== "appointmentId" && (
-                          <tr className="notification-header" key={key}>
-                            <th className="notification-header">{key}:</th>
-                            <td className="notification-value">{value}</td>
-                          </tr>
-                        )
-                    )}
+        <div className="customerReport">
+          <h1>Notifications</h1>
+
+          {notifications && notifications.length > 0 ? (
+            <table id="notificationsTable" className="display">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Service</th>
+                  <th>Pet Name</th>
+                  <th>Pet Species</th>
+                  <th>Pet Breed</th>
+                  <th>Pet Weight (kg)</th>
+                  <th>Pet Age</th>
+                  <th>Pet Birthdate</th>
+                  <th>Pet Gender</th>
+                  <th>Pet Color</th>
+                  <th>Vaccination</th>
+                  <th>Vaccination Date</th>
+                  <th>First Grooming</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No notifications</p>
-        )}
+              </thead>
+              <tbody>
+                {notifications.map((notification, index) => (
+                  <tr key={index}>
+                    {Object.entries(JSON.parse(notification.data)).map(
+                      ([key, value]) =>
+                        key !== "appointmentId" && <td key={key}>{value}</td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No notifications</p>
+          )}
+        </div>
       </div>
       {isVisible && (
         <button className="back-to-top" onClick={scrollToTop}>
