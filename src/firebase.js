@@ -345,6 +345,21 @@ const AuditLogger = async ({ event }) => {
   }
 };
 
+// Retrieve the email of the appointment owner using userId
+const getUserEmail = async (userId) => {
+  try {
+    const userDoc = await getDoc(doc(dba, "users", userId));
+    if (userDoc.exists()) {
+      return userDoc.data().email;
+    } else {
+      throw new Error("User document not found");
+    }
+  } catch (error) {
+    console.error("Error getting user email:", error.message);
+    throw error;
+  }
+};
+
 export {
   getAuth,
   auth,
@@ -382,4 +397,5 @@ export {
   getAllData,
   getUserData,
   AuditLogger,
+  getUserEmail,
 };
