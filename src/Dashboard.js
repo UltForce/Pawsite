@@ -142,6 +142,21 @@ const Dashboard = () => {
     return `${year}-${month}-${day} ${dayOfWeek}`;
   };
 
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "pending":
+        return <span className="badge bg-warning">{status}</span>;
+      case "approved":
+        return <span className="badge bg-info">{status}</span>;
+      case "completed":
+        return <span className="badge bg-success">{status}</span>;
+      case "canceled":
+        return <span className="badge bg-danger">{status}</span>;
+      default:
+        return <span className="badge bg-secondary">{status}</span>;
+    }
+  };
+
   return (
     <section className="background-image">
       <h1 className="centered">Dashboard</h1>
@@ -200,53 +215,56 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
-
-        <table id="appointmentsTable" className="display">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Service</th>
-              <th>Pet Name</th>
-              <th>Pet Species</th>
-              <th>Pet Breed</th>
-              <th>Pet Weight (kg)</th>
-              <th>Pet Age</th>
-              <th>Pet Color</th>
-              <th>Pet Birthdate</th>
-              <th>Pet Gender</th>
-              <th>Vaccination</th>
-              <th>Vaccination Date</th>
-              <th>First Grooming</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.appointmentId}>
-                <td>{appointment.name}</td>
-                <td>{formatDateTime(appointment.date)}</td>
-                <td>{appointment.appointmentType}</td>
-                <td>{appointment.serviceType}</td>
-                <td>{appointment.petName}</td>
-                <td>{appointment.species}</td>
-                <td>{appointment.breed}</td>
-                <td>{appointment.weight}</td>
-                <td>{appointment.age}</td>
-                <td>{appointment.color}</td>
-                <td>{vaccinationformatDateTime(appointment.birthdate)}</td>
-                <td>{appointment.gender}</td>
-                <td>{appointment.vaccination}</td>
-                <td>
-                  {vaccinationformatDateTime(appointment.vaccinationDate)}
-                </td>
-                <td>{appointment.firstGrooming}</td>
-                <td>{appointment.status}</td>
+        {appointments && appointments.length > 0 ? (
+          <table id="appointmentsTable" className="display">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Service</th>
+                <th>Pet Name</th>
+                <th>Pet Species</th>
+                <th>Pet Breed</th>
+                <th>Pet Weight (kg)</th>
+                <th>Pet Age</th>
+                <th>Pet Color</th>
+                <th>Pet Birthdate</th>
+                <th>Pet Gender</th>
+                <th>Vaccination</th>
+                <th>Vaccination Date</th>
+                <th>First Grooming</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {appointments.map((appointment) => (
+                <tr key={appointment.appointmentId}>
+                  <td>{appointment.name}</td>
+                  <td>{formatDateTime(appointment.date)}</td>
+                  <td>{appointment.appointmentType}</td>
+                  <td>{appointment.serviceType}</td>
+                  <td>{appointment.petName}</td>
+                  <td>{appointment.species}</td>
+                  <td>{appointment.breed}</td>
+                  <td>{appointment.weight}</td>
+                  <td>{appointment.age}</td>
+                  <td>{appointment.color}</td>
+                  <td>{vaccinationformatDateTime(appointment.birthdate)}</td>
+                  <td>{appointment.gender}</td>
+                  <td>{appointment.vaccination}</td>
+                  <td>
+                    {vaccinationformatDateTime(appointment.vaccinationDate)}
+                  </td>
+                  <td>{appointment.firstGrooming}</td>
+                  <td>{getStatusBadge(appointment.status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No appointments</p>
+        )}
       </div>
       <br />
     </section>

@@ -80,7 +80,21 @@ const Notifications = () => {
       });
     }
   }, [notifications]);
+  const vaccinationformatDateTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    // Check if dateTimeString is not applicable
+    if (!dateTimeString) {
+      return "N/A";
+    }
+    // Extract date, day of the week, and hour
+    const year = dateTime.getFullYear();
+    const month = ("0" + (dateTime.getMonth() + 1)).slice(-2); // Adding leading zero for single digit months
+    const day = ("0" + dateTime.getDate()).slice(-2); // Adding leading zero for single digit days
+    const dayOfWeek = dateTime.toLocaleDateString("en-US", { weekday: "long" });
 
+    // Format date string with spaces and without minutes and seconds
+    return `${year}-${month}-${day} ${dayOfWeek}`;
+  };
   return (
     <section className="background-image">
       <br />
@@ -106,15 +120,27 @@ const Notifications = () => {
                   <th>Vaccination</th>
                   <th>Vaccination Date</th>
                   <th>First Grooming</th>
+                  <th>Message</th>
                 </tr>
               </thead>
               <tbody>
                 {notifications.map((notification, index) => (
                   <tr key={index}>
                     {Object.entries(JSON.parse(notification.data)).map(
-                      ([key, value]) =>
-                        key !== "appointmentId" && <td key={key}>{value}</td>
+                      ([key, value]) => {
+                        if (key === "vaccinationDate") {
+                          return (
+                            <td key={key}>
+                              {vaccinationformatDateTime(value)}
+                            </td>
+                          );
+                        } else if (key !== "appointmentId" && key !== "petId") {
+                          return <td key={key}>{value}</td>;
+                        }
+                        return null; // Skip rendering if key is "appointmentId" or "petId"
+                      }
                     )}
+                    <td>{notification.message}</td>
                   </tr>
                 ))}
               </tbody>

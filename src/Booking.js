@@ -19,6 +19,9 @@ import {
   getCurrentUserId,
   getAllAppointments,
   AuditLogger,
+  getUserPet,
+  getAllPets,
+  getPetDetails,
 } from "./firebase";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -63,6 +66,7 @@ const Booking = ({ addNotification }) => {
     name: "",
     appointmentType: "",
     serviceType: "Nail Trim",
+    petId: "",
     petName: "",
     species: "",
     breed: "",
@@ -81,13 +85,11 @@ const Booking = ({ addNotification }) => {
   const [termsChecked, setTermsChecked] = useState(false); // State for tracking if terms are checked
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedPet, setSelectedPet] = useState("");
+  const [pets, setPets] = useState([]);
+  const [selectedPetDetails, setSelectedPetDetails] = useState(null); // State to store selected pet's details
 
   const PetNameInputRef = useRef(null);
-  const SpeciesInputRef = useRef(null);
-  const BreedNumberInputRef = useRef(null);
-  const WeightInputRef = useRef(null);
-  const AgeInputRef = useRef(null);
-  const ColorInputRef = useRef(null);
 
   const calendarRef = useRef(null);
   // Object mapping appointment status to colors
@@ -102,6 +104,40 @@ const Booking = ({ addNotification }) => {
   const getStatusColor = (status) => {
     return statusColors[status] || "gray"; // Default color is gray for unknown status
   };
+  const fetchPets = async () => {
+    try {
+      const loggedInUserId = getCurrentUserId(); // Get current user's ID
+      const userRole = await getUserRoleFirestore(loggedInUserId);
+      const allpets = await getAllPets();
+      const userpets = await getUserPet(loggedInUserId);
+      if (userRole === "admin") {
+        setPets(allpets);
+      } else {
+        setPets(userpets);
+      }
+    } catch (error) {
+      console.error("Error fetching pets:", error.message);
+    }
+  };
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
+  useEffect(() => {
+    const fetchPetDetails = async () => {
+      try {
+        if (selectedPet) {
+          const petDetails = await getPetDetails(selectedPet);
+          setSelectedPetDetails(petDetails);
+        }
+      } catch (error) {
+        console.error("Error fetching pet details:", error.message);
+      }
+    };
+
+    fetchPetDetails();
+  }, [selectedPet]);
+
   // Fetch user ID from local storage when component mounts
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -109,12 +145,15 @@ const Booking = ({ addNotification }) => {
       if (user) {
         const userId = getCurrentUserId();
         const userRole = await getUserRoleFirestore(userId);
+
         setIsAdmin(userRole === "admin");
       }
     });
+    fetchPets();
     fetchAppointments();
     return () => unsubscribe();
   }, []);
+
   // Fetch appointments
   const fetchAppointments = async () => {
     try {
@@ -170,6 +209,7 @@ const Booking = ({ addNotification }) => {
           name: clickedAppointment.name,
           appointmentType: clickedAppointment.appointmentType,
           serviceType: clickedAppointment.serviceType,
+          petId: clickedAppointment.petId,
           petName: clickedAppointment.petName,
           species: clickedAppointment.species,
           breed: clickedAppointment.breed,
@@ -182,6 +222,8 @@ const Booking = ({ addNotification }) => {
           vaccinationDate: clickedAppointment.vaccinationDate,
           firstGrooming: clickedAppointment.firstGrooming,
         });
+        setSelectedPet(clickedAppointment.petId);
+
         setSelectedDate(clickedAppointment.date); // Set selected date
         setIsFormOpen(true); // Open form
       } else {
@@ -216,29 +258,14 @@ const Booking = ({ addNotification }) => {
       ...formData,
       serviceType: formData.serviceType || "Nail Trim",
     };
-
-    if (
-      !updatedFormData.name ||
-      !updatedFormData.petName ||
-      !updatedFormData.species ||
-      !updatedFormData.breed ||
-      !updatedFormData.weight ||
-      !updatedFormData.age ||
-      !updatedFormData.birthdate ||
-      !updatedFormData.gender ||
-      !updatedFormData.color ||
-      !updatedFormData.vaccination ||
-      (updatedFormData.vaccination === "yes" &&
-        !updatedFormData.vaccinationDate) ||
-      !updatedFormData.firstGrooming
-    ) {
+    if (!updatedFormData.name || !selectedPet) {
       Toast.fire({
         icon: "error",
         title: "Please fill in all the fields.",
       });
       return; // Exit early if fields are empty
     }
-
+    console.log(selectedPetDetails);
     const loggedInUserId = getCurrentUserId();
 
     if (formData.appointmentId) {
@@ -255,18 +282,20 @@ const Booking = ({ addNotification }) => {
             name: formData.name,
             appointmentType: formData.appointmentType,
             serviceType: formData.serviceType,
-            petName: formData.petName,
-            species: formData.species,
-            breed: formData.breed,
-            weight: formData.weight,
-            age: formData.age,
-            birthdate: formData.birthdate,
-            gender: formData.gender,
-            color: formData.color,
-            vaccination: formData.vaccination,
-            vaccinationDate: formData.vaccinationDate,
-            firstGrooming: formData.firstGrooming,
+            petId: selectedPetDetails.petId,
+            petName: selectedPetDetails.petName,
+            species: selectedPetDetails.species,
+            breed: selectedPetDetails.breed,
+            weight: selectedPetDetails.weight,
+            age: selectedPetDetails.age,
+            birthdate: selectedPetDetails.birthdate,
+            gender: selectedPetDetails.gender,
+            color: selectedPetDetails.color,
+            vaccination: selectedPetDetails.vaccination,
+            vaccinationDate: selectedPetDetails.vaccinationDate,
+            firstGrooming: selectedPetDetails.firstGrooming,
           });
+          setSelectedPet(selectedPetDetails.petId);
           addNotification({
             id: Date.now(),
             message: `Appointment updated successfully:`,
@@ -286,6 +315,7 @@ const Booking = ({ addNotification }) => {
             name: "",
             appointmentType: "",
             serviceType: "Nail Trim",
+            petId: "",
             petName: "",
             species: "",
             breed: "",
@@ -298,6 +328,7 @@ const Booking = ({ addNotification }) => {
             vaccinationDate: "N/A",
             firstGrooming: "",
           });
+          setSelectedPet("");
           // Show success message
           Swal.fire({
             title: "success",
@@ -333,30 +364,49 @@ const Booking = ({ addNotification }) => {
             name: formData.name,
             appointmentType: formData.appointmentType,
             serviceType: formData.serviceType,
-            petName: formData.petName,
-            species: formData.species,
-            breed: formData.breed,
-            weight: formData.weight,
-            age: formData.age,
-            status: formData.status,
-            birthdate: formData.birthdate,
-            gender: formData.gender,
-            color: formData.color,
-            vaccination: formData.vaccination,
-            vaccinationDate: formData.vaccinationDate,
-            firstGrooming: formData.firstGrooming,
+            petId: selectedPetDetails.petId,
+            petName: selectedPetDetails.petName,
+            species: selectedPetDetails.species,
+            breed: selectedPetDetails.breed,
+            weight: selectedPetDetails.weight,
+            age: selectedPetDetails.age,
+            status: selectedPetDetails.status,
+            birthdate: selectedPetDetails.birthdate,
+            gender: selectedPetDetails.gender,
+            color: selectedPetDetails.color,
+            vaccination: selectedPetDetails.vaccination,
+            vaccinationDate: selectedPetDetails.vaccinationDate,
+            firstGrooming: selectedPetDetails.firstGrooming,
           });
+          setSelectedPet(selectedPetDetails.petId);
+          const appointmentData = {
+            ...formData,
+            petId: selectedPetDetails.petId,
+            petName: selectedPetDetails.petName,
+            species: selectedPetDetails.species,
+            breed: selectedPetDetails.breed,
+            weight: selectedPetDetails.weight,
+            age: selectedPetDetails.age,
+            status: selectedPetDetails.status,
+            birthdate: selectedPetDetails.birthdate,
+            gender: selectedPetDetails.gender,
+            color: selectedPetDetails.color,
+            vaccination: selectedPetDetails.vaccination,
+            vaccinationDate: selectedPetDetails.vaccinationDate,
+            firstGrooming: selectedPetDetails.firstGrooming,
+          };
           addNotification({
             id: Date.now(),
             message: `Appointment created successfully:`,
-            data: `${JSON.stringify(formData)}`,
-          }); // Pass formData containing appointment detailsls
+            data: `${JSON.stringify(appointmentData)}`,
+          }); // Pass formData containing appointment details
           setIsFormOpen(false); // Close form
           setIsValidDaySelected(false);
           setFormData({
             name: "",
             appointmentType: "",
             serviceType: "Nail Trim",
+            petId: "",
             petName: "",
             species: "",
             breed: "",
@@ -369,6 +419,7 @@ const Booking = ({ addNotification }) => {
             vaccinationDate: "N/A",
             firstGrooming: "",
           });
+          setSelectedPet("");
           // Show success message
           Swal.fire({
             title: "success",
@@ -432,11 +483,13 @@ const Booking = ({ addNotification }) => {
                 name: "",
                 appointmentType: "",
                 serviceType: "Nail Trim",
+                petId: "",
                 petName: "",
                 species: "",
                 breed: "",
                 weight: "",
                 age: "",
+                status: "pending",
                 birthdate: "",
                 gender: "",
                 color: "",
@@ -444,6 +497,7 @@ const Booking = ({ addNotification }) => {
                 vaccinationDate: "N/A",
                 firstGrooming: "",
               });
+              setSelectedPet("");
               addNotification({
                 id: Date.now(),
                 message: `Appointment deleted successfully:`,
@@ -500,6 +554,7 @@ const Booking = ({ addNotification }) => {
                 name: "",
                 appointmentType: "",
                 serviceType: "Nail Trim",
+                petId: "",
                 petName: "",
                 species: "",
                 breed: "",
@@ -512,6 +567,7 @@ const Booking = ({ addNotification }) => {
                 vaccinationDate: "N/A",
                 firstGrooming: "",
               });
+              setSelectedPet("");
               addNotification({
                 id: Date.now(),
                 message: `Appointment canceled successfully:`,
@@ -662,6 +718,7 @@ const Booking = ({ addNotification }) => {
       name: "",
       appointmentType: "",
       serviceType: "Nail Trim",
+      petId: "",
       petName: "",
       species: "",
       breed: "",
@@ -674,6 +731,7 @@ const Booking = ({ addNotification }) => {
       vaccinationDate: "N/A",
       firstGrooming: "",
     });
+    setSelectedPet("");
   };
 
   // Handle view change on calendar
@@ -718,6 +776,7 @@ const Booking = ({ addNotification }) => {
           name: "",
           appointmentType: "",
           serviceType: "Nail Trim",
+          petId: "",
           petName: "",
           species: "",
           breed: "",
@@ -730,6 +789,7 @@ const Booking = ({ addNotification }) => {
           vaccinationDate: "N/A",
           firstGrooming: "",
         });
+        setSelectedPet("");
         addNotification({
           id: Date.now(),
           message: `Appointment status updated successfully:`,
@@ -790,79 +850,7 @@ const Booking = ({ addNotification }) => {
       // Check if the pressed key is Enter
       if (event.target.id === "floatingName") {
         PetNameInputRef.current.focus();
-      } else if (event.target.id === "floatingPet") {
-        SpeciesInputRef.current.focus();
-      } else if (event.target.id === "floatingSpecies") {
-        BreedNumberInputRef.current.focus();
-      } else if (event.target.id === "floatingBreed") {
-        WeightInputRef.current.focus();
-      } else if (event.target.id === "floatingWeight") {
-        AgeInputRef.current.focus();
-      } else if (event.target.id === "floatingAge") {
-        ColorInputRef.current.focus();
       }
-    }
-  };
-  // Define handleVaccinationChange function to update vaccination status and date in formData state
-  const handleVaccinationChange = (e) => {
-    const vaccinationStatus = e.target.value;
-
-    // Update vaccination status
-    setFormData({ ...formData, vaccination: vaccinationStatus });
-
-    // If vaccination status is "no", set vaccination date to "N/A"
-    if (vaccinationStatus === "no") {
-      setFormData({ ...formData, vaccination: "no", vaccinationDate: "" });
-    } else if (formData.vaccination === "no") {
-      // If changing from "no" to "yes", clear vaccination date
-      setFormData({ ...formData, vaccinationDate: "" });
-    }
-  };
-
-  // Define handleBirthdateChange function to update birthdate in formData state
-  const handleBirthdateChange = (e) => {
-    const selectedDate = e.target.value;
-    // Check if selected date is not in the future
-    if (selectedDate <= new Date().toISOString().split("T")[0]) {
-      setFormData({ ...formData, birthdate: selectedDate });
-    } else {
-      Toast.fire({
-        icon: "error",
-        title: "Birthdate cannot be in the future",
-      });
-    }
-  };
-
-  // Define handleVaccinationDateChange function to update vaccination date in formData state
-  const handleVaccinationDateChange = (e) => {
-    const selectedDate = e.target.value;
-    const petBirthdate = formData.birthdate; // Get pet's birthdate from formData state
-
-    if (!petBirthdate) {
-      // Check if pet's birthdate is not set
-      Toast.fire({
-        icon: "error",
-        title: "Please set the pet's birthdate first",
-      });
-      return; // Exit function early
-    }
-
-    // Check if selected date is not in the future
-    if (selectedDate <= new Date().toISOString().split("T")[0]) {
-      // Check if selected date is later than pet's birthdate
-      if (selectedDate >= petBirthdate) {
-        setFormData({ ...formData, vaccinationDate: selectedDate });
-      } else {
-        Toast.fire({
-          icon: "error",
-          title: "Vaccination date cannot be earlier than pet's birthdate",
-        });
-      }
-    } else {
-      Toast.fire({
-        icon: "error",
-        title: "Vaccination date cannot be in the future",
-      });
     }
   };
 
@@ -903,7 +891,7 @@ const Booking = ({ addNotification }) => {
             allDaySlot={false}
             datesSet={handleViewChange}
             expandRows={true}
-            height="975px"
+            height="625px"
             eventMinWidth={1000}
             eventTimeFormat={{
               // Set custom time format
@@ -1014,319 +1002,20 @@ const Booking = ({ addNotification }) => {
                   </select>
                 </div>
                 <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingPet"
+                  <label for="petSelect">Select Pet:</label>
+                  <select
+                    id="petSelect"
+                    class="form-select form-select-sm booking-form"
+                    value={selectedPet}
+                    onChange={(e) => setSelectedPet(e.target.value)}
                   >
-                    Pet Name:
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Name"
-                    id="floatingPet"
-                    value={formData.petName}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 128) {
-                        setFormData({ ...formData, petName: e.target.value });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={PetNameInputRef}
-                  />
-                </div>
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingSpecies"
-                  >
-                    Pet Species:
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Species"
-                    id="floatingSpecies"
-                    value={formData.species}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 128) {
-                        setFormData({ ...formData, species: e.target.value });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={SpeciesInputRef}
-                  />
-                </div>
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingBreed"
-                  >
-                    Pet Breed:
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Breed"
-                    id="floatingBreed"
-                    value={formData.breed}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 128) {
-                        setFormData({ ...formData, breed: e.target.value });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={BreedNumberInputRef}
-                  />
-                </div>
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingWeight"
-                  >
-                    Pet Weight: (kg)
-                  </label>
-                  <input
-                    type="number"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Weight"
-                    id="floatingWeight"
-                    value={formData.weight}
-                    onChange={(e) => {
-                      const weightValue = e.target.value;
-                      if (weightValue >= 0 && weightValue.length <= 4) {
-                        // Check if the value is positive or zero
-                        setFormData({ ...formData, weight: weightValue });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={WeightInputRef}
-                  />
-                </div>
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingAge"
-                  >
-                    Pet Age:
-                  </label>
-                  <input
-                    type="number"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Age"
-                    id="floatingAge"
-                    value={formData.age}
-                    onChange={(e) => {
-                      const ageValue = e.target.value;
-                      if (ageValue >= 0 && ageValue.length <= 3) {
-                        // Check if the value is positive or zero
-                        setFormData({ ...formData, age: ageValue });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={AgeInputRef}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingColor"
-                  >
-                    Pet Color:
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Color"
-                    id="floatingColor"
-                    value={formData.color}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 128) {
-                        setFormData({ ...formData, color: e.target.value });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={ColorInputRef}
-                  />
-                </div>
-                <div>
-                  <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingBirthdate"
-                  >
-                    Pet Birthdate:
-                  </label>
-                  <input
-                    type="date"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Birthdate"
-                    id="floatingBirthdate"
-                    value={formData.birthdate}
-                    onChange={handleBirthdateChange}
-                  />
-                </div>
-                <div>
-                  <label
-                    className="col-form-label col-form-label-sm"
-                    for="genderOptions"
-                  >
-                    Pet Gender:
-                  </label>
-                  <div id="genderOptions">
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gender"
-                        id="male"
-                        value="male"
-                        checked={formData.gender === "male"} // Check if gender is male
-                        onChange={(e) =>
-                          setFormData({ ...formData, gender: e.target.value })
-                        }
-                      />
-                      <label className="form-check-label" for="male">
-                        Male
-                      </label>
-                    </div>
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gender"
-                        id="female"
-                        value="female"
-                        checked={formData.gender === "female"} // Check if gender is male
-                        onChange={(e) =>
-                          setFormData({ ...formData, gender: e.target.value })
-                        }
-                      />
-                      <label className="form-check-label" for="female">
-                        Female
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    className="col-form-label col-form-label-sm"
-                    htmlFor="vaccinationOptions"
-                  >
-                    Vaccination:
-                  </label>
-                  <div id="vaccinationOptions">
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="vaccination"
-                        id="vaccinationyes"
-                        value="yes"
-                        checked={formData.vaccination === "yes"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            vaccination: e.target.value,
-                          })
-                        }
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="vaccinationyes"
-                      >
-                        Yes
-                      </label>
-                    </div>
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="vaccination"
-                        id="vaccinationno"
-                        value="no"
-                        checked={formData.vaccination === "no"}
-                        onChange={handleVaccinationChange}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="vaccinationno"
-                      >
-                        No
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                {formData.vaccination === "yes" && ( // Conditionally render if vaccination is yes
-                  <div>
-                    <label
-                      className="col-form-label col-form-label-sm"
-                      htmlFor="vaccinationDate"
-                    >
-                      Vaccination Date:
-                    </label>
-                    <input
-                      type="date"
-                      className="form-control form-control-sm booking-form"
-                      id="vaccinationDate"
-                      value={formData.vaccinationDate}
-                      onChange={handleVaccinationDateChange}
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label
-                    className="col-form-label col-form-label-sm"
-                    for="groomingOptions"
-                  >
-                    First Grooming:
-                  </label>
-                  <div id="groomingOptions">
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="grooming"
-                        id="groomingyes"
-                        value="yes"
-                        checked={formData.firstGrooming === "yes"} // Check if gender is male
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            firstGrooming: e.target.value,
-                          })
-                        }
-                      />
-                      <label className="form-check-label" for="groomingyes">
-                        Yes
-                      </label>
-                    </div>
-                    <div className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="grooming"
-                        id="groomingno"
-                        value="no"
-                        checked={formData.firstGrooming === "no"} // Check if gender is male
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            firstGrooming: e.target.value,
-                          })
-                        }
-                      />
-                      <label className="form-check-label" for="groomingno">
-                        No
-                      </label>
-                    </div>
-                  </div>
+                    <option value="">Select a pet</option>
+                    {pets.map((pet) => (
+                      <option key={pet.petId} value={pet.petId}>
+                        {pet.petName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <br />
                 <div>

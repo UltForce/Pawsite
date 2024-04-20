@@ -1,7 +1,7 @@
 import "bootstrap";
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { auth, getCurrentUserId, AuditLogger } from "./firebase";
+import { auth, getCurrentUserId, AuditLogger, getUserPet } from "./firebase";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,7 +10,9 @@ import {
   getPetById,
   updatePet,
   deletePet,
+  getUserRoleFirestore,
 } from "./firebase";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa"; // Import FontAwesome icons
 import $ from "jquery";
 import "datatables.net";
 // Toast configuration for displaying messages
@@ -91,16 +93,22 @@ function Pet() {
       }
     }
   };
-  useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        const pets = await getAllPets();
-        setPets(pets);
-      } catch (error) {
-        console.error("Error fetching pets:", error.message);
+  const fetchPets = async () => {
+    try {
+      const loggedInUserId = getCurrentUserId(); // Get current user's ID
+      const userRole = await getUserRoleFirestore(loggedInUserId);
+      const allpets = await getAllPets();
+      const userpets = await getUserPet(loggedInUserId);
+      if (userRole === "admin") {
+        setPets(allpets);
+      } else {
+        setPets(userpets);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching pets:", error.message);
+    }
+  };
+  useEffect(() => {
     fetchPets();
   }, []);
 
@@ -172,6 +180,8 @@ function Pet() {
 
     const updatedFormData = {
       ...formData,
+      petId: formData.petId,
+      userId: formData.userId,
     };
 
     if (
@@ -196,9 +206,8 @@ function Pet() {
     }
 
     const loggedInUserId = getCurrentUserId();
-
     if (formData.petId) {
-      // Update appointment
+      // Update pet
       Swal.fire({
         icon: "question",
         title: "Do you want to edit this pet?",
@@ -228,6 +237,7 @@ function Pet() {
 
           // Call the AuditLogger function with the event object
           AuditLogger({ event });
+          setIsFormOpen(false); // Close form
           setFormData({
             petName: "",
             species: "",
@@ -257,11 +267,11 @@ function Pet() {
               });
             }
           });
-          getAllPets(); // Fetch appointments
+          fetchPets(); // Fetch pets
         }
       });
     } else {
-      // Create new appointment
+      // Create new pet
       Swal.fire({
         icon: "question",
         title: "Do you want to create this pet?",
@@ -297,6 +307,7 @@ function Pet() {
             vaccinationDate: "N/A",
             firstGrooming: "",
           });
+          fetchPets(); // Fetch pets
           // Show success message
           Swal.fire({
             title: "success",
@@ -324,6 +335,27 @@ function Pet() {
         }
       });
     }
+  };
+
+  // Handle form submission
+  const handleUpdatePet = async (petData) => {
+    setFormData({
+      // Set form data
+      userId: petData.userId,
+      petId: petData.petId,
+      petName: petData.petName,
+      species: petData.species,
+      breed: petData.breed,
+      weight: petData.weight,
+      age: petData.age,
+      birthdate: petData.birthdate,
+      gender: petData.gender,
+      color: petData.color,
+      vaccination: petData.vaccination,
+      vaccinationDate: petData.vaccinationDate,
+      firstGrooming: petData.firstGrooming,
+    });
+    setIsFormOpen(true);
   };
 
   useEffect(() => {
@@ -374,50 +406,167 @@ function Pet() {
     return `${year}-${month}-${day} ${dayOfWeek}`;
   };
 
+  // Handle deletion of pet
+  const handleDeletePet = async (petId) => {
+    try {
+      const loggedInUserId = getCurrentUserId(); // Get the current user's ID
+      const numberOfPets = pets.length;
+      // Check if the user has only one pet
+      if (numberOfPets === 1) {
+        Swal.fire({
+          icon: "error",
+          title: "Cannot delete last pet",
+          text: "You cannot delete your last pet",
+          confirmButtonText: "Ok",
+        });
+        return;
+      }
+
+      Swal.fire({
+        icon: "question",
+        title: "Do you want to delete this pet?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          // If user is admin, delete pet
+          await deletePet(petId);
+          setFormData({
+            petName: "",
+            species: "",
+            breed: "",
+            weight: "",
+            age: "",
+            birthdate: "",
+            gender: "",
+            color: "",
+            vaccination: "",
+            vaccinationDate: "N/A",
+            firstGrooming: "",
+          });
+
+          const event = {
+            type: "Pets", // Type of event
+            userId: loggedInUserId, // User ID associated with the event
+            details: "User deleted an existing pet", // Details of the event
+          };
+
+          // Call the AuditLogger function with the event object
+          AuditLogger({ event });
+          fetchPets(); // Fetch pets
+          // Show success message
+          Swal.fire({
+            title: "success",
+            text: "Pet deleted successfully",
+            icon: "success",
+            type: "success",
+            heightAuto: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirm",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Toast.fire({
+                icon: "success",
+                title: "Pet deleted successfully",
+              });
+            }
+          });
+          return;
+        }
+      });
+    } catch (error) {
+      console.error("Error deleting pet:", error);
+      Toast.fire({
+        icon: "error",
+        title: "Error deleting pet",
+      });
+    }
+  };
+
+  function handleAddPetButton() {
+    setFormData({
+      userId: "",
+      petId: "",
+      petName: "",
+      species: "",
+      breed: "",
+      weight: "",
+      age: "",
+      birthdate: "",
+      gender: "",
+      color: "",
+      vaccination: "",
+      vaccinationDate: "N/A",
+      firstGrooming: "",
+    });
+    setIsFormOpen(true);
+  }
   return (
     <section className="background-image">
       <div className="centered">
-        <div>
-          <h2>Pet List</h2>
-          <table id="petsTable" className="display">
-            <thead>
-              <tr>
-                <th>Pet Name</th>
-                <th>Pet Species</th>
-                <th>Pet Breed</th>
-                <th>Pet Weight (kg)</th>
-                <th>Pet Age</th>
-                <th>Pet Color</th>
-                <th>Pet Birthdate</th>
-                <th>Pet Gender</th>
-                <th>Vaccination</th>
-                <th>Vaccination Date</th>
-                <th>First Grooming</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pets.map((pet) => (
-                <tr key={pet.petId}>
-                  <td>{pet.petName}</td>
-                  <td>{pet.species}</td>
-                  <td>{pet.breed}</td>
-                  <td>{pet.weight}</td>
-                  <td>{pet.age}</td>
-                  <td>{pet.color}</td>
-                  <td>{vaccinationformatDateTime(pet.birthdate)}</td>
-                  <td>{pet.gender}</td>
-                  <td>{pet.vaccination}</td>
-                  <td>{vaccinationformatDateTime(pet.vaccinationDate)}</td>
-                  <td>{pet.firstGrooming}</td>
+        <center>
+          <h1>Pet List</h1>
+        </center>
+        <div className="customerReport">
+          {pets && pets.length > 0 ? (
+            <table id="petsTable" className="display">
+              <thead>
+                <tr>
+                  <th>Pet Name</th>
+                  <th>Pet Species</th>
+                  <th>Pet Breed</th>
+                  <th>Pet Weight (kg)</th>
+                  <th>Pet Age</th>
+                  <th>Pet Color</th>
+                  <th>Pet Birthdate</th>
+                  <th>Pet Gender</th>
+                  <th>Vaccination</th>
+                  <th>Vaccination Date</th>
+                  <th>First Grooming</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {pets.map((pet) => (
+                  <tr key={pet.petId}>
+                    <td>{pet.petName}</td>
+                    <td>{pet.species}</td>
+                    <td>{pet.breed}</td>
+                    <td>{pet.weight}</td>
+                    <td>{pet.age}</td>
+                    <td>{pet.color}</td>
+                    <td>{vaccinationformatDateTime(pet.birthdate)}</td>
+                    <td>{pet.gender}</td>
+                    <td>{pet.vaccination}</td>
+                    <td>{vaccinationformatDateTime(pet.vaccinationDate)}</td>
+                    <td>{pet.firstGrooming}</td>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeletePet(pet.petId)}
+                      >
+                        <FaTrash /> {/* FontAwesome edit icon */}
+                      </button>
+                      <button
+                        className="btn btn-primary btn-sm mx-1"
+                        onClick={() => handleUpdatePet(pet)}
+                      >
+                        <FaEdit /> {/* FontAwesome edit icon */}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No pets</p>
+          )}
           <center>
             <button
               className="btn btn-outline-primary"
               type="button"
-              onClick={() => setIsFormOpen(true)}
+              onClick={handleAddPetButton}
             >
               Add Pets
             </button>
@@ -756,7 +905,7 @@ function Pet() {
                   </div>
                 </div>
                 <br />
-                <div>
+                <div style={{ marginLeft: "20px" }}>
                   <input
                     type="checkbox"
                     checked={termsChecked}

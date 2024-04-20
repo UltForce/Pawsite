@@ -396,7 +396,24 @@ const getAllPets = async () => {
     return [];
   }
 };
-
+const getUserPet = async (userId) => {
+  try {
+    // Query the "pets" collection where userId matches the logged-in user's ID
+    const petsQuery = query(
+      collection(dba, "pets"),
+      where("userId", "==", userId)
+    );
+    const snapshot = await getDocs(petsQuery);
+    const pets = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return pets;
+  } catch (error) {
+    console.error("Error getting user pets:", error.message);
+    return [];
+  }
+};
 // Function to retrieve a single pet by ID
 const getPetById = async (petId) => {
   try {
@@ -415,7 +432,7 @@ const getPetById = async (petId) => {
 };
 
 // Function to update a pet by ID
-const updatePet = async (petId, newData) => {
+const updatePet = async (userId, petId, newData) => {
   try {
     // Update the document in the "pets" collection with the new data
     await updateDoc(doc(dba, "pets", petId), newData);
@@ -433,6 +450,27 @@ const deletePet = async (petId) => {
     console.log("Pet deleted successfully!");
   } catch (error) {
     console.error("Error deleting pet:", error.message);
+  }
+};
+
+const getPetDetails = async (petId) => {
+  try {
+    // Construct reference to the pet document
+    const petDocRef = doc(dba, "pets", petId);
+
+    // Get pet document snapshot
+    const petDocSnapshot = await getDoc(petDocRef);
+
+    if (petDocSnapshot.exists()) {
+      // Return pet data
+      return petDocSnapshot.data();
+    } else {
+      console.error("Pet document not found in Firestore.");
+      return null; // Return null if pet document doesn't exist
+    }
+  } catch (error) {
+    console.error("Error fetching pet details from Firestore:", error.message);
+    throw error; // You can handle this error in the calling code
   }
 };
 
@@ -479,4 +517,6 @@ export {
   getPetById,
   updatePet,
   deletePet,
+  getUserPet,
+  getPetDetails,
 };

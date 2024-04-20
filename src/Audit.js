@@ -128,26 +128,30 @@ const Audit = () => {
       <br />
       <h1 className="centered">Audit Logs</h1>
       <div className="customerReport">
-        <table id="auditTable" className="display ">
-          <thead>
-            <tr>
-              <th>Event Type</th>
-              <th>Name</th>
-              <th>Timestamp</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {auditLogs.map((log) => (
-              <tr key={log.id}>
-                <td>{log.eventType}</td>
-                <td>{`${log.firstname} ${log.lastname}`}</td>
-                <td>{formatTimestamp(log.timestamp)}</td>
-                <td>{log.details}</td>
+        {auditLogs && auditLogs.length > 0 ? (
+          <table id="auditTable" className="display ">
+            <thead>
+              <tr>
+                <th>Event Type</th>
+                <th>Name</th>
+                <th>Timestamp</th>
+                <th>Details</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {auditLogs.map((log) => (
+                <tr key={log.id}>
+                  <td>{log.eventType}</td>
+                  <td>{`${log.firstname} ${log.lastname}`}</td>
+                  <td>{formatTimestamp(log.timestamp)}</td>
+                  <td>{log.details}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No appointments</p>
+        )}
       </div>
     </section>
   );
