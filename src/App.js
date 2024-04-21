@@ -74,6 +74,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/reset" element={<Reset />} />
         <Route path="/Audit" element={<Audit />} />
+        <Route path="*" element={<Homepage />} />
       </Routes>
       <Footer />
       <ToastContainer />
