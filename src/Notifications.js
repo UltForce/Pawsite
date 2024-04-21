@@ -100,8 +100,9 @@ const Notifications = () => {
       <br />
       <div className="centered">
         <div className="customerReport">
-          <h1>Notifications</h1>
-
+          <center>
+            <h1>Notifications</h1>
+          </center>
           {notifications && notifications.length > 0 ? (
             <table id="notificationsTable" className="display">
               <thead>

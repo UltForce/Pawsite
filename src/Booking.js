@@ -907,11 +907,13 @@ const Booking = ({ addNotification }) => {
         <div style={{ flex: 0.3 }}>
           {isFormOpen && (
             <>
+              <br />
+              <br />
               <h2>Appointment Form</h2>
               <form onSubmit={handleFormSubmit}>
                 <div>
                   <label
-                    class="col-form-label col-form-label-sm"
+                    class="col-form-label col-form-label"
                     for="floatingName"
                   >
                     Name
@@ -931,9 +933,10 @@ const Booking = ({ addNotification }) => {
                     onKeyPress={handleKeyPress}
                   />
                 </div>
+                <br />
                 <div>
                   <label
-                    className="col-form-label col-form-label-sm"
+                    className="col-form-label col-form-label"
                     for="typeOptions"
                   >
                     Appointment Type:
@@ -979,6 +982,7 @@ const Booking = ({ addNotification }) => {
                     </div>
                   </div>
                 </div>
+                <br />
                 <div>
                   <label>Service Type:</label>
                   <select
@@ -1001,6 +1005,7 @@ const Booking = ({ addNotification }) => {
                     <option value="Cat Grooming">Cat Grooming</option>
                   </select>
                 </div>
+                <br />
                 <div>
                   <label for="petSelect">Select Pet:</label>
                   <select
@@ -1028,6 +1033,7 @@ const Booking = ({ addNotification }) => {
                     I agree to the <a href="/terms">Terms and Conditions</a>.
                   </label>
                 </div>
+                <br />
                 <button
                   className="btn btn-outline-primary"
                   type="submit"
@@ -1045,8 +1051,10 @@ const Booking = ({ addNotification }) => {
                     Delete
                   </button>
                 )}
+
                 {isAdmin && (
                   <div className="dropdown">
+                    <br />
                     <button
                       className={`btn btn-${getStatusColor(
                         formData.status ? formData.status : "pending"

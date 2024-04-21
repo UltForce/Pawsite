@@ -195,29 +195,6 @@ footer {
   text-align: center;
 }
 
-.notification {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.notification .content {
-  flex: 1;
-}
-
-.dismiss-button {
-  background-color: #ccc;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
 .account-table {
   width: 100%;
   border-collapse: collapse; /* Remove border spacing */
@@ -239,59 +216,6 @@ footer {
 .account-table td:first-child {
   background-color: #333; /* Highlight the first column */
   color: white; /* Text color for the first column */
-}
-
-.notification-content {
-  display: flex;
-  margin-bottom: 8px;
-}
-
-.notification-header {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.notification-message {
-  flex: 1;
-}
-
-.notification-value {
-  flex: 1;
-}
-
-.notification-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.notification-table th,
-.notification-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.notification-table th {
-  background-color: #333;
-  color: white;
-}
-
-.notification-table th:first-child,
-.notification-table td:first-child {
-  background-color: #333;
-  color: white;
-}
-
-.notification-table tbody td {
-  vertical-align: center; /* Align cell content to the top */
-}
-
-.notification-content {
-  margin-bottom: 4px;
-}
-
-.notification-content strong {
-  margin-right: 4px;
 }
 
 .footer {
@@ -373,6 +297,7 @@ footer {
 
 .accordion-body {
   white-space: pre-wrap;
+  max-height: none;
 }
 
 .accordion-container {
@@ -381,16 +306,14 @@ footer {
 }
 
 .accordion {
-  width: 50%;
+  width: 100%;
 }
-.search {
-  width: 300px;
+
+.accordion-item {
+  min-height: 70px;
 }
-.search-container {
-  width: 40%; /* Adjust the width to fill the parent container */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.accordion-button {
+  min-height: 70px;
 }
 .custom-event {
   width: 150px; /* Adjust the width as needed */
