@@ -656,7 +656,7 @@ const Booking = ({ addNotification }) => {
       calendarApi.changeView("timeGridDay", startDate3);
     } else if (selectInfo.view.type === "timeGridDay") {
       // Check if the selected hour is in the past
-      if (startDate.isBefore(currentDate, "hour")) {
+      if (startDate.isBefore(currentDate.clone().add(1, "hour"), "hour")) {
         setIsFormOpen(false); // Close form
         setIsValidDaySelected(false); // Set day as invalid
         Toast.fire({

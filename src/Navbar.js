@@ -171,8 +171,8 @@ const Navbar = ({ notifications, setNotifications }) => {
             </li>
             <li className={location.pathname === "/Shop" ? "active" : ""}>
               <Link to="/Shop">
-                <FontAwesomeIcon icon={faTag} />
-                <span className="nav-label"> Services</span>
+                <FontAwesomeIcon icon={faShoppingCart} />
+                <span className="nav-label"> Shop</span>
               </Link>
             </li>
             <li
@@ -191,8 +191,8 @@ const Navbar = ({ notifications, setNotifications }) => {
             </li>
             <li className={location.pathname === "/services" ? "active" : ""}>
               <Link to="/services">
-                <FontAwesomeIcon icon={faShoppingCart} />
-                <span className="nav-label"> Shop</span>
+                <FontAwesomeIcon icon={faTag} />
+                <span className="nav-label"> Services</span>
               </Link>
             </li>
             <li className={location.pathname === "/booking" ? "active" : ""}>

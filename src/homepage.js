@@ -28,10 +28,12 @@ const Homepage = () => {
   return (
     <section className="background-image">
       <div className="homepage centered">
-        <header>
+        <header className="homepage centered">
           <h1>Welcome to Pawsite!</h1>
           <h4>Be part of the pack.</h4>
-          <img src="pawsite2.png" height="200px" />
+          <center>
+            <img src="pawsite2.png" height="200px" />
+          </center>
         </header>
         <main>
           <p>

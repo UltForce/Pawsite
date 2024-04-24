@@ -348,7 +348,7 @@ const Shop = () => {
   return (
     <section className="background-image">
       <div className="centered">
-        <h1 className="page-title">Services</h1>
+        <h1 className="page-title">Shop</h1>
         {isAdmin && (
           <div>
             <button className="btn btn-outline-primary" onClick={handleSubmit}>

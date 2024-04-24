@@ -31,12 +31,20 @@ const Services = () => {
           <div /*className="gallery-container"*/ className="row">
             <div /*className="gallery-row"*/ className="col-md-6">
               <center>
-                <img src={services1} alt="Gallery 1" className="image" />
+                <img
+                  src={services1}
+                  alt="Gallery 1"
+                  className="image-services"
+                />
               </center>
             </div>
             <div /*className="gallery-row"*/ className="col-md-6">
               <center>
-                <img src={services2} alt="Gallery 2" className="image" />
+                <img
+                  src={services2}
+                  alt="Gallery 2"
+                  className="image-services"
+                />
               </center>
             </div>
           </div>

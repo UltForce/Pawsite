@@ -403,7 +403,7 @@ const Terms = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-12">
+              <div className="col-md-6">
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThirteen">
                     <button
@@ -429,6 +429,34 @@ const Terms = () => {
                       appointment are in the same time slot. In the case that
                       the appointment is canceled or a no show, the walk-in
                       appointment can take ove the time slot.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingFourteen">
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseFourteen"
+                      aria-expanded="false"
+                      aria-controls="collapseFourteen"
+                    >
+                      Products
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseFourteen"
+                    className="accordion-collapse collapse  "
+                    aria-labelledby="headingFourteen"
+                    data-bs-parent="#faqsAccordion"
+                  >
+                    <div className="accordion-body">
+                      The products in the shop page are only for preview and can
+                      only be bought onsite of the grooming shop.
                     </div>
                   </div>
                 </div>

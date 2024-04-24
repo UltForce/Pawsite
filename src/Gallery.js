@@ -15,21 +15,19 @@ const Gallery = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
   return (
-    <section className="background-image">
+    <section className="background-shadow">
       <div /*className="homepage"*/>
         <main>
           <div /*className="gallery-container"*/ className="row">
-            <div /*className="gallery-row"*/ className="col-md-4">
-              <center>
-                <img src={gallery1} alt="Gallery 1" className="image" />
-              </center>
-            </div>
-            <div /*className="gallery-row"*/ className="col-md-4">
+            <center>
+              <h1>Dogs</h1>
+            </center>
+            <div /*className="gallery-row"*/ className="col-md-6">
               <center>
                 <img src={gallery2} alt="Gallery 2" className="image" />
               </center>
             </div>
-            <div /*className="gallery-row"*/ className="col-md-4">
+            <div /*className="gallery-row"*/ className="col-md-6">
               <center>
                 <img src={gallery3} alt="Gallery 3" className="image" />
               </center>
@@ -52,8 +50,19 @@ const Gallery = () => {
               </center>
             </div>
           </div>
+          <div /*className="gallery-container"*/ className="row">
+            <center>
+              <h1>Cats</h1>
+            </center>
+            <div /*className="gallery-row"*/ className="col-md-12">
+              <center>
+                <img src={gallery1} alt="Gallery 1" className="image" />
+              </center>
+            </div>
+          </div>
         </main>
       </div>
+      <br />
     </section>
   );
 };
