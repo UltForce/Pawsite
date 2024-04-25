@@ -309,8 +309,21 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      Customer and Pet information will be kept confidential and
-                      will not be shared with third parties.
+                      We use the personal information provided by our customers
+                      to schedule grooming appointments, communicate with them
+                      regarding their appointments, understand their pet's
+                      grooming needs, and ensure the safety and well-being of
+                      their pets during the grooming process. We may also use
+                      this information for internal record-keeping and to
+                      improve our services. We do not sell, trade, or otherwise
+                      transfer personal information to third parties unless we
+                      have obtained explicit consent from the customer or are
+                      required to do so by law. We take the security of customer
+                      data seriously and implement various measures to protect
+                      it from unauthorized access, disclosure, alteration, or
+                      destruction. Once the data is no longer needed, we
+                      securely dispose of it to prevent unauthorized access or
+                      misuse.
                     </div>
                   </div>
                 </div>
