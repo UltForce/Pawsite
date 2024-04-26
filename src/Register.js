@@ -1,8 +1,15 @@
 // Register.js
 
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { auth, dba, doc, setDoc, AuditLogger } from "./firebase";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  auth,
+  dba,
+  doc,
+  setDoc,
+  AuditLogger,
+  getUserRoleFirestore,
+} from "./firebase";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
 import { sendEmailVerification, signInWithPopup } from "firebase/auth";
@@ -10,6 +17,7 @@ import { GoogleAuthProvider } from "firebase/auth";
 import { linkWithCredential } from "firebase/auth";
 import { EmailAuthProvider } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa"; // Import FontAwesome icons
+
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -44,6 +52,7 @@ const Register = () => {
   const UnitInputRef = useRef(null);
   const PasswordInputRef = useRef(null);
   const ConfirmPasswordInputRef = useRef(null);
+  const navigate = useNavigate();
   const [termsChecked, setTermsChecked] = useState(false); // State for tracking if terms are checked
   const handleGoogleSignIn = async () => {
     if (
@@ -127,9 +136,15 @@ const Register = () => {
             userId: user.uid,
             details: "User registered",
           };
-          await sendEmailVerification(googleEmail);
+          //await sendEmailVerification(user.email);
           AuditLogger({ event });
-
+          // Check user role and redirect
+          const userRole = await getUserRoleFirestore(user.uid);
+          if (userRole === "admin") {
+            navigate("/dashboard");
+          } else {
+            navigate("/homepage");
+          }
           Swal.fire({
             title: "success",
             text: "Account registered successfully",
