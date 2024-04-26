@@ -136,7 +136,7 @@ const Register = () => {
             userId: user.uid,
             details: "User registered",
           };
-          //await sendEmailVerification(user.email);
+          await sendEmailVerification(user);
           AuditLogger({ event });
           // Check user role and redirect
           const userRole = await getUserRoleFirestore(user.uid);
