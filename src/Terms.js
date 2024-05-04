@@ -71,7 +71,9 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      A customer can only schedule one appointment at a time
+                      Customers have the option to do walk-ins but online
+                      appointment scheduling are recommended. A customer can
+                      only schedule one appointment at a time
                     </div>
                   </div>
                 </div>
@@ -87,7 +89,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseTwo"
                     >
-                      Cancellation and rescheduling
+                      Cancellation
                     </button>
                   </h2>
                   <div
@@ -98,10 +100,7 @@ const Terms = () => {
                   >
                     <div className="accordion-body">
                       A customer can only request cancellation on appointments
-                      not yet approved by the administrators. In the case that
-                      the customer wishes to cancel or reschedule an already
-                      approved appointment, please contact 0927 882 0488 /
-                      09988891178 directly.
+                      not yet approved by the administrators.
                     </div>
                   </div>
                 </div>
@@ -119,7 +118,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseThree"
                     >
-                      Pet Information
+                      Rescheduling
                     </button>
                   </h2>
                   <div
@@ -129,9 +128,9 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The customers must be able to give accurate information on
-                      their pet like species, breed, and their sizes as this may
-                      affect the prices of the appointment.
+                      In the case that the customer wishes to cancel or
+                      reschedule an already approved appointment, please contact
+                      0927 882 0488 directly.
                     </div>
                   </div>
                 </div>
@@ -148,7 +147,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseFour"
                     >
-                      Vaccination
+                      Walk-ins
                     </button>
                   </h2>
                   <div
@@ -158,8 +157,11 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The customers may be requested to show their vaccinations
-                      for their pets as part of their health policies.
+                      For walk-ins, appointments made on the website will be
+                      prioritized in the case that a walk-in and online
+                      appointment are in the same time slot. In the case that
+                      the appointment is canceled or a no-show, the walk-in
+                      appointment can take over the time slot.
                     </div>
                   </div>
                 </div>
@@ -178,7 +180,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseFive"
                     >
-                      Grooming services
+                      Refusal of Service
                     </button>
                   </h2>
                   <div
@@ -188,11 +190,10 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The groomer will only provide the grooming services stated
-                      in the scheduled appointment. In the case that the
-                      customer wishes to request more services, the customer and
-                      groomer must both agree to the conditions and the customer
-                      will have added costs.
+                      The grooming shop reserves the right to refuse service to
+                      any client for reasons of including but not limited to
+                      aggressive pet behavior, pregnant pet, or injuries or
+                      severe health conditions.
                     </div>
                   </div>
                 </div>
@@ -208,7 +209,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseSix"
                     >
-                      Latecomers
+                      Payment
                     </button>
                   </h2>
                   <div
@@ -218,9 +219,8 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      Customers and Groomers must be able to come at the
-                      scheduled time. Latecomers may incur additional charges or
-                      their appointment canceled.
+                      Payment can only be made on site of the grooming shop.
+                      Cash, Bank Transfer, and GCASH payment are accepted.
                     </div>
                   </div>
                 </div>
@@ -239,7 +239,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseSeven"
                     >
-                      Liability
+                      Pet Information
                     </button>
                   </h2>
                   <div
@@ -249,10 +249,9 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The grooming shop will take reasonable care for the
-                      customer's pet but will not be liable for any pre-existing
-                      conditions. The customers are liable for any damage or
-                      injuries that their pet may have caused.
+                      The customers must be able to give accurate information on
+                      their pet like species, breed, and sizes as this may
+                      affect the prices of the appointment.
                     </div>
                   </div>
                 </div>
@@ -268,7 +267,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseEight"
                     >
-                      Photography and Social Media
+                      Vaccination
                     </button>
                   </h2>
                   <div
@@ -278,9 +277,8 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      Customers may be asked by the grooming shop to take
-                      pictures of their pets for marketing purposes. The
-                      customer may choose to refuse.
+                      The customers may be requested to show their vaccinations
+                      for their pets as part of their health policies.
                     </div>
                   </div>
                 </div>
@@ -299,7 +297,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseNine"
                     >
-                      Privacy Policy
+                      Grooming Services
                     </button>
                   </h2>
                   <div
@@ -309,21 +307,10 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      We use the personal information provided by our customers
-                      to schedule grooming appointments, communicate with them
-                      regarding their appointments, understand their pet's
-                      grooming needs, and ensure the safety and well-being of
-                      their pets during the grooming process. We may also use
-                      this information for internal record-keeping and to
-                      improve our services. We do not sell, trade, or otherwise
-                      transfer personal information to third parties unless we
-                      have obtained explicit consent from the customer or are
-                      required to do so by law. We take the security of customer
-                      data seriously and implement various measures to protect
-                      it from unauthorized access, disclosure, alteration, or
-                      destruction. Once the data is no longer needed, we
-                      securely dispose of it to prevent unauthorized access or
-                      misuse.
+                      The groomer will only provide the grooming services stated
+                      in the scheduled appointment. In the case that the
+                      customer wishes to request more services, the customer and
+                      groomer must both agree to the conditions.
                     </div>
                   </div>
                 </div>
@@ -340,7 +327,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseTen"
                     >
-                      Changes to Terms and Conditions
+                      Products
                     </button>
                   </h2>
                   <div
@@ -350,9 +337,8 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The grooming shop reserves the right to modify these terms
-                      and conditions as needed. Customers will be notified of
-                      any changes.
+                      The products on the shop page are only for preview and can
+                      only be bought on-site at the grooming shop.
                     </div>
                   </div>
                 </div>
@@ -371,7 +357,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseEleven"
                     >
-                      Refusal of Service
+                      Liability
                     </button>
                   </h2>
                   <div
@@ -381,8 +367,10 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The grooming shop reserves the right to refuse service to
-                      any client for any reason.
+                      The grooming shop will take reasonable care of the
+                      customer's pet but will not be liable for any pre-existing
+                      conditions. The customers are liable for any damage or
+                      injuries that their pet may have caused.
                     </div>
                   </div>
                 </div>
@@ -398,7 +386,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseTwelve"
                     >
-                      Payment
+                      Photography and Social Media
                     </button>
                   </h2>
                   <div
@@ -408,7 +396,9 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      Payment can only be made onsite of the grooming shop.
+                      Customers may be asked by the grooming shop to take
+                      pictures of their pets for marketing purposes. The
+                      customer may choose to refuse.
                     </div>
                   </div>
                 </div>
@@ -427,7 +417,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseThirteen"
                     >
-                      Walk-ins
+                      Changes to Terms and Conditions
                     </button>
                   </h2>
                   <div
@@ -437,11 +427,9 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      For walk-ins, appointments made in the website will be
-                      prioritized in the case that a walk-in and online
-                      appointment are in the same time slot. In the case that
-                      the appointment is canceled or a no show, the walk-in
-                      appointment can take ove the time slot.
+                      The grooming shop reserves the right to modify these terms
+                      and conditions as needed. Customers will be notified of
+                      any changes.
                     </div>
                   </div>
                 </div>
@@ -458,7 +446,7 @@ const Terms = () => {
                       aria-expanded="false"
                       aria-controls="collapseFourteen"
                     >
-                      Products
+                      Privacy Policy
                     </button>
                   </h2>
                   <div
@@ -468,8 +456,21 @@ const Terms = () => {
                     data-bs-parent="#faqsAccordion"
                   >
                     <div className="accordion-body">
-                      The products in the shop page are only for preview and can
-                      only be bought onsite of the grooming shop.
+                      We use the personal information provided by our customers
+                      to schedule grooming appointments, communicate with them
+                      regarding their appointments, understand their pet's
+                      grooming needs, and ensure the safety and well-being of
+                      their pets during the grooming process. We may also use
+                      this information for internal record-keeping and to
+                      improve our services. We do not sell, trade, or otherwise
+                      transfer personal information to third parties unless we
+                      have obtained explicit consent from the customer or are
+                      required to do so by law. We take the security of customer
+                      data seriously and implement various measures to protect
+                      it from unauthorized access, disclosure, alteration, or
+                      destruction. Once the data is no longer needed, we
+                      securely dispose of it to prevent unauthorized access or
+                      misuse.
                     </div>
                   </div>
                 </div>

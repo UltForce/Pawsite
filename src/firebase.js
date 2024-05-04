@@ -474,6 +474,26 @@ const getPetDetails = async (petId) => {
   }
 };
 
+// Function to retrieve the user email using userID
+const getUserEmailById = async (userId) => {
+  try {
+    // Get the user document based on the userID
+    const userDoc = await getDoc(doc(dba, "users", userId));
+
+    if (userDoc.exists()) {
+      // Return the email from the user document
+      return userDoc.data().email;
+    } else {
+      console.error("User document not found for userID:", userId);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting user email by ID:", error.message);
+    throw error;
+  }
+};
+
+
 export {
   getAuth,
   auth,
@@ -519,4 +539,5 @@ export {
   deletePet,
   getUserPet,
   getPetDetails,
+  getUserEmailById,
 };

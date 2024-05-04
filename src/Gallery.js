@@ -25,11 +25,13 @@ const Gallery = () => {
             <div /*className="gallery-row"*/ className="col-md-6">
               <center>
                 <img src={gallery2} alt="Gallery 2" className="image" />
+                <div className="image-label">Summer Cut</div>
               </center>
             </div>
             <div /*className="gallery-row"*/ className="col-md-6">
               <center>
                 <img src={gallery3} alt="Gallery 3" className="image" />
+                <div className="image-label">Puppy Cut</div>
               </center>
             </div>
           </div>
@@ -37,16 +39,19 @@ const Gallery = () => {
             <div /*className="gallery-row"*/ className="col-md-4">
               <center>
                 <img src={gallery4} alt="Gallery 4" className="image" />
+                <div className="image-label">Puppy Cut</div>
               </center>
             </div>
             <div /*className="gallery-row"*/ className="col-md-4">
               <center>
                 <img src={gallery5} alt="Gallery 5" className="image" />
+                <div className="image-label">Summer Cut</div>
               </center>
             </div>
             <div /*className="gallery-row"*/ className="col-md-4">
               <center>
                 <img src={gallery6} alt="Gallery 6" className="image" />
+                <div className="image-label">Summer Cut</div>
               </center>
             </div>
           </div>
@@ -57,6 +62,7 @@ const Gallery = () => {
             <div /*className="gallery-row"*/ className="col-md-12">
               <center>
                 <img src={gallery1} alt="Gallery 1" className="image" />
+                <div className="image-label">Basic Groom</div>
               </center>
             </div>
           </div>

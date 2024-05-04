@@ -612,28 +612,54 @@ function Pet() {
                     ref={PetNameInputRef}
                   />
                 </div>
+
                 <div>
                   <label
-                    class="col-form-label col-form-label-sm"
-                    for="floatingSpecies"
+                    className="col-form-label col-form-label-sm"
+                    for="SpeciesOptions"
                   >
                     Pet Species:
                   </label>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm booking-form"
-                    placeholder="Pet Species"
-                    id="floatingSpecies"
-                    value={formData.species}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 128) {
-                        setFormData({ ...formData, species: e.target.value });
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    ref={SpeciesInputRef}
-                  />
+                  <div id="SpeciesOptions">
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="species"
+                        id="speciesdog"
+                        value="Dog"
+                        checked={formData.species === "Dog"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            species: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="speciesdog">
+                        Dog
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="species"
+                        id="speciescat"
+                        value="Cat"
+                        checked={formData.species === "Cat"} // Check if gender is male
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            species: e.target.value,
+                          })
+                        }
+                      />
+                      <label className="form-check-label" for="speciescat">
+                        Cat
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label

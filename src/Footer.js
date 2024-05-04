@@ -26,7 +26,7 @@ const Footer = () => {
           </a>
         </div>
         <div className="contact-info">
-          <p>Contact us: 0927 882 0488 / 09988891178</p>
+          <p>Contact us: 0927 882 0488</p>
           <p>Email: woofpackph@gmail.com</p>
         </div>
       </div>

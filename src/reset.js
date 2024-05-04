@@ -38,7 +38,7 @@ const Reset = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await sendPasswordResetEmail(auth, email);
+          //await sendPasswordResetEmail(auth, email);
           Swal.fire({
             title: "success",
             text: "Password reset link sent successfully.",

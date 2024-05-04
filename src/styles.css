@@ -337,6 +337,7 @@ footer {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin-bottom: 25px; /* Adjust spacing between images */
 }
 
 .gallery img {
@@ -351,6 +352,7 @@ footer {
 .image {
   width: 95%;
   max-width: 450px;
+  margin-bottom: 50px; /* Adjust spacing between images */
 }
 label {
   margin-left: 10px;
@@ -434,4 +436,17 @@ label {
   border-radius: 50%;
   display: inline-block;
   margin-left: 5px; /* Adjust as needed */
+}
+
+.image-label {
+  position: absolute;
+  top: 0.5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 2px 2px;
+  border-radius: 2px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #333;
 }

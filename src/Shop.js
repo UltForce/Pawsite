@@ -103,7 +103,7 @@ const Shop = () => {
 
   const handleSubmit = async () => {
     Swal.fire({
-      title: "Add a Service",
+      title: "Add a Product",
       html:
         '<div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name"><label for="swal-input-name">Name</label></div>' +
         '<div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description"><label for="swal-input-description">Description</label></div>' +
@@ -136,7 +136,7 @@ const Shop = () => {
 
         Swal.fire({
           icon: "question",
-          title: "Do you want to add this service?",
+          title: "Do you want to add this Product?",
           showDenyButton: true,
           confirmButtonText: "Yes",
           denyButtonText: "No",
@@ -158,9 +158,9 @@ const Shop = () => {
               fetchServices();
               const userId = getCurrentUserId(); // Get the current user's ID
               const event = {
-                type: "Services", // Type of event
+                type: "Products", // Type of event
                 userId: userId, // User ID associated with the event
-                details: "User has created a service", // Details of the event
+                details: "User has created a Product", // Details of the event
               };
 
               // Call the AuditLogger function with the event object
@@ -168,7 +168,7 @@ const Shop = () => {
               // Show success message
               Swal.fire({
                 title: "Success",
-                text: "Service created successfully",
+                text: "Product created successfully",
                 icon: "success",
                 heightAuto: false,
                 confirmButtonColor: "#3085d6",
@@ -177,12 +177,12 @@ const Shop = () => {
                 if (result.isConfirmed) {
                   Toast.fire({
                     icon: "success",
-                    title: "Service created successfully",
+                    title: "Product created successfully",
                   });
                 }
               });
             } catch (error) {
-              console.error("Error submitting service:", error.message);
+              console.error("Error submitting Product:", error.message);
             }
           }
         });
@@ -194,7 +194,7 @@ const Shop = () => {
   const handleDelete = async (serviceId, imageUrl) => {
     Swal.fire({
       icon: "question",
-      title: "Do you want to delete this service?",
+      title: "Do you want to delete this Product?",
       showDenyButton: true,
       confirmButtonText: "Yes",
       denyButtonText: `No`,
@@ -215,20 +215,20 @@ const Shop = () => {
           fetchServices();
           const userId = getCurrentUserId(); // Get the current user's ID
           const event = {
-            type: "Services", // Type of event
+            type: "Products", // Type of event
             userId: userId, // User ID associated with the event
-            details: "User has deleted a service", // Details of the event
+            details: "User has deleted a Product", // Details of the event
           };
 
           // Call the AuditLogger function with the event object
           AuditLogger({ event });
         } catch (error) {
-          console.error("Error deleting service:", error.message);
+          console.error("Error deleting Product:", error.message);
         }
         // Show success message
         Swal.fire({
           title: "success",
-          text: "Service deleted successfully",
+          text: "Product deleted successfully",
           icon: "success",
           heightAuto: false,
           confirmButtonColor: "#3085d6",
@@ -237,7 +237,7 @@ const Shop = () => {
           if (result.isConfirmed) {
             Toast.fire({
               icon: "success",
-              title: "Service deleted successfully",
+              title: "Product deleted successfully",
             });
           }
         });
@@ -247,7 +247,7 @@ const Shop = () => {
 
   const handleEdit = (service) => {
     Swal.fire({
-      title: "Edit Service",
+      title: "Edit Product",
       html: `
         <div class="form-floating"><input id="swal-input-name" class="form-control" placeholder="Name" value="${service.name}" ><label for="swal-input-name">Name</label></div>
         <div class="form-floating"><input id="swal-input-description" class="form-control" placeholder="Description" value="${service.description}"><label for="swal-input-description">Description</label></div>
@@ -280,7 +280,7 @@ const Shop = () => {
 
         Swal.fire({
           icon: "question",
-          title: "Do you want to update this service?",
+          title: "Do you want to update this Product?",
           showDenyButton: true,
           confirmButtonText: "Yes",
           denyButtonText: "No",
@@ -308,9 +308,9 @@ const Shop = () => {
               fetchServices();
               const userId = getCurrentUserId(); // Get the current user's ID
               const event = {
-                type: "Services", // Type of event
+                type: "Products", // Type of event
                 userId: userId, // User ID associated with the event
-                details: "User has edited a service", // Details of the event
+                details: "User has edited a product", // Details of the event
               };
 
               // Call the AuditLogger function with the event object
@@ -318,7 +318,7 @@ const Shop = () => {
               // Show success message
               Swal.fire({
                 title: "Success",
-                text: "Service updated successfully",
+                text: "Product updated successfully",
                 icon: "success",
                 heightAuto: false,
                 confirmButtonColor: "#3085d6",
@@ -327,12 +327,12 @@ const Shop = () => {
                 if (result.isConfirmed) {
                   Toast.fire({
                     icon: "success",
-                    title: "Service updated successfully",
+                    title: "Product updated successfully",
                   });
                 }
               });
             } catch (error) {
-              console.error("Error updating service:", error.message);
+              console.error("Error updating product:", error.message);
             }
           }
         });

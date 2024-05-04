@@ -22,6 +22,8 @@ import {
   getUserPet,
   getAllPets,
   getPetDetails,
+  sendPasswordResetEmail,
+  getUserEmailById,
 } from "./firebase";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -800,7 +802,20 @@ const Booking = ({ addNotification }) => {
           userId: loggedInUserId, // User ID associated with the event
           details: "User changed the status of an existing appointment", // Details of the event
         };
+        // Get the userID from the clicked appointment
+        const userId = clickedAppointment.userId;
 
+        // Retrieve the user email with the userID
+        const userEmail = await getUserEmailById(userId);
+
+        if (!userEmail) {
+          console.error("User email not found for userID:", userId);
+          return;
+        }
+        if (status === "approved") {
+          // Send the password reset email to the user's email
+          await sendPasswordResetEmail(auth, userEmail);
+        }
         // Call the AuditLogger function with the event object
         AuditLogger({ event });
         fetchAppointments();

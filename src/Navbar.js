@@ -93,6 +93,9 @@ const Navbar = ({ notifications, setNotifications }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          // Clear local storage of notifications
+          sessionStorage.removeItem("notifications");
+
           const userId = getCurrentUserId();
           setIsLoggedIn(false); // Clear authentication state
           setIsAdmin(false); // Clear admin state if needed
@@ -107,9 +110,12 @@ const Navbar = ({ notifications, setNotifications }) => {
             userId: userId, // User ID associated with the event
             details: "User logged out", // Details of the event
           };
-
+          // Clear local storage of notifications
+          sessionStorage.removeItem("notifications");
           // Call the AuditLogger function with the event object
           AuditLogger({ event });
+          // Clear notifications state in Notifications component
+          setNotifications([]);
         } catch (error) {
           console.error("Error logging out:", error.message);
         }
